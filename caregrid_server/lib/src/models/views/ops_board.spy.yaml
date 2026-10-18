@@ -1,0 +1,14 @@
+### The command console's single prioritized queue of owned incidents plus header stats.
+class: OpsBoard
+fields:
+  generatedAt: DateTime
+  campusName: String
+  ### Open incidents, most urgent first.
+  active: List<IncidentSummary>
+  ### Closed in the last 24 hours.
+  recent: List<IncidentSummary>
+  respondersAvailable: int
+  respondersTotal: int
+  camerasDegraded: int
+  camerasTotal: int
+  escalatedOpen: int

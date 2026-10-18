@@ -1,0 +1,8 @@
+### Live push message. Deliberately minimal: clients refetch role-filtered data when they receive it.
+class: OpsEvent
+fields:
+  ### incident, dispatch, twin, scenario, readiness or hello.
+  kind: String
+  incidentId: int?
+  message: String?
+  at: DateTime

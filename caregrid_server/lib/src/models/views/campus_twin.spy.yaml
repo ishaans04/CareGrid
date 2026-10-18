@@ -1,0 +1,11 @@
+### Snapshot of the campus digital twin for the live map and admin screens.
+class: CampusTwin
+fields:
+  campusName: String
+  zones: List<Zone>
+  roads: List<RoadSegment>
+  cameras: List<Camera>
+  responders: List<Responder>
+  activeIncidents: List<IncidentSummary>
+  ### Responder code to zone code it is currently passing through (live telemetry).
+  responderPositions: Map<String, String>

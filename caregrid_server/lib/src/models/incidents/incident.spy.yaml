@@ -1,0 +1,64 @@
+### One owned, traceable incident. Every meaningful signal becomes (or joins) an incident; nothing waits in an alert queue.
+class: Incident
+table: incident
+fields:
+  ### Human readable id, e.g. INC-1042.
+  code: String, unique
+  title: String
+  eventType: EventType
+  family: EventFamily
+  severity: Severity
+  state: IncidentState
+  zoneCode: String
+  ### Floor / corridor / landmark, e.g. 'Block B, ground floor, corridor 2'.
+  locationDetail: String?
+  primaryCameraCode: String?
+  ### Anonymous track id from edge inference. No facial recognition.
+  trackId: String?
+  source: SignalSource
+  confidence: double
+  corroborated: bool, default=false
+  observability: Observability, default=full
+  ### What could happen if nobody acts, e.g. 'Potential medical emergency'. Never a diagnosis.
+  consequence: String
+  policyCode: String?
+  ### The agent's explanation, one line per reasoning step.
+  reasoning: List<String>
+  ### Evidence that argues against an emergency.
+  negativeEvidence: List<String>
+  ### The single next action the operator should take.
+  nextAction: String?
+  ### Parent incident for multi-victim events (this row is a victim sub-record).
+  parentIncidentId: int?
+  escalationLevel: int, default=0
+  needsHumanReview: bool, default=false
+  ownerName: String?
+  hospitalNotified: bool, default=false
+  ### Hospital acknowledged it is ready to receive the patient.
+  hospitalReady: bool, default=false
+  ### Campus member who raised an SOS. Never sent to any client.
+  reporterUserId: int?, scope=serverOnly
+  scenarioRunId: int?
+  ### Simulated local hour used by scenarios (e.g. 2 for the 02:17 hostel scenario).
+  contextHour: int?
+  onsetAt: DateTime
+  detectedAt: DateTime
+  verifiedAt: DateTime?
+  dispatchedAt: DateTime?
+  acknowledgedAt: DateTime?
+  enRouteAt: DateTime?
+  onSceneAt: DateTime?
+  careAt: DateTime?
+  resolvedAt: DateTime?
+  dismissedAt: DateTime?
+  ### Outcome on resolution or reason on dismissal.
+  closureNote: String?
+  ### The next milestone Proof-of-Response expects, and when.
+  nextDeadline: DateTime?
+  nextDeadlineLabel: String?
+  updatedAt: DateTime
+indexes:
+  incident_state_idx:
+    fields: state
+  incident_zone_idx:
+    fields: zoneCode

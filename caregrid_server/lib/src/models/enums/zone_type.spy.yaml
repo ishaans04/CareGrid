@@ -1,0 +1,28 @@
+### Kind of place in the campus digital twin.
+enum: ZoneType
+serialized: byName
+properties:
+  label: String
+values:
+  - hostel:
+      label: 'Hostel'
+  - academic:
+      label: 'Academic'
+  - lab:
+      label: 'Laboratory'
+  - libraryHall:
+      label: 'Library'
+  - sports:
+      label: 'Sports'
+  - hospital:
+      label: 'Hospital'
+  - gate:
+      label: 'Gate'
+  - admin:
+      label: 'Administration'
+  - commons:
+      label: 'Commons'
+  - junction:
+      label: 'Road junction'
+  - outside:
+      label: 'Outside campus'

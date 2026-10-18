@@ -1,0 +1,8 @@
+### Shortest passable route between two zones in the campus graph.
+class: RoutePlan
+fields:
+  found: bool
+  route: List<String>
+  routeNames: List<String>
+  distanceMeters: int
+  note: String?

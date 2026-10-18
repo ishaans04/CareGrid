@@ -1,0 +1,8 @@
+### Availability of a responder. busy means occupied by work outside CareGrid.
+enum: ResponderStatus
+serialized: byName
+values:
+  - available
+  - assigned
+  - busy
+  - offline

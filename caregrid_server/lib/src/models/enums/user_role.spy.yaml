@@ -1,0 +1,16 @@
+### Role of a signed-in CareGrid user. Decides which console and which data the user sees.
+enum: UserRole
+serialized: byName
+properties:
+  label: String
+values:
+  - command:
+      label: 'Security / Command'
+  - medical:
+      label: 'Medical team'
+  - responder:
+      label: 'Responder'
+  - admin:
+      label: 'IT / Administration'
+  - member:
+      label: 'Campus member'

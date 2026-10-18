@@ -1,0 +1,6 @@
+### Returned by a successful sign-in.
+class: SignInResult
+fields:
+  token: String
+  user: AppUser
+  expiresAt: DateTime

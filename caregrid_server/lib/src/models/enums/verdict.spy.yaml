@@ -1,0 +1,6 @@
+### Result of a stress test.
+enum: Verdict
+serialized: byName
+values:
+  - pass
+  - fail

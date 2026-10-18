@@ -1,0 +1,6 @@
+### Latency of one response stage, predicted (stress test) or measured (analytics).
+class: StageEstimate
+fields:
+  label: String
+  seconds: double
+  note: String?

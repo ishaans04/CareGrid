@@ -1,0 +1,7 @@
+### Passability of a road segment.
+enum: RoadStatus
+serialized: byName
+values:
+  - open
+  - congested
+  - blocked

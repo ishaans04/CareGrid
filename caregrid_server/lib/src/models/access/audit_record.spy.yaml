@@ -1,0 +1,14 @@
+### Access and action audit: who saw what, who escalated, who dispatched, who overrode the AI, and when.
+class: AuditRecord
+table: audit_record
+fields:
+  at: DateTime
+  userId: int?
+  userName: String
+  role: String
+  action: String
+  target: String?
+  detail: String?
+indexes:
+  audit_at_idx:
+    fields: at

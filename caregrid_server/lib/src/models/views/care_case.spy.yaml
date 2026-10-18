@@ -1,0 +1,20 @@
+### Hospital / care console row: incoming emergency context, location, ETA and handoff state.
+class: CareCase
+fields:
+  incidentId: int
+  code: String
+  severity: Severity
+  state: IncidentState
+  nature: String
+  zoneName: String
+  locationDetail: String?
+  onsetAt: DateTime
+  ### pre-alert, unit en route, on scene, care in progress, handover, closed.
+  handoffState: String
+  hospitalReady: bool
+  ambulanceCode: String?
+  ambulanceStatus: String?
+  ### Estimated arrival of the first unit at the scene.
+  sceneEta: DateTime?
+  responders: List<String>
+  careNotes: List<String>

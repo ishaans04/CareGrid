@@ -1,0 +1,6 @@
+### Typed error returned to the app, e.g. a role trying an action it is not allowed to perform.
+exception: CareGridException
+fields:
+  message: String
+  ### forbidden, notFound, invalidState or badRequest.
+  code: String

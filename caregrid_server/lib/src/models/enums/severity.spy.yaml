@@ -1,0 +1,19 @@
+### Incident priority. Lower rank is more urgent.
+enum: Severity
+serialized: byName
+properties:
+  label: String
+  rank: int
+values:
+  - p0:
+      label: 'P0 Critical'
+      rank: 0
+  - p1:
+      label: 'P1 Urgent'
+      rank: 1
+  - p2:
+      label: 'P2 High'
+      rank: 2
+  - p3:
+      label: 'P3 Routine'
+      rank: 3

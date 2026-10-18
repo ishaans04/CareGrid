@@ -1,0 +1,16 @@
+### Failure injected into the digital twin by the Stress-Test Engine.
+enum: StressFailureKind
+serialized: byName
+properties:
+  label: String
+values:
+  - responderBusy:
+      label: 'Responder unavailable'
+  - gateClosed:
+      label: 'Gate unavailable'
+  - roadBlocked:
+      label: 'Road blocked'
+  - cameraDegraded:
+      label: 'Camera degraded'
+  - cameraOffline:
+      label: 'Camera offline'

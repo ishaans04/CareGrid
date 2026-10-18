@@ -1,0 +1,9 @@
+### Bearer token issued at sign-in and validated by the server's authentication handler.
+class: AuthToken
+table: auth_token
+serverOnly: true
+fields:
+  token: String, unique
+  userId: int
+  createdAt: DateTime
+  expiresAt: DateTime

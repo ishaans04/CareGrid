@@ -1,0 +1,11 @@
+### A two-way road between two zones in the campus graph.
+class: RoadSegment
+table: road_segment
+fields:
+  code: String, unique
+  name: String
+  fromZone: String
+  toZone: String
+  lengthMeters: int
+  status: RoadStatus, default=open
+  isOutsideCampus: bool, default=false

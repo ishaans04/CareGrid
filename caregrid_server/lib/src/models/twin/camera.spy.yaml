@@ -1,0 +1,12 @@
+### An existing campus camera used as a sensor. CareGrid integrates cameras; it does not replace them.
+class: Camera
+table: camera
+fields:
+  code: String, unique
+  zoneCode: String
+  label: String
+  health: AssetHealth, default=online
+  ### Cameras that can corroborate an event seen by this one.
+  adjacentCameras: List<String>
+  ### Faces and identities are never processed; masked cameras only emit anonymous track events.
+  privacyMasked: bool, default=true

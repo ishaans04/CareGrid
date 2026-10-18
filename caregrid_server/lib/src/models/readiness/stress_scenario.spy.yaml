@@ -1,0 +1,13 @@
+### A compound-failure rehearsal: an emergency plus things going wrong at the same time.
+class: StressScenario
+table: stress_scenario
+fields:
+  code: String, unique
+  name: String
+  description: String
+  zoneCode: String
+  eventType: EventType
+  ### Local hour the emergency happens at (policies are time-aware).
+  hour: int
+  failures: List<StressFailure>
+  builtIn: bool, default=false

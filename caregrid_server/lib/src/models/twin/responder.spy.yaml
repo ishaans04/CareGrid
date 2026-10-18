@@ -1,0 +1,20 @@
+### A dispatchable response unit: security desk, patrol, ambulance, ER team, facilities or fire safety.
+class: Responder
+table: responder
+fields:
+  code: String, unique
+  name: String
+  type: ResponderType
+  status: ResponderStatus, default=available
+  ### Zone the unit is at right now.
+  zoneCode: String
+  ### Zone the unit returns to after a task.
+  baseZoneCode: String
+  speedMetersPerMin: int
+  ### Time from accepting a task to starting to move.
+  mobilizationSeconds: int
+  capabilities: List<String>
+  contact: String
+  activeDispatchId: int?
+  ### Note shown when the unit is busy or offline, e.g. 'Inter-hospital transfer'.
+  statusNote: String?

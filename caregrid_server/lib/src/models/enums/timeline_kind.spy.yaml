@@ -1,0 +1,15 @@
+### Category of an incident timeline entry.
+enum: TimelineKind
+serialized: byName
+values:
+  - signal
+  - agent
+  - policy
+  - dispatch
+  - responder
+  - proof
+  - escalation
+  - operatorAction
+  - care
+  - closure
+  - system

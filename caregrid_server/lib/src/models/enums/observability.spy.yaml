@@ -1,0 +1,12 @@
+### How well the incident location is covered by working sensors.
+enum: Observability
+serialized: byName
+properties:
+  label: String
+values:
+  - full:
+      label: 'Full coverage'
+  - degraded:
+      label: 'Degraded coverage'
+  - blind:
+      label: 'Blind spot'

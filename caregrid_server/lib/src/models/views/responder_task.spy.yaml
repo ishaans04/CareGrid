@@ -1,0 +1,14 @@
+### Minimum necessary context for a responder: where, what, how to get there, what to do.
+class: ResponderTask
+fields:
+  dispatch: Dispatch
+  incidentCode: String
+  severity: Severity
+  ### Observable nature, never a diagnosis, e.g. 'Possible medical emergency (person down)'.
+  nature: String
+  zoneName: String
+  locationDetail: String?
+  routeNames: List<String>
+  instructions: List<String>
+  hospitalNotified: bool
+  otherResponders: List<String>

@@ -1,0 +1,7 @@
+### Responder app home: own unit, current task and recent assignments.
+class: ResponderHome
+fields:
+  responder: Responder
+  zoneName: String
+  task: ResponderTask?
+  recent: List<Dispatch>

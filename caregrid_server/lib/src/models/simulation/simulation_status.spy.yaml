@@ -1,0 +1,5 @@
+### Simulation lab state: catalog plus recent runs.
+class: SimulationStatus
+fields:
+  scenarios: List<ScenarioInfo>
+  runs: List<ScenarioRun>

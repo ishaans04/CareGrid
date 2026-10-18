@@ -1,0 +1,24 @@
+### After-action analytics: MTTC stage by stage, Response Completion Integrity and trust metrics.
+class: OpsMetrics
+fields:
+  generatedAt: DateTime
+  ### Mean Time To Care: onset to care initiated, in seconds.
+  mttcSeconds: double?
+  ### Mean latency of each stage (detection, verification, dispatch, acknowledgement, arrival, care start).
+  stages: List<StageEstimate>
+  ### Response Completion Integrity: share of dispatched incidents verified through arrival and care with no silent failure.
+  rciPercent: double?
+  ### Dismissed after verification / verified.
+  falseEscalationPercent: double?
+  ### Incidents with degraded or blind observability / all incidents.
+  blindSpotPercent: double?
+  incidentsTotal: int
+  resolved: int
+  dismissed: int
+  open: int
+  escalations: int
+  dismissReasons: Map<String, int>
+  byFamily: Map<String, int>
+  bySeverity: Map<String, int>
+  ### Incidents per zone name, for coverage planning.
+  byZone: Map<String, int>

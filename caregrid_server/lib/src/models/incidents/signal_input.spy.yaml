@@ -1,0 +1,12 @@
+### Payload an edge gateway (or the simulator) sends to ingest one signal.
+class: SignalInput
+fields:
+  source: SignalSource
+  eventType: EventType
+  zoneCode: String
+  cameraCode: String?
+  trackId: String?
+  confidence: double
+  detail: String?
+  locationDetail: String?
+  contextHour: int?

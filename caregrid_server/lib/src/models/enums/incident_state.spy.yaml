@@ -1,0 +1,48 @@
+### Lifecycle state of an incident. Arrival, care and closure are measured states, not assumptions.
+enum: IncidentState
+serialized: byName
+properties:
+  label: String
+  stage: int
+  open: bool
+values:
+  - detected:
+      label: 'Detected'
+      stage: 0
+      open: true
+  - review:
+      label: 'Needs review'
+      stage: 1
+      open: true
+  - verified:
+      label: 'Verified'
+      stage: 1
+      open: true
+  - dispatched:
+      label: 'Dispatched'
+      stage: 2
+      open: true
+  - acknowledged:
+      label: 'Acknowledged'
+      stage: 3
+      open: true
+  - enRoute:
+      label: 'En route'
+      stage: 4
+      open: true
+  - onScene:
+      label: 'On scene'
+      stage: 5
+      open: true
+  - care:
+      label: 'Care / action'
+      stage: 6
+      open: true
+  - resolved:
+      label: 'Resolved'
+      stage: 7
+      open: false
+  - dismissed:
+      label: 'Dismissed'
+      stage: 7
+      open: false

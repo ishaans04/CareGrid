@@ -1,0 +1,21 @@
+### Report of one stress-test run against the digital twin.
+class: StressTestRun
+table: stress_test_run
+fields:
+  scenarioCode: String
+  scenarioName: String
+  ranAt: DateTime
+  ranBy: String
+  verdict: Verdict
+  ### Predicted onset-to-arrival of the slowest required unit.
+  predictedSeconds: int
+  slaSeconds: int
+  policyCode: String?
+  stages: List<StageEstimate>
+  responderPlan: List<String>
+  findings: List<String>
+  fixes: List<StressFix>
+  ### Verdict when the recommended fixes are applied together.
+  verdictAfterFix: Verdict?
+  predictedAfterFixSeconds: int?
+  planAfterFix: List<String>

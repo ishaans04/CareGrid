@@ -1,0 +1,10 @@
+### A remedy the Stress-Test Engine tried, and whether the re-run passed with it.
+class: StressFix
+fields:
+  ### Machine code, e.g. gate-override:G4, fallback-responder, open-road:R12.
+  code: String
+  title: String
+  detail: String
+  ### The fix can be applied to the live twin from the Readiness Lab.
+  applicable: bool
+  passesAlone: bool

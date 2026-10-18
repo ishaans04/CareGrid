@@ -1,0 +1,11 @@
+### What a campus member sees about their own SOS: closed-loop feedback, no other people's data.
+class: SosStatus
+fields:
+  incidentId: int
+  code: String
+  state: IncidentState
+  zoneName: String
+  raisedAt: DateTime
+  message: String
+  responders: List<String>
+  sceneEta: DateTime?

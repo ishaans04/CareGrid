@@ -1,0 +1,8 @@
+### The response the orchestrator recommends: best unit per required type plus warnings.
+class: ResponsePlan
+fields:
+  options: List<PlanOption>
+  ### Alternatives the operator can pick instead of the recommendation.
+  alternatives: List<PlanOption>
+  warnings: List<String>
+  arrivalSlaSeconds: int

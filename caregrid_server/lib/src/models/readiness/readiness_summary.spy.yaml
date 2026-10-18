@@ -1,0 +1,7 @@
+### Campus readiness: how many rehearsed compound failures the current twin survives.
+class: ReadinessSummary
+fields:
+  scorePercent: int
+  passed: int
+  total: int
+  runs: List<StressTestRun>

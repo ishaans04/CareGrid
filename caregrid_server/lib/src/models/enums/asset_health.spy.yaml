@@ -1,0 +1,7 @@
+### Operational health of a sensor such as a camera.
+enum: AssetHealth
+serialized: byName
+values:
+  - online
+  - degraded
+  - offline

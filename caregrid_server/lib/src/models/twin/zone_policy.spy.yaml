@@ -1,0 +1,29 @@
+### A site-specific standard operating procedure: what counts as an incident in a zone at a time, and who responds.
+class: ZonePolicy
+table: zone_policy
+fields:
+  code: String, unique
+  name: String
+  ### Null means the policy applies to every zone type.
+  zoneType: ZoneType?
+  family: EventFamily
+  ### Local hour window [startHour, endHour). Wraps past midnight when start > end. Null means all day.
+  startHour: int?
+  endHour: int?
+  severity: Severity
+  ### Minimum signal confidence before the agent treats the event as verified.
+  minConfidence: double
+  ### Require a second camera or sensor (or temporal persistence) before verification.
+  requireCorroboration: bool
+  ### Dispatch without waiting for operator confirmation (life-safety hazards only).
+  autoDispatch: bool
+  notifyHospital: bool
+  responderTypes: List<ResponderType>
+  ### Used when no unit of a required type is available.
+  fallbackTypes: List<ResponderType>
+  verifySlaSeconds: int
+  ackSlaSeconds: int
+  ### Onset-to-arrival target for the first unit of every required type.
+  arrivalSlaSeconds: int
+  careSlaSeconds: int
+  instructions: List<String>

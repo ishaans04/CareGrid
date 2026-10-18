@@ -1,0 +1,30 @@
+services:
+  # Development services
+  postgres:
+    image: ghcr.io/serverpod/postgres:16
+    ports:
+      - "8090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: caregrid
+      POSTGRES_PASSWORD: "sqAR5YuYBctwPnQeNH6Sv-G8ENYweYRX"
+    volumes:
+      - caregrid_data:/var/lib/postgresql/data
+
+
+  # Test services
+  postgres_test:
+    image: ghcr.io/serverpod/postgres:16
+    ports:
+      - "9090:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: caregrid_test
+      POSTGRES_PASSWORD: "_6YU7Sqt3O7WU5jbmys-0tmOYDWkOJsY"
+    volumes:
+      - caregrid_test_data:/var/lib/postgresql/data
+
+
+volumes:
+  caregrid_data:
+  caregrid_test_data:

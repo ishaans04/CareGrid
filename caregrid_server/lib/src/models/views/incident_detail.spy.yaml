@@ -1,0 +1,19 @@
+### Everything one role may see about one incident. Fields are redacted per role on the server.
+class: IncidentDetail
+fields:
+  incident: Incident
+  zoneName: String
+  zoneType: ZoneType
+  timeline: List<TimelineEntry>
+  dispatches: List<Dispatch>
+  ### Raw signals (command role only).
+  signals: List<SensorEvent>
+  policy: ZonePolicy?
+  ### Recommended response while the incident is not yet dispatched.
+  plan: ResponsePlan?
+  victims: List<IncidentSummary>
+  ### Action ids this viewer may perform, e.g. confirmDispatch, dismiss, escalate, resolve.
+  allowedActions: List<String>
+  viewerRole: UserRole
+  ### What was hidden from this viewer and why (transparent least-privilege).
+  redactions: List<String>

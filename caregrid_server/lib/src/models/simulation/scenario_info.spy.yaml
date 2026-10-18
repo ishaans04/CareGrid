@@ -1,0 +1,13 @@
+### Catalog entry for a seeded live scenario.
+class: ScenarioInfo
+fields:
+  code: String
+  title: String
+  description: String
+  ### What the audience should see happen.
+  expected: String
+  zoneCode: String
+  steps: int
+  faults: List<String>
+  ### Capability of the platform the scenario demonstrates.
+  demonstrates: List<String>

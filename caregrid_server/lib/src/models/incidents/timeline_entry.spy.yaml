@@ -1,0 +1,14 @@
+### One timestamped line of the incident's audit timeline: the institutional memory.
+class: TimelineEntry
+table: timeline_entry
+fields:
+  incidentId: int
+  at: DateTime
+  kind: TimelineKind
+  actor: String
+  message: String
+  ### Entries that reference camera evidence are only shown to the command role.
+  sensitive: bool, default=false
+indexes:
+  timeline_incident_idx:
+    fields: incidentId

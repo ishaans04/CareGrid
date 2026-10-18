@@ -1,0 +1,14 @@
+### One candidate responder for an incident, with its computed route and ETA.
+class: PlanOption
+fields:
+  responderCode: String
+  responderName: String
+  responderType: ResponderType
+  role: String
+  route: List<String>
+  routeNames: List<String>
+  distanceMeters: int
+  ### Mobilization plus travel time.
+  etaSeconds: int
+  withinSla: bool
+  note: String?

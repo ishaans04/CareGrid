@@ -1,0 +1,18 @@
+### Where a campus signal came from.
+enum: SignalSource
+serialized: byName
+properties:
+  label: String
+values:
+  - camera:
+      label: 'Camera'
+  - sos:
+      label: 'SOS app'
+  - accessControl:
+      label: 'Access control'
+  - vehicle:
+      label: 'Vehicle telemetry'
+  - iotSensor:
+      label: 'IoT sensor'
+  - operatorReport:
+      label: 'Operator'

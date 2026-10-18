@@ -1,0 +1,20 @@
+### A node of the campus digital twin: a building, a gate, a road junction or a point outside campus.
+class: Zone
+table: zone
+fields:
+  ### Stable short code, e.g. HB for Birch Hostel.
+  code: String, unique
+  name: String
+  type: ZoneType
+  ### Schematic map position (0..1000 x 0..700 canvas units).
+  x: double
+  y: double
+  description: String?
+  ### Gates only: whether vehicles can pass right now.
+  isOpen: bool, default=true
+  ### Gates only: closed gate that can be remotely opened for emergency vehicles.
+  emergencyOverride: bool, default=false
+  ### Restricted zones (labs, server rooms) trigger access policies.
+  isRestricted: bool, default=false
+  ### Privacy-sensitive zones only expose minimum context to non-command roles.
+  privacySensitive: bool, default=false

@@ -1,0 +1,9 @@
+### A seeded account listed on the sign-in screen of the prototype.
+class: DemoAccount
+fields:
+  handle: String
+  displayName: String
+  role: UserRole
+  title: String
+  pinHint: String
+  description: String

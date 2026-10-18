@@ -1,0 +1,18 @@
+### Kind of human response unit that can be dispatched.
+enum: ResponderType
+serialized: byName
+properties:
+  label: String
+values:
+  - securityDesk:
+      label: 'Security desk'
+  - securityPatrol:
+      label: 'Security patrol'
+  - ambulance:
+      label: 'Ambulance'
+  - hospitalEr:
+      label: 'Hospital ER team'
+  - facilities:
+      label: 'Facilities crew'
+  - fireSafety:
+      label: 'Fire and safety unit'

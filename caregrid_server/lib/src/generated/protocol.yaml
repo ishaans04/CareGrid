@@ -1,0 +1,62 @@
+account:
+  - demoAccounts:
+  - signIn:
+  - me:
+  - signOut:
+admin:
+  - policies:
+  - updatePolicy:
+  - setCameraHealth:
+  - setGate:
+  - setRoadStatus:
+  - setResponderStatus:
+  - auditLog:
+  - users:
+  - resetDemo:
+analytics:
+  - metrics:
+campus:
+  - twin:
+  - route:
+care:
+  - cases:
+  - markReady:
+incident:
+  - board:
+  - detail:
+  - confirmDispatch:
+  - claim:
+  - escalate:
+  - addNote:
+  - dismiss:
+  - resolve:
+live:
+  - watch:
+readiness:
+  - scenarios:
+  - run:
+  - runCustom:
+  - runAll:
+  - history:
+  - applyFix:
+responder:
+  - home:
+  - acknowledge:
+  - enRoute:
+  - arrive:
+  - startCare:
+  - complete:
+  - decline:
+  - setAvailability:
+signal:
+  - ingest:
+  - recent:
+simulation:
+  - status:
+  - start:
+  - stop:
+  - clear:
+sos:
+  - raise:
+  - mine:
+  - cancel:

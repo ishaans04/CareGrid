@@ -1,0 +1,6 @@
+### A failure applied to a copy of the digital twin during a stress test.
+class: StressFailure
+fields:
+  kind: StressFailureKind
+  ### Responder, gate, road or camera code the failure applies to.
+  target: String

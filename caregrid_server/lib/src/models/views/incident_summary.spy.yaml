@@ -1,0 +1,26 @@
+### Compact incident row for queues, maps and lists.
+class: IncidentSummary
+fields:
+  id: int
+  code: String
+  title: String
+  eventType: EventType
+  family: EventFamily
+  severity: Severity
+  state: IncidentState
+  zoneCode: String
+  zoneName: String
+  locationDetail: String?
+  confidence: double
+  observability: Observability
+  escalationLevel: int
+  needsHumanReview: bool
+  nextAction: String?
+  nextDeadline: DateTime?
+  nextDeadlineLabel: String?
+  onsetAt: DateTime
+  updatedAt: DateTime
+  responders: List<String>
+  victimCount: int
+  parentIncidentId: int?
+  fromScenario: bool

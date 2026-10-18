@@ -1,0 +1,20 @@
+### Family of observable events. Each family maps to a response domain.
+enum: EventFamily
+serialized: byName
+properties:
+  label: String
+values:
+  - medical:
+      label: 'Human safety / medical'
+  - fireHazard:
+      label: 'Fire / hazard'
+  - mobility:
+      label: 'Mobility'
+  - access:
+      label: 'Access / restriction'
+  - environment:
+      label: 'Environment'
+  - object:
+      label: 'Object / asset'
+  - crowd:
+      label: 'Event / crowd'

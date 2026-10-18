@@ -1,0 +1,45 @@
+### Observable event reported by a signal. Negative-evidence types argue against an emergency.
+enum: EventType
+serialized: byName
+properties:
+  label: String
+  negative: bool, default=false
+values:
+  - personDown:
+      label: 'Person down'
+  - fall:
+      label: 'Fall'
+  - prolongedImmobility:
+      label: 'Prolonged immobility'
+  - visibleDistress:
+      label: 'Visible distress'
+  - sosRequest:
+      label: 'SOS request'
+  - smoke:
+      label: 'Smoke'
+  - fire:
+      label: 'Fire'
+  - crowdSurge:
+      label: 'Crowd surge'
+  - vehicleCollision:
+      label: 'Vehicle collision'
+  - routeObstruction:
+      label: 'Route obstruction'
+  - restrictedEntry:
+      label: 'Restricted entry'
+  - flooding:
+      label: 'Flooding'
+  - unattendedObject:
+      label: 'Unattended object'
+  - personRecovered:
+      label: 'Person recovered'
+      negative: true
+  - helpArrived:
+      label: 'Bystander help arrived'
+      negative: true
+  - hazardCleared:
+      label: 'Hazard cleared'
+      negative: true
+  - reporterCancelled:
+      label: 'Reporter cancelled SOS'
+      negative: true

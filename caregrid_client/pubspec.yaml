@@ -1,0 +1,10 @@
+name: caregrid_client
+description: Generated CareGrid client used by the Flutter app to call the server.
+
+environment:
+  sdk: '^3.12.2'
+
+resolution: workspace
+
+dependencies:
+  serverpod_client: 4.0.4

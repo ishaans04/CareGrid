@@ -1,0 +1,13 @@
+### A seeded CareGrid user. The prototype signs in with handle + PIN; production would use campus SSO.
+class: AppUser
+table: app_user
+fields:
+  handle: String, unique
+  displayName: String
+  role: UserRole
+  ### Job title shown in the UI, e.g. 'Night shift command operator'.
+  title: String
+  ### Responder unit this user operates (responder role only).
+  responderCode: String?
+  ### Demo PIN. Never sent to clients.
+  pin: String?, scope=serverOnly

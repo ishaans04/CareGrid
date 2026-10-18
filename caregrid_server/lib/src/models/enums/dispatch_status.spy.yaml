@@ -1,0 +1,34 @@
+### State of one responder assignment, tracked by Proof-of-Response.
+enum: DispatchStatus
+serialized: byName
+properties:
+  label: String
+  active: bool
+values:
+  - offered:
+      label: 'Offered'
+      active: true
+  - acknowledged:
+      label: 'Acknowledged'
+      active: true
+  - enRoute:
+      label: 'En route'
+      active: true
+  - onScene:
+      label: 'On scene'
+      active: true
+  - care:
+      label: 'Care / action'
+      active: true
+  - completed:
+      label: 'Completed'
+      active: false
+  - declined:
+      label: 'Declined'
+      active: false
+  - timedOut:
+      label: 'Timed out'
+      active: false
+  - recalled:
+      label: 'Recalled'
+      active: false

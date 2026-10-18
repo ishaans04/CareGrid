@@ -1,0 +1,16 @@
+### One playback of a seeded emergency scenario through the live pipeline.
+class: ScenarioRun
+table: scenario_run
+fields:
+  scenarioCode: String
+  title: String
+  startedAt: DateTime
+  startedBy: String
+  ### Simulated operator and responders act on their own.
+  autopilot: bool
+  ### running, completed or stopped.
+  status: String
+  stepsTotal: int
+  stepsEmitted: int
+  ### Injected faults, e.g. noAck:AMB-A2.
+  faults: List<String>

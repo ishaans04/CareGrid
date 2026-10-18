@@ -1,0 +1,32 @@
+### One responder assignment. Proof-of-Response tracks it against an expected trajectory.
+class: Dispatch
+table: dispatch
+fields:
+  incidentId: int
+  responderCode: String
+  responderName: String
+  responderType: ResponderType
+  ### primary, first-responder, support or fallback.
+  role: String
+  status: DispatchStatus
+  ### Zone codes from the responder's start to the incident.
+  route: List<String>
+  distanceMeters: int
+  etaSeconds: int
+  offeredAt: DateTime
+  ackDeadline: DateTime
+  acknowledgedAt: DateTime?
+  enRouteAt: DateTime?
+  arrivalDeadline: DateTime?
+  onSceneAt: DateTime?
+  careAt: DateTime?
+  completedAt: DateTime?
+  ### 0..1 along the route, from simulated telemetry.
+  progress: double, default=0
+  ### geofence or responder: how arrival was verified.
+  arrivalSource: String?
+  stalled: bool, default=false
+  note: String?
+indexes:
+  dispatch_incident_idx:
+    fields: incidentId

@@ -1,0 +1,24 @@
+### A normalized signal from the edge event bus: camera inference, SOS, access control, vehicle or IoT.
+class: SensorEvent
+table: sensor_event
+fields:
+  source: SignalSource
+  eventType: EventType
+  zoneCode: String
+  cameraCode: String?
+  trackId: String?
+  confidence: double
+  detail: String?
+  locationDetail: String?
+  observedAt: DateTime
+  receivedAt: DateTime
+  ### Incident this signal created or joined.
+  incidentId: int?
+  ### What the agent did with the signal, e.g. 'Corroborated INC-1042'.
+  outcome: String?
+  contextHour: int?
+  scenarioRunId: int?
+  reporterUserId: int?, scope=serverOnly
+indexes:
+  sensor_event_incident_idx:
+    fields: incidentId
