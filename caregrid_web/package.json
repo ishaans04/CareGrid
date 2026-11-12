@@ -1,0 +1,12 @@
+{
+  "name": "caregrid-submission-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Team Duality interactive submission prototype, synthetic data only",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test tests/domain.test.mjs"
+  },
+  "engines": { "node": ">=22" }
+}

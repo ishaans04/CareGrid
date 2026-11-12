@@ -1,0 +1,23 @@
+[
+  {
+    "file": "12112026/uploads/CareGrid_Final_IITG_WhyCode4U_Concept.pdf",
+    "sha256": "9299380243c8238c9a69708c3b11d32d2c5acd24f64fe74c66fc2e5e47a0df13",
+    "pages": 25,
+    "reviewedPages": "all",
+    "method": "Full extracted text plus visual review of every rendered page"
+  },
+  {
+    "file": "12112026/uploads/CareGrid ppt.pdf",
+    "sha256": "9bb21e2ad5e3529a849c6639daf8048f23ff76e0dbdafc83cb7a93ff7cedaac7",
+    "pages": 8,
+    "reviewedPages": "all",
+    "method": "All pages rendered and read visually; image-based PDF"
+  },
+  {
+    "file": "12112026/misc/CareGrid_Chokers Final .pdf",
+    "sha256": "6c3e73d448888d55939d72113dd67f96c1b30b744c6e99f29b9b9b06e77d3925",
+    "pages": 7,
+    "reviewedPages": "all",
+    "method": "Full extracted text plus visual review of every rendered page"
+  }
+]

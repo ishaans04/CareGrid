@@ -17,3 +17,8 @@ pubspec_overrides.yaml
 
 # Serverpod Cloud CLI
 .scloud/
+
+# Local research extraction, dependency caches and preview state
+tmp/
+node_modules/
+*.log

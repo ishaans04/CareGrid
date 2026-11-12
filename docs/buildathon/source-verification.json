@@ -1,0 +1,1090 @@
+[
+  {
+    "url": "https://about.appsheet.com/",
+    "status": 200,
+    "resolvedUrl": "https://about.appsheet.com/home/",
+    "title": "Google AppSheet | Build apps with no code",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://ai.google.dev/",
+    "status": 200,
+    "resolvedUrl": "https://ai.google/",
+    "title": "Google AI - How we're making AI helpful for everyone",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://ai.google.dev/gemini-api/docs/image-generation",
+    "status": 200,
+    "resolvedUrl": "https://aistudio.google.com/docs/image-generation",
+    "title": "",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://ai.google.dev/gemini-api/docs/live",
+    "status": 200,
+    "resolvedUrl": "https://aistudio.google.com/docs/live-api",
+    "title": "",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://ai.google.dev/gemini-api/docs/music-generation",
+    "status": 200,
+    "resolvedUrl": "https://aistudio.google.com/docs/music-generation",
+    "title": "",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://ai.google.dev/gemma/docs",
+    "status": 200,
+    "resolvedUrl": "https://ai.google.dev/gemma/docs?hl=id",
+    "title": "Ringkasan model Gemma &nbsp;|&nbsp; Google AI for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://antigravity.google/",
+    "status": 200,
+    "resolvedUrl": "https://antigravity.google/",
+    "title": "Google Antigravity",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/alloydb/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/alloydb/docs?hl=ko",
+    "title": "PostgreSQL용 AlloyDB 문서 &nbsp;|&nbsp; AlloyDB for PostgreSQL &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/api-gateway/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/api-gateway/docs?hl=it",
+    "title": "Documentazione di API Gateway &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/apigee/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/apigee/docs?hl=zh-cn",
+    "title": "Apigee 文档 &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/application-integration/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/application-integration/docs?hl=id",
+    "title": "Dokumentasi Application Integration &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/armor/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/armor/docs",
+    "title": "Google Cloud Armor documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/artifact-analysis/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/artifact-analysis/docs",
+    "title": "Artifact Analysis documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/artifact-registry/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/artifact-registry/docs?hl=it",
+    "title": "Documentazione di Artifact Registry &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/bigquery/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/bigquery/docs",
+    "title": "BigQuery documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/bigquery/docs/bqml-introduction",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/bigquery/docs/bqml-introduction",
+    "title": "Introduction to ML in BigQuery &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/bigtable/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/bigtable/docs",
+    "title": "Bigtable documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/binary-authorization/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/binary-authorization/docs?hl=he",
+    "title": "מסמכי Binary Authorization &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/build/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/build/docs",
+    "title": "Cloud Build documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/cdn/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/cdn/docs?hl=es",
+    "title": "Documentación de Cloud CDN &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/certificate-manager/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/certificate-manager/docs",
+    "title": "Certificate Manager documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/compute/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/compute/docs?hl=he",
+    "title": "מאמרי עזרה של Compute Engine &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/dataflow/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/dataflow/docs",
+    "title": "Dataflow documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/datastream/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/datastream/docs",
+    "title": "Datastream documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/deploy/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/deploy/docs",
+    "title": "Cloud Deploy documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/dialogflow/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/dialogflow/docs?hl=de",
+    "title": "Dialogflow CX &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/dns/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/dns/docs",
+    "title": "Cloud DNS documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/document-ai/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/document-ai/docs?hl=es",
+    "title": "Documentación de Document AI &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/eventarc/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/eventarc/docs",
+    "title": "Eventarc documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/functions/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/functions/docs",
+    "title": "Cloud Run functions documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/healthcare-api/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/healthcare-api/docs?hl=pt-br",
+    "title": "Documentação da API Cloud Healthcare &nbsp;|&nbsp; Cloud Healthcare API &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/iam/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/iam/docs",
+    "title": "Identity and Access Management documentation &nbsp;|&nbsp; Identity and Access Management (IAM) &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/iam/docs/workload-identity-federation",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/iam/docs/workload-identity-federation",
+    "title": "Workload Identity Federation &nbsp;|&nbsp; Identity and Access Management (IAM) &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/iap/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/iap/docs?hl=de",
+    "title": "Dokumentation für Identity-Aware Proxy &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/identity-platform/docs/product-comparison",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/identity-platform/docs/product-comparison",
+    "title": "Differences between Identity Platform and Firebase Authentication &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/infrastructure-manager/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/infrastructure-manager/docs?hl=it",
+    "title": "Documentazione di Infrastructure Manager &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/kms/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/kms/docs",
+    "title": "Cloud Key Management Service documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/kubernetes-engine/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/kubernetes-engine/docs",
+    "title": "Google Kubernetes Engine documentation &nbsp;|&nbsp; Google Kubernetes Engine (GKE) &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/load-balancing/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/load-balancing/docs?hl=fr",
+    "title": "Documentation Cloud Load Balancing &nbsp;|&nbsp; Cloud Load Balancing &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/logging/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/logging/docs",
+    "title": "Cloud Logging documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/logging/docs/audit",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/logging/docs/audit",
+    "title": "Cloud Audit Logs overview &nbsp;|&nbsp; Cloud Logging &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/looker-studio",
+    "status": 200,
+    "resolvedUrl": "https://cloud.google.com/data-studio",
+    "title": "Data Studio: Business Insights Visualizations | Google Cloud",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/looker/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/looker/docs",
+    "title": "Looker documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/memorystore/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/memorystore/docs?hl=es",
+    "title": "Memorystore &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/monitoring/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/monitoring/docs",
+    "title": "Cloud Monitoring documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/network-connectivity/docs/interconnect",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/network-connectivity/docs/interconnect",
+    "title": "Cloud Interconnect documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/network-connectivity/docs/vpn",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/network-connectivity/docs/vpn?hl=id",
+    "title": "Dokumentasi Cloud VPN &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/products",
+    "status": 200,
+    "resolvedUrl": "https://cloud.google.com/products",
+    "title": "Products and Services | Google Cloud",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/pubsub/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/pubsub/docs",
+    "title": "Pub/Sub documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/run/docs/configuring/vpc-direct-vpc",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/run/docs/configuring/vpc-direct-vpc",
+    "title": "Direct VPC with a VPC network &nbsp;|&nbsp; Cloud Run &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/run/docs/create-jobs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/run/docs/create-jobs",
+    "title": "Create jobs &nbsp;|&nbsp; Cloud Run &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/run/docs/overview/what-is-cloud-run",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run?hl=it",
+    "title": "Che cos&apos;è Cloud Run &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/run/pricing",
+    "status": 200,
+    "resolvedUrl": "https://cloud.google.com/run/pricing",
+    "title": "Cloud Run pricing | Google Cloud",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/scheduler/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/scheduler/docs",
+    "title": "Cloud Scheduler documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/secret-manager/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/secret-manager/docs",
+    "title": "Secret Manager documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/security-command-center/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/security-command-center/docs",
+    "title": "Security Command Center documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/sensitive-data-protection/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/sensitive-data-protection/docs",
+    "title": "Sensitive Data Protection documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/shell/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/shell/docs",
+    "title": "Cloud Shell documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/spanner/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/spanner/docs",
+    "title": "Spanner documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/speech-to-text/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/speech-to-text/docs?hl=zh-tw",
+    "title": "Cloud 語音轉文字說明文件 &nbsp;|&nbsp; Cloud Speech-to-Text &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/sql/docs/postgres",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/sql/docs/postgres",
+    "title": "Cloud SQL for Postgre&#8288;SQL documentation &nbsp;|&nbsp; Cloud SQL for PostgreSQL &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/sql/docs/postgres/backup-recovery/backups",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/sql/docs/postgres/backup-recovery/backups?hl=he",
+    "title": "סקירה כללית על גיבויים ב-Cloud SQL &nbsp;|&nbsp; Cloud SQL for PostgreSQL &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/sql/pricing",
+    "status": 200,
+    "resolvedUrl": "https://cloud.google.com/sql/pricing",
+    "title": "Cloud SQL pricing | Google Cloud",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/storage/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/storage/docs",
+    "title": "Cloud Storage documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/storage/docs/lifecycle",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/storage/docs/lifecycle",
+    "title": "Object Lifecycle Management &nbsp;|&nbsp; Cloud Storage &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/storage/pricing",
+    "status": 200,
+    "resolvedUrl": "https://cloud.google.com/storage/pricing",
+    "title": "Storage pricing | Google Cloud",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/text-to-speech/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/text-to-speech/docs?hl=pt",
+    "title": "Documentação do Cloud Text-to-Speech &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/trace/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/trace/docs?hl=de",
+    "title": "Cloud Trace-Dokumentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/translate/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/translate/docs",
+    "title": "Cloud Translation documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/vertex-ai/docs/vector-search/overview",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/vector-search/overview",
+    "title": "Vector Search &nbsp;|&nbsp; Gemini Enterprise Agent Platform &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/scale",
+    "title": "Scale your agents &nbsp;|&nbsp; Gemini Enterprise Agent Platform &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/embeddings/get-text-embeddings",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/embeddings/get-text-embeddings",
+    "title": "Get text embeddings &nbsp;|&nbsp; Gemini Enterprise Agent Platform &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/models/evaluation-overview",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/evaluation-overview",
+    "title": "Gen AI evaluation service overview &nbsp;|&nbsp; Gemini Enterprise Agent Platform &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/rag-engine/rag-overview",
+    "title": "RAG Engine on Gemini Enterprise Agent Platform overview &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/vertex-ai/generative-ai/pricing",
+    "status": 200,
+    "resolvedUrl": "https://cloud.google.com/model-garden/pricing",
+    "title": "Agent Platform Pricing | Google Cloud",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/video-intelligence/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/video-intelligence/docs?hl=es",
+    "title": "Documentación de la API Video Intelligence &nbsp;|&nbsp; Video Intelligence API &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/vision/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/vision/docs",
+    "title": "Cloud Vision API documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/vpc-service-controls/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/vpc-service-controls/docs",
+    "title": "VPC Service Controls documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/vpc/docs/private-service-connect",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/vpc/docs/private-service-connect",
+    "title": "Private Service Connect &nbsp;|&nbsp; Virtual Private Cloud &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/workflows/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/workflows/docs",
+    "title": "Workflows documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://cloud.google.com/workstations/docs",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/workstations/docs",
+    "title": "Cloud Workstations documentation &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developer.android.com/develop",
+    "status": 200,
+    "resolvedUrl": "https://developer.android.com/develop",
+    "title": "Develop for Android &nbsp;|&nbsp; Android Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/apps-script",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/apps-script",
+    "title": "Apps Script &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/edge/litert",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/edge/litert",
+    "title": "LiteRT: High-Performance On-Device Machine Learning Framework &nbsp;|&nbsp; Google AI Edge &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/maps/billing-and-pricing/india",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/maps/billing-and-pricing/india",
+    "title": "Google Maps Platform India pricing and billing FAQ &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/maps/documentation/geocoding",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/maps/documentation/geocoding",
+    "title": "Geocoding API &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/maps/documentation/geolocation",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/maps/documentation/geolocation/overview?hl=pt-br",
+    "title": "Visão geral da API Geolocation &nbsp;|&nbsp; Geolocation API &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/maps/documentation/javascript",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/maps/documentation/javascript?hl=pt-br",
+    "title": "Documentação da Plataforma Google Maps &nbsp;|&nbsp; Maps JavaScript API &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/maps/documentation/navigation",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/maps/documentation",
+    "title": "Google Maps Platform Documentation &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/maps/documentation/places/web-service",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/maps/documentation/places/web-service",
+    "title": "Places API (New) &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/maps/documentation/routes",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/maps/documentation/routes",
+    "title": "Routes API &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/maps/documentation/routes/route-modifiers",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/maps/documentation/routes/route-modifiers",
+    "title": "Specify route features to avoid &nbsp;|&nbsp; Routes API &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/maps/documentation/urls/get-started",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/maps/documentation/urls/get-started",
+    "title": "Get Started &nbsp;|&nbsp; Maps URLs &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/mediapipe",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/edge/mediapipe/solutions",
+    "title": "Google AI Edge &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/ml-kit",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/ml-kit?hl=zh-tw",
+    "title": "ML Kit &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://developers.google.com/workspace",
+    "status": 200,
+    "resolvedUrl": "https://developers.google.com/workspace",
+    "title": "Google Workspace &nbsp;|&nbsp; Google for Developers",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/billing/docs/how-to/budgets",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/billing/docs/how-to/budgets",
+    "title": "Create, edit, or delete budgets and budget alerts &nbsp;|&nbsp; Cloud Billing &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/billing/docs/how-to/budgets-spend-caps",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/billing/docs/how-to/budgets-spend-caps",
+    "title": "Manage spend cap budgets &nbsp;|&nbsp; Cloud Billing &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/control-generated-output",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/control-generated-output?hl=zh-tw",
+    "title": "結構化輸出內容 &nbsp;|&nbsp; Gemini Enterprise Agent Platform &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/locations",
+    "title": "Deployments and endpoints &nbsp;|&nbsp; Gemini Enterprise Agent Platform &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/zero-data-retention",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/resources/zero-data-retention",
+    "title": "Gemini Enterprise Agent Platform and zero data retention &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/model-armor/overview",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/model-armor/overview",
+    "title": "Model Armor overview &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/pubsub/docs/exactly-once-delivery",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/pubsub/docs/exactly-once-delivery",
+    "title": "Exactly-once delivery &nbsp;|&nbsp; Pub/Sub &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/run/docs/configuring/billing-settings",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/run/docs/configuring/billing-settings?hl=es-419",
+    "title": "Configuración de facturación de los servicios &nbsp;|&nbsp; Cloud Run &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/run/docs/overview/what-is-cloud-run",
+    "title": "What is Cloud Run &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/run/docs/triggering/websockets",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/run/docs/triggering/websockets",
+    "title": "Using WebSockets &nbsp;|&nbsp; Cloud Run &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/tasks/docs/common-pitfalls",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/tasks/docs/common-pitfalls",
+    "title": "Issues and limitations &nbsp;|&nbsp; Cloud Tasks &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/multimodal/overview",
+    "status": 200,
+    "resolvedUrl": "https://docs.cloud.google.com/gemini-enterprise-agent-platform/models",
+    "title": "Overview of models on Agent Platform &nbsp;|&nbsp; Gemini Enterprise Agent Platform &nbsp;|&nbsp; Google Cloud Documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://docs.flutter.dev/",
+    "status": 200,
+    "resolvedUrl": "https://docs.flutter.dev/",
+    "title": "Flutter documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/analytics",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/analytics?hl=pl",
+    "title": "Google Analytics for Firebase",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/app-check",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/app-check",
+    "title": "Firebase App Check",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/app-distribution",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/app-distribution",
+    "title": "Firebase App Distribution",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/app-hosting",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/app-hosting",
+    "title": "Firebase App Hosting",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/auth",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/auth?hl=he",
+    "title": "Firebase Authentication",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/auth/admin/verify-id-tokens",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/auth/admin/verify-id-tokens?hl=ar",
+    "title": "إثبات ملكية الرموز المميّزة للهوية &nbsp;|&nbsp; Firebase Authentication",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/cloud-messaging",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/cloud-messaging?hl=hi",
+    "title": "Firebase Cloud Messaging",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/cloud-messaging/customize-messages/collapsible-message-types",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/cloud-messaging/customize-messages/collapsible-message-types?hl=he",
+    "title": "הודעות שלא ניתנות לכיווץ או לכיווץ &nbsp;|&nbsp; Firebase Cloud Messaging",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/cloud-messaging/understand-delivery",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/cloud-messaging/understand-delivery",
+    "title": "Understanding message delivery &nbsp;|&nbsp; Firebase Cloud Messaging",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/crashlytics",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/crashlytics?hl=pt-br",
+    "title": "Firebase Crashlytics",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/database",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/database",
+    "title": "Firebase Realtime Database",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/emulator-suite",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/emulator-suite?hl=pl",
+    "title": "Wprowadzenie do Pakietu emulatorów lokalnych Firebase. &nbsp;|&nbsp; Firebase Local Emulator Suite",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/extensions",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/extensions?hl=es-419",
+    "title": "Firebase Extensions",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/firestore",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/firestore",
+    "title": "Firestore &nbsp;|&nbsp; Firebase",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/hosting",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/hosting",
+    "title": "Firebase Hosting",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/perf-mon",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/perf-mon?hl=id",
+    "title": "Firebase Performance Monitoring",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/remote-config",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/remote-config?hl=bn",
+    "title": "Firebase Remote Config",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://firebase.google.com/docs/test-lab",
+    "status": 200,
+    "resolvedUrl": "https://firebase.google.com/docs/test-lab",
+    "title": "Firebase Test Lab",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://google.github.io/adk-docs/",
+    "status": 200,
+    "resolvedUrl": "https://adk.dev/",
+    "title": "Agent Development Kit (ADK) - Agent Development Kit (ADK)",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://googleapis.github.io/python-genai/",
+    "status": 200,
+    "resolvedUrl": "https://googleapis.github.io/python-genai/",
+    "title": "Google Gen AI SDK documentation",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://hack2skill.com/api/v1/event/startupbuildathon2026/event-details",
+    "status": 200,
+    "resolvedUrl": "https://hack2skill.com/api/v1/event/startupbuildathon2026/event-details",
+    "title": "",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://hack2skill.com/api/v1/event/startupbuildathon2026/event-tnc",
+    "status": 200,
+    "resolvedUrl": "https://hack2skill.com/api/v1/event/startupbuildathon2026/event-tnc",
+    "title": "",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://hack2skill.com/event/buildathon/tnc",
+    "status": 200,
+    "resolvedUrl": "https://hack2skill.com/event/buildathon/tnc",
+    "title": "Hack2skill",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://hack2skill.com/event/startupbuildathon2026/registration?isExternalLinkRedirection=true",
+    "status": 200,
+    "resolvedUrl": "https://hack2skill.com/event/startupbuildathon2026/registration?isExternalLinkRedirection=true",
+    "title": "Hack2skill",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://startupbuildathon.com/",
+    "status": 200,
+    "resolvedUrl": "https://startupbuildathon.com/",
+    "title": "Startup Buildathon India 2026",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://startupbuildathon.com/js/app.js",
+    "status": 200,
+    "resolvedUrl": "https://startupbuildathon.com/js/app.js",
+    "title": "",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  },
+  {
+    "url": "https://www.meity.gov.in/documents/act-and-policies/digital-personal-data-protection-rules-2025-gDOxUjMtQWa?pageTitle=Digital-Personal-Data-Protection-Rules-2025",
+    "status": 200,
+    "resolvedUrl": "https://www.meity.gov.in/documents/act-and-policies/digital-personal-data-protection-rules-2025-gDOxUjMtQWa?pageTitle=Digital-Personal-Data-Protection-Rules-2025",
+    "title": "",
+    "checked": "2026-11-12",
+    "method": "public HTTP retrieval; reachability is not technical acceptance testing"
+  }
+]

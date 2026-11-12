@@ -1,12 +1,12 @@
-name: Deploy to Serverpod Cloud
+name: Legacy Serverpod Cloud deploy (manual)
 
-# Deploys every push to main once the repository has a SERVERPOD_CLOUD_TOKEN
+# Historical non-Google deployment path, retained for reference only.
+# Automatic deployment is disabled for the Google Cloud buildathon architecture.
+# Manual runs require a SERVERPOD_CLOUD_TOKEN
 # secret (serverpod cloud auth create-token) and scloud.yaml is committed
 # (created by `serverpod cloud launch`). Without the secret the job is skipped.
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

@@ -2,6 +2,8 @@
 
 # CareGrid
 
+> **Startup Buildathon India 2026 · Team Duality (Hriday Vig + Ishaan Sharma).** Start with the [submission package](docs/buildathon/README.md), [Google solution architecture](docs/buildathon/SOLUTION-ARCHITECTURE.md), and [interactive web prototype](caregrid_web/README.md). [Pitch assets](assets/pitch/README.md) include the architecture graphic and product captures. The older Flutter/Serverpod documentation below describes the inherited prototype; Serverpod Cloud is a historical deployment path. The proposed event architecture uses Google Cloud. No live Google resources or campus pilot are claimed.
+
 **The AI emergency response operating system for campuses**
 
 *No emergency should wait in a queue, and no response should be trusted merely because an alert was sent.*
@@ -359,4 +361,4 @@ Metrics shown in the app are measured on the prototype and seeded data. They are
 
 ## Team
 
-Team Falcons: Ishaan Sharma, Hriday Vig.
+Team Duality: Ishaan Sharma, Hriday Vig. Older PDFs/design exports may retain previous event/team names as historical source material.

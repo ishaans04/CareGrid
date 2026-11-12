@@ -1,5 +1,7 @@
 # CareGrid component reference
 
+> **2026 buildathon update:** this reference describes the inherited Dart/Flutter prototype. The current Google target is in [SOLUTION-ARCHITECTURE.md](buildathon/SOLUTION-ARCHITECTURE.md). The additive browser-local submission console is documented in [caregrid_web/README.md](../caregrid_web/README.md); it does not yet call this API. Its screens, state model, fixture inputs and limitations are listed below.
+
 The single reference for every element of the CareGrid prototype: app screens and shared widgets, API endpoints, server services, data models, behaviour rules and seeded data. Keep it in step with the code: when a component is added, renamed or removed, update its entry here in the same commit.
 
 - [1. Overview](#1-overview)
@@ -489,3 +491,22 @@ Past incidents over the last two weeks so analytics have data on first launch: h
 | CI | `analyze.yml` (server + app, fatal infos), `format.yml` (server + app), `tests.yml` (server tests on embedded PostgreSQL) |
 
 **Prototype limits.** Single server instance: the ops ticker and pending scenario steps live in memory (multi-instance would use recurring future calls and a lock). Sign-in uses seeded handles and PINs (campus SSO replaces it behind the same authentication handler). Responder movement and arrival are simulated telemetry. No vision model runs: camera signals come from the simulator or `signal.ingest`, which is the contract a real edge detector would call.
+
+## 9. Submission web prototype (`caregrid_web/`)
+
+| File / surface | Responsibility |
+| --- | --- |
+| `server.mjs` | Dependency-free loopback-only static server; path containment and MIME handling. |
+| `index.html`, `styles.css` | Responsive application shell, local Google Fonts, design tokens, focus/reduced-motion styles. |
+| `app.js` / Command | Synthetic queue/filter, campus SVG, resource/coverage fixtures, proof summary and scenario controls. |
+| `app.js` / Incident workspace | Illustrated evidence, fixture brief, deterministic plan, explicit response actions, audit timeline and JSON export. |
+| `app.js` / Responder | Minimal task context and next-step action; explicit demo check-in, no real GPS. |
+| `app.js` / Care | Minimized handoff context and medical-team-ready demo action. |
+| `app.js` / Readiness | Three selectable failures, isolated what-if model, alternate-route intervention; no live asset mutations. |
+| `app.js` / After-action | Illustrative stage timings and seeded response-integrity denominator, never pilot results. |
+| `domain.mjs` | Pure response state transitions, missed-ACK escalation, synthetic rehearsal calculator. |
+| `tests/domain.test.mjs` | Guards closure ordering, prevents silence becoming acceptance, verifies isolated rehearsal intervention. |
+| Browser state | `caregrid.duality.v1` localStorage key; synthetic data only; reset affects only that key. |
+| Capture fixtures | Explicit `?demo=` initial states; deep-link views via URL hash. |
+
+Role/view navigation is presentation behavior, not production authorization. All Google AI, identity, map and cloud data integrations remain proposed until connected and tested. Original Dart services and generated clients were not rewritten.

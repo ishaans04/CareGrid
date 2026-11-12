@@ -1,0 +1,22 @@
+name: Submission prototype checks
+
+on:
+  push:
+    branches: [main]
+    paths: ['caregrid_web/**', '.github/workflows/web-prototype.yml']
+  pull_request:
+    paths: ['caregrid_web/**', '.github/workflows/web-prototype.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check caregrid_web/app.js
+      - run: node --test caregrid_web/tests/domain.test.mjs
