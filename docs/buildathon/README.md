@@ -2,6 +2,8 @@
 
 Prepared 12 November 2026 (Asia/Kolkata). Founders: Hriday Vig and Ishaan Sharma.
 
+**Updated 20 November:** [the connected MVP](CONNECTED-MVP.md) now joins the polished web workspace to Serverpod/PostgreSQL. The original presentation and research package remain available separately.
+
 **CareGrid connects an emergency signal to a verified human response.** Its strongest differentiators are Proof-of-Response after dispatch and failure rehearsals before an emergency. The first buyer is a residential campus with an existing security team, hospital/medical partner, and response vehicles.
 
 ## Start here
@@ -14,13 +16,14 @@ Prepared 12 November 2026 (Asia/Kolkata). Founders: Hriday Vig and Ishaan Sharma
 | [Document review](DOCUMENT-REVIEW.md) | Every original document and PDF reviewed, page coverage, conflicts and claims to correct |
 | [Product and pitch notes](PRODUCT-AND-PITCH.md) | Founder positioning, buyer, validation, business model, screenshot captions and demo script |
 | [Implementation plan](IMPLEMENTATION-PLAN.md) | Exact changes required to connect the current prototype to Google Cloud |
+| [Connected MVP](CONNECTED-MVP.md) | Working local architecture, response fixes, role boundaries and launch instructions |
 | [Visual assets](../../assets/pitch/README.md) | Architecture exports and product captures for the deck |
 | [Interactive submission prototype](../../caregrid_web/README.md) | Locally runnable console matching the Claude Design visual direction |
 
 ## Status and claim boundary
 
-- **Existing implementation:** Flutter/Serverpod/Dart prototype, PostgreSQL models, deterministic fusion/policies, campus routing, simulation, response watchdog, rehearsal engine and role views. Historical test results in the original README have not been independently rerun in this session.
-- **Submission experience:** a separate interactive web prototype for screenshots and product demonstration. It uses fictional, browser-local data and explicit simulated workflow controls. It does not call Gemini, Google Maps, Firebase or the existing Dart server.
+- **Existing implementation:** Flutter/Serverpod/Dart prototype, PostgreSQL models, deterministic fusion/policies, campus routing, simulation, response watchdog, rehearsal engine and role views. All 29 backend tests now pass against real embedded PostgreSQL; Dart static analysis reports no issues. Flutter UI checks were not rerun.
+- **Submission experience:** the default web workspace now calls the Dart backend through a local authenticated gateway. The original `/index.html` presentation retains its fictional browser-local fixtures. Neither experience calls Gemini, Maps or Firebase. [Validation and limits](VALIDATION.md).
 - **Proposed deployment:** Google Cloud Run + Cloud SQL for PostgreSQL, Gemini through Google's enterprise AI platform, Firebase identity/notifications, Google Cloud Storage and operational controls. No project or billable resources have been created.
 - **Pilot gates:** real telemetry, robust authentication, durable deadlines, transactional dispatch, trained operators, model evaluation and approved institutional SOPs are required before operational use.
 

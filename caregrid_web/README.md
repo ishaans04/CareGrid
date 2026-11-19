@@ -1,20 +1,42 @@
-# CareGrid submission prototype
+# CareGrid connected response workspace
 
-Team Duality · local interactive product demonstration · synthetic data only.
+Team Duality · shared Serverpod/PostgreSQL state · synthetic data only. Updated 20 November 2026.
 
-Run with Node 22 or newer (no dependency installation):
+From the repository root on Windows with Node 22+, start the full MVP:
 
 ```powershell
-cd E:\Projects\CareGrid-\caregrid_web
-npm.cmd start
+powershell -File scripts/start-local.ps1
 ```
 
-Open <http://127.0.0.1:4173>. Tests: `npm.cmd test`.
+The first launch downloads the pinned Dart 3.12.2 SDK, verifies its official SHA-256 checksum, resolves dependencies, and lets Serverpod download embedded PostgreSQL. All application state, SDK and dependency files remain under ignored `tmp/` (PostgreSQL binaries use Serverpod's user-local cache). No Flutter installation, Google project or billing is required. Subsequent starts preserve the synthetic local database.
 
-Command, incident workspace, responder, care, readiness and analytics views share browser-local state. Dispatch, acceptance, movement, arrival, care and closure are explicit actions. A missed-ACK scenario requires alternate-unit escalation. A what-if model demonstrates a compound-failure intervention. Reset clears this prototype's local demo state only. JSON export contains synthetic case/audit data.
+With Dart already available, run `node scripts/dev.mjs` from the repository root. `DART_EXECUTABLE` can select a specific SDK. The launcher prepares a server-only workspace, applies the existing migration, waits for the seeded backend, and opens the loopback web service. It checks ports 8080/8081/8082/4173 before starting. Stop the owning terminal with Ctrl+C; do not start a second copy on the same ports.
 
-The role/view selector illustrates intended product views; it is **not authentication or backend authorization**. No camera, live GPS, emergency service, Gemini, Maps or Firebase is connected. The campus drawing and evidence scene are original code illustrations. Google integration labels describe the proposed architecture and are labeled as such. This frontend does not yet call the existing Serverpod application. Integration requirements: [implementation plan](../docs/buildathon/IMPLEMENTATION-PLAN.md).
+Open <http://127.0.0.1:4173>. The sign-in screen lists seeded accounts and intentional demo PIN hints. Use separate browser profiles or private windows for simultaneous roles. Command owns and dispatches cases, responders record their milestones, medical staff prepare the receiving team, admin runs readiness and analytics, and members send/follow their own SOS requests. The backend enforces role and assignment access. [Implementation and boundaries](../docs/buildathon/CONNECTED-MVP.md).
+
+To demonstrate arrival provenance, send an SOS from a member, approve its dispatch from command, then sign in as the assigned responder. Elapsed time cannot confirm arrival for this case. The responder must acknowledge, depart, confirm arrival and record care before command can close it. The per-unit proof panel and timeline update from the database. Rehearsal scenarios use explicitly labelled simulated travel instead.
+
+This is loopback development authentication, not production identity. No camera, live GPS, emergency service, Gemini, Maps, Firebase or Google Cloud deployment is connected. Gateway sessions are held in memory and end on restart. The database is persistent locally; the one-second watchdog is not a durable cloud worker. [Cloud acceptance gates](../docs/buildathon/IMPLEMENTATION-PLAN.md) remain open.
+
+## Checks and connected screenshots
+
+```powershell
+cd caregrid_web
+npm.cmd ci
+npm.cmd test
+# With the complete backend running and Google Chrome installed:
+npm.cmd run test:browser
+# Optionally export screenshots while exercising the same real workflow:
+$env:CAREGRID_CAPTURE = '1'
+npm.cmd run test:browser
+```
+
+Browser tests use separate, temporary Chrome contexts, never a personal profile. They cover the shared multi-role loop, missing-care closure guard, unauthorized API calls, backend readiness/analytics, mobile overflow, draft retention and connection failure. Captures go to [assets/pitch/connected](../assets/pitch/connected/README.md). `node --test caregrid_web/tests/*.test.mjs` runs the domain/gateway tests without an npm install. For backend checks, prepare with `node scripts/dev.mjs --prepare-only`, then run `dart test` and `dart analyze` from `tmp/server-runtime/caregrid_server` using the same SDK/PUB_CACHE as the launcher.
+
+## Original pitch presentation
+
+The original six-view presentation is at <http://127.0.0.1:4173/index.html>. It remains a separate browser-local demonstration with reproducible fixtures. Its view selector illustrates roles; it does not authenticate. Its simulated controls and illustrative 401s → 252s result are not backend operations. To serve only this presentation, run `node caregrid_web/server.mjs` and visit `/index.html` directly; no Dart or npm installation is required.
 
 Design follows the supplied `12112026/CareGrid v2.dc.html`: ink, warm paper, lime and cyan; Archivo, Instrument Serif and Martian Mono; fine rules, numbered sections, editorial hierarchy and a schematic campus. Local fonts have system fallbacks. All numbers are fixtures, illustrative predictions or demo observations, never customer outcomes.
 
-Direct view links: `/#overview`, `/#incident`, `/#responder`, `/#care`, `/#readiness`, `/#analytics`. Reproducible synthetic capture fixtures: `?demo=verified`, `?demo=dispatched`, `?demo=active`, `?demo=care`, `?demo=readiness`, `?demo=outcome`, followed by a view hash. These reset the initial in-memory demo on page load; remove the query to resume stored state. Keyboard navigation, focus styles, reduced-motion handling and responsive layouts are included.
+Presentation view links use `/index.html#overview`, `/index.html#incident`, `/index.html#responder`, `/index.html#care`, `/index.html#readiness`, `/index.html#analytics`. Capture fixtures append `?demo=verified`, `?demo=dispatched`, `?demo=active`, `?demo=care`, `?demo=readiness` or `?demo=outcome`, followed by the view hash. Remove the query to resume stored presentation state.

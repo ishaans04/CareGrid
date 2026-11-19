@@ -12,6 +12,8 @@ The submission should show three things: **Gemini helps understand evidence**, *
 
 **Status:** this is a target architecture. The submitted screenshot prototype runs locally with fictional data. No cloud deployment, live vision inference, real responder tracking or Google AI performance is claimed.
 
+**Local implementation update, 20 November 2026:** [the connected MVP](CONNECTED-MVP.md) now runs authenticated web roles against Serverpod/PostgreSQL, including SOS → dispatch → responder care → closure, readiness results and audit records. This completes a local vertical slice; the Google deployment and durable-worker gates below remain open.
+
 ## 2. The diagram to put on the deck
 
 Use [the exported diagram](../../assets/pitch/architecture-overview.svg) for the main slide. Show the operational path prominently and support services in a quieter foundation band. Put the extensive catalogue in backup material.

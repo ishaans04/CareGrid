@@ -4,7 +4,7 @@ This is an implementation backlog with acceptance gates, not a claim that migrat
 
 ## Repository decisions
 
-Keep `caregrid_server`, `caregrid_client` and `caregrid_flutter`. Do not hand-edit generated clients or pretend the new web prototype already calls their RPC API. Add `caregrid_web` as the presentation-quality submission surface. Keep `12112026` as supplied design/source material; avoid overwriting its historical content.
+Keep `caregrid_server`, `caregrid_client` and `caregrid_flutter`; do not hand-edit generated clients. `caregrid_web` now includes a connected Serverpod/PostgreSQL workspace and a separate browser-local presentation. The local RPC contract is verified against Serverpod 4.0.4 and the real backend. [Completed local slice](CONNECTED-MVP.md). Keep `12112026` as supplied design/source material.
 
 The existing Serverpod framework can run on Google-managed compute. Its present Dockerfile/config and Serverpod Cloud CI are **not** a complete Cloud Run deployment. Disable the old automatic external-cloud deploy path before using main for the Google event; keep it manual/historical if retained.
 
@@ -21,7 +21,7 @@ The existing Serverpod framework can run on Google-managed compute. Its present 
 
 | Work | Existing location | Required change / acceptance |
 | --- | --- | --- |
-| Frontend transport | New web prototype; generated Dart client remains separate | Define authenticated HTTP adapter or supported JS protocol client. Show connection mode and errors; no silent fall back from real to synthetic data. |
+| Frontend transport | Connected Node gateway + web workspace; generated Dart client remains separate | Local adapter complete. Replace demo identity, configure HTTPS/origins and distributed session handling or direct verified identity before Cloud Run. Preserve explicit connection errors; no silent fixture fallback. |
 | API container | `caregrid_server/Dockerfile`, production config | Cloud Run ingress must bind `0.0.0.0:$PORT`. Serverpod has API :8080, Insights :8081, web :8082; expose only the intended API ingress and keep Insights private/disabled. Serve web separately via Firebase Hosting. Test streaming and TLS origins. |
 | Configuration | `caregrid_server/config/production.yaml` | Replace placeholder hosts, validate environment overrides against Serverpod 4 docs, define SQL host/SSL/connection limits, CORS and log output. Do not embed passwords into a build layer. |
 | Database | Existing migrations/models | Apply migration once as a controlled job before traffic; backups and rollback plan. Cloud SQL private networking or tested Auth Proxy/connector sidecar. Verify Dart socket/TCP compatibility. |
@@ -35,7 +35,7 @@ Do not use a guessed Docker tag, SDK version or environment variable as a deploy
 
 ## Phase C: safety and durability before real use
 
-1. **Simulation isolation:** gate `ProofOfResponse._advance` and simulated check-ins to explicit simulation incidents. Today travel-time completion can create a “geofence” arrival outside autopilot. Real cases require authenticated evidence/manual SOP check-in. Test that elapsed time cannot create arrival.
+1. **Simulation isolation:** fixed and regression-tested locally on 19–20 November. `_advance` requires an explicit scenario run; arrival source is `simulation`. Non-simulation travel never invents arrival, overdue units escalate, and closure cannot manufacture care. Genuine telemetry provenance and per-SOP closure criteria still require implementation.
 2. **Transactional state:** unit reservation, incident revision, dispatch record, deadline and outbox commit together. Test two concurrent commands competing for one ambulance and retrying the same command.
 3. **Durable clock:** SQL deadline jobs, lease/fencing, restart recovery and reconciliation. Test killing the worker before/after commit and injecting duplicate execution. Tasks is a retry/backup transport, not the sole urgent timer.
 4. **Tenant isolation:** add campus membership and tenant-scoped foreign keys/queries. Test ID guessing and cross-campus role/evidence access for every endpoint.

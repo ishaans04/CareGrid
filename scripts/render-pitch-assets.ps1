@@ -25,7 +25,7 @@ foreach ($shot in $shots) {
   $imagePath = Join-Path $workspacePath ('assets\pitch\' + $shot.Name + '.png')
   $profilePath = Join-Path $workspacePath ('tmp\render-' + $shot.Name)
   $logPath = Join-Path $workspacePath ('tmp\render-' + $shot.Name + '.log')
-  $arguments = @('--headless=new','--no-first-run','--disable-gpu','--disable-background-networking','--disable-component-update','--hide-scrollbars',('--user-data-dir="' + $profilePath + '"'),('--window-size=' + $shot.Size),('--screenshot="' + $imagePath + '"'),'--virtual-time-budget=2500',('"http://127.0.0.1:4173/' + $shot.Url + '"'))
+  $arguments = @('--headless=new','--no-first-run','--disable-gpu','--disable-background-networking','--disable-component-update','--hide-scrollbars',('--user-data-dir="' + $profilePath + '"'),('--window-size=' + $shot.Size),('--screenshot="' + $imagePath + '"'),'--virtual-time-budget=2500',('"http://127.0.0.1:4173/index.html' + $shot.Url + '"'))
   Start-Process -FilePath $chromePath -ArgumentList $arguments -WindowStyle Hidden -Wait -RedirectStandardError $logPath
   if (-not (Test-Path -LiteralPath $imagePath)) { throw ('Capture missing: ' + $shot.Name) }
   $file = Get-Item -LiteralPath $imagePath

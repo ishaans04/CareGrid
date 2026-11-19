@@ -1,6 +1,6 @@
 # CareGrid component reference
 
-> **2026 buildathon update:** this reference describes the inherited Dart/Flutter prototype. The current Google target is in [SOLUTION-ARCHITECTURE.md](buildathon/SOLUTION-ARCHITECTURE.md). The additive browser-local submission console is documented in [caregrid_web/README.md](../caregrid_web/README.md); it does not yet call this API. Its screens, state model, fixture inputs and limitations are listed below.
+> **20 November 2026 update:** the Google target is in [SOLUTION-ARCHITECTURE.md](buildathon/SOLUTION-ARCHITECTURE.md). The web workspace now calls this Serverpod API through an authenticated local gateway; the original presentation remains browser-local. [Connected implementation](buildathon/CONNECTED-MVP.md), [launch instructions](../caregrid_web/README.md) and [validation](buildathon/VALIDATION.md).
 
 The single reference for every element of the CareGrid prototype: app screens and shared widgets, API endpoints, server services, data models, behaviour rules and seeded data. Keep it in step with the code: when a component is added, renamed or removed, update its entry here in the same commit.
 
@@ -22,6 +22,10 @@ The single reference for every element of the CareGrid prototype: app screens an
 | Server | `caregrid_server/` | Serverpod 4 backend: endpoints, domain services, models, migrations, seed, tests. |
 | Client | `caregrid_client/` | Generated typed client. Never edited by hand; regenerate with `serverpod generate`. |
 | App | `caregrid_flutter/` | Flutter app for Android, iOS and web. One codebase, five role consoles. |
+| Connected web | `caregrid_web/connected.*`, `connected-domain.mjs` | Role-specific web workspace, shared backend state, per-unit proof, mobile actions, polling with draft retention and visible errors. |
+| Local web gateway | `caregrid_web/server.mjs` | Same-origin static/JSON service, opaque HttpOnly sessions, allowlisted Serverpod RPC, typed error handling and request limits; loopback demo mode. |
+| Local launcher | `scripts/start-local.ps1`, `scripts/dev.mjs` | Verified portable Dart setup on Windows; server-only workspace without Flutter; preserved synthetic DB; API readiness gate and owned process cleanup. |
+| Browser checks / assets | `caregrid_web/e2e/connected.spec.mjs`, `assets/pitch/connected/` | Real multi-role Chrome workflow, 390px browser checks, backend failure behavior and reproducible connected screenshots. |
 
 **Data flow.** A signal enters `SignalEndpoint` / `SosEndpoint` (or the simulator), the `IncidentAgent` creates or updates an `Incident`, the `Orchestrator` changes state and writes the timeline, and `OpsBus` pushes a minimal `OpsEvent` over the `LiveEndpoint` stream. Every screen is a `LiveLoader` that refetches its role-filtered data when an event arrives. The `OpsTicker` runs `ProofOfResponse` and `SimulationEngine` once per second.
 
@@ -246,7 +250,7 @@ Errors reach the app as `CareGridException(message, code)` with `code` one of `f
 | `IncidentAgent` | `src/agent/incident_agent.dart` | Signal ingest: suppression of offline cameras, fusion, corroboration, victim linking, negative evidence, verification decision, explanation lines. |
 | `ResponsePlanner` | `src/response/response_planner.dart` | Fastest available unit per required type, fallbacks, alternatives, SLA warnings. |
 | `Orchestrator` | `src/response/orchestrator.dart` | All state transitions: verify, dispatch, confirm/override, acknowledge, en route, arrive, start care, complete, decline, re-dispatch, escalate, dismiss, resolve, state derivation and next deadline, timeline writes. |
-| `ProofOfResponse` | `src/response/proof_of_response.dart` | 1 s watchdog: deadlines, missed acknowledgement, stalls, simulated telemetry, reroute, geofence arrival, autopilot actions, live unit positions. |
+| `ProofOfResponse` | `src/response/proof_of_response.dart` | 1 s watchdog: deadlines, missed acknowledgement and stalls. Explicit scenario runs alone simulate travel, rerouting and labelled arrival; genuine cases require responder check-in. |
 | `IncidentViews` | `src/response/incident_views.dart` | Summaries, urgency ordering, per-role redaction. |
 | `StressTestEngine` | `src/readiness/stress_test_engine.dart` | Applies failures to a twin copy, predicts every stage, judges against the SOP SLA, searches and combines fixes. Pure computation. |
 | `ScenarioLibrary` | `src/simulation/scenario_library.dart` | The eight live scenarios (signals, timing, faults). |
@@ -360,7 +364,8 @@ Most specific match wins: zone-type match +2, hour window +1; ties go to the mor
   - review / verified past the confirmation deadline → escalate and extend the deadline;
   - offered past the ack deadline → dispatch timed out, unit marked unreachable ("radio check"), escalate, re-dispatch the same responder type (or flag the incident commander if none);
   - acknowledged for more than 45 s without moving → stall escalation;
-  - en route → simulated progress (elapsed / travel time); a newly blocked road ahead triggers a reroute from the current node; 100% → arrival verified by geofence; past the arrival deadline → stall escalation;
+  - en route in an explicit scenario → simulated progress (elapsed / travel time), rerouting around blocked roads and labelled simulated arrival;
+  - en route outside a scenario → no generated route progress or arrival; passing the arrival deadline escalates once until the unit confirms its status;
   - on scene past the care SLA without care → escalation.
 - Decline → unit released, same-type replacement dispatched.
 - Resolve requires a verified arrival; closes active dispatches, returns units to base, closes victim records. Dismiss recalls active dispatches.

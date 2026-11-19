@@ -1,11 +1,11 @@
-name: Submission prototype checks
+name: Connected MVP checks
 
 on:
   push:
-    branches: [main]
-    paths: ['caregrid_web/**', '.github/workflows/web-prototype.yml']
+    branches: [main, duality/google-buildathon]
+    paths: ['caregrid_web/**', 'caregrid_server/**', 'scripts/**', 'pubspec.lock', '.github/workflows/web-prototype.yml']
   pull_request:
-    paths: ['caregrid_web/**', '.github/workflows/web-prototype.yml']
+    paths: ['caregrid_web/**', 'caregrid_server/**', 'scripts/**', 'pubspec.lock', '.github/workflows/web-prototype.yml']
 
 permissions:
   contents: read
@@ -19,4 +19,46 @@ jobs:
         with:
           node-version: '22'
       - run: node --check caregrid_web/app.js
-      - run: node --test caregrid_web/tests/domain.test.mjs
+      - run: node --check caregrid_web/connected.js
+      - run: node --check caregrid_web/server.mjs
+      - run: node --check scripts/dev.mjs
+      - run: node --test caregrid_web/tests/*.test.mjs
+      - run: node scripts/check-submission.mjs
+
+  connected-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CAREGRID_START_FULL: '1'
+      PUB_CACHE: ${{ github.workspace }}/tmp/pub-cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: caregrid_web/package-lock.json
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.12.2'
+      - name: Install browser test dependencies
+        working-directory: caregrid_web
+        run: npm ci
+      - name: Prepare server-only Dart workspace
+        run: node scripts/dev.mjs --prepare-only
+      - name: Analyze backend
+        working-directory: tmp/server-runtime/caregrid_server
+        run: dart analyze --fatal-infos
+      - name: Test backend with embedded PostgreSQL
+        working-directory: tmp/server-runtime/caregrid_server
+        run: dart test
+      - name: Test connected roles in Google Chrome
+        working-directory: caregrid_web
+        run: npm run test:browser
+      - name: Upload browser failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: connected-browser-failures
+          path: tmp/browser-results/
+          retention-days: 7

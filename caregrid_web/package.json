@@ -1,12 +1,20 @@
 {
-  "name": "caregrid-submission-prototype",
-  "version": "0.1.0",
+  "name": "caregrid-response-workspace",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Team Duality interactive submission prototype, synthetic data only",
+  "description": "Connected campus response workspace and separate pitch presentation, synthetic data only",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test tests/domain.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "playwright test",
+    "dev:full": "node ../scripts/dev.mjs"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1",
+    "prettier": "3.10.1"
+  }
 }
