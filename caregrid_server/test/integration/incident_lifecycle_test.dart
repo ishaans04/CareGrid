@@ -115,10 +115,10 @@ void main() {
       expect(detail.incident.corroborated, isTrue);
       expect(detail.incident.hospitalNotified, isTrue);
       expect(detail.policy?.code, 'SOP-HST-MED-NIGHT');
-      expect(
-        detail.plan!.options.map((o) => o.responderCode),
-        ['DESK-HB', 'AMB-A2'],
-      );
+      expect(detail.plan!.options.map((o) => o.responderCode), [
+        'DESK-HB',
+        'AMB-A2',
+      ]);
 
       await endpoints.incident.confirmDispatch(cmd, hero.id, null);
       final crew = await signedIn('amb.a2');
@@ -173,6 +173,24 @@ void main() {
         endpoints.incident.resolve(cmd, hero.id, 'Assumed fine'),
         throwsA(isA<CareGridException>()),
       );
+    });
+
+    test('closure cannot manufacture an unrecorded care milestone', () async {
+      final cmd = await signedIn('cmd.night');
+      final hero = await heroVerified(cmd);
+      await endpoints.incident.confirmDispatch(cmd, hero.id, null);
+      final crew = await signedIn('amb.a2');
+      final id = (await endpoints.responder.home(crew)).task!.dispatch.id!;
+      await endpoints.responder.arrive(crew, id);
+      await expectLater(
+        endpoints.incident.resolve(cmd, hero.id, 'Assumed care was given'),
+        throwsA(isA<CareGridException>()),
+      );
+      final incident = (await Incident.db.findById(session, hero.id))!;
+      expect(incident.careAt, isNull);
+      expect(incident.resolvedAt, isNull);
+      final detail = await endpoints.incident.detail(cmd, hero.id);
+      expect(detail.allowedActions, isNot(contains('resolve')));
     });
 
     test(
@@ -257,7 +275,7 @@ void main() {
       },
     );
 
-    test('geofence telemetry verifies arrival', () async {
+    test('elapsed time cannot verify arrival outside a simulation', () async {
       final cmd = await signedIn('cmd.night');
       final hero = await heroVerified(cmd);
       await endpoints.incident.confirmDispatch(cmd, hero.id, null);
@@ -271,14 +289,71 @@ void main() {
           enRouteAt: DateTime.now().toUtc().subtract(
             const Duration(minutes: 5),
           ),
+          arrivalDeadline: DateTime.now().toUtc().subtract(
+            const Duration(minutes: 1),
+          ),
         ),
       );
 
       await ProofOfResponse.tick(session);
 
+      final pending = (await Dispatch.db.findById(session, id))!;
+      expect(pending.status, DispatchStatus.enRoute);
+      expect(pending.arrivalSource, isNull);
+      expect(pending.onSceneAt, isNull);
+      expect(pending.progress, 0);
+      expect(pending.stalled, isTrue);
+      final incident = (await Incident.db.findById(session, hero.id))!;
+      expect(incident.escalationLevel, greaterThanOrEqualTo(1));
+      // A second tick does not repeat the overdue-arrival escalation.
+      await ProofOfResponse.tick(session);
+      final again = (await Incident.db.findById(session, hero.id))!;
+      expect(again.escalationLevel, incident.escalationLevel);
+      await endpoints.responder.arrive(crew, id);
+      final confirmed = (await Dispatch.db.findById(session, id))!;
+      expect(confirmed.arrivalSource, 'responder');
+      expect(confirmed.onSceneAt, isNotNull);
+    });
+
+    test('explicit scenario runs retain labelled simulated arrival', () async {
+      final cmd = await signedIn('cmd.night');
+      final hero = await heroVerified(cmd);
+      final run = await ScenarioRun.db.insertRow(
+        session,
+        ScenarioRun(
+          scenarioCode: 'TEST-EXPLICIT-SIMULATION',
+          title: 'Arrival fixture',
+          startedAt: DateTime.now().toUtc(),
+          startedBy: 'Integration test',
+          autopilot: false,
+          status: 'running',
+          stepsTotal: 0,
+          stepsEmitted: 0,
+          faults: [],
+        ),
+      );
+      final incident = (await Incident.db.findById(session, hero.id))!;
+      await Incident.db.updateRow(
+        session,
+        incident.copyWith(scenarioRunId: run.id),
+      );
+      await endpoints.incident.confirmDispatch(cmd, hero.id, null);
+      final crew = await signedIn('amb.a2');
+      final id = (await endpoints.responder.home(crew)).task!.dispatch.id!;
+      await endpoints.responder.enRoute(crew, id);
+      final dispatch = (await Dispatch.db.findById(session, id))!;
+      await Dispatch.db.updateRow(
+        session,
+        dispatch.copyWith(
+          enRouteAt: DateTime.now().toUtc().subtract(
+            const Duration(minutes: 5),
+          ),
+        ),
+      );
+      await ProofOfResponse.tick(session);
       final arrived = (await Dispatch.db.findById(session, id))!;
       expect(arrived.status, DispatchStatus.onScene);
-      expect(arrived.arrivalSource, 'geofence');
+      expect(arrived.arrivalSource, 'simulation');
     });
 
     test(
@@ -377,7 +452,65 @@ void main() {
       expect(redacted.incident.primaryCameraCode, isNull);
       expect(redacted.signals, isEmpty);
       expect(redacted.redactions, isNotEmpty);
+      expect(redacted.incident.reasoning, isEmpty);
+      expect(redacted.incident.negativeEvidence, isEmpty);
     });
+
+    test(
+      'care access cannot be obtained by guessing an unshared incident id',
+      () async {
+        final cmd = await signedIn('cmd.night');
+        final hero = await heroVerified(cmd);
+        final incident = (await Incident.db.findById(session, hero.id))!;
+        await Incident.db.updateRow(
+          session,
+          incident.copyWith(hospitalNotified: false),
+        );
+        final medical = await signedIn('er.doctor');
+        for (final action in <Future<dynamic> Function()>[
+          () => endpoints.incident.detail(medical, hero.id),
+          () => endpoints.incident.addNote(medical, hero.id, 'Unshared note'),
+          () => endpoints.incident.escalate(
+            medical,
+            hero.id,
+            'Unshared escalation',
+          ),
+          () =>
+              endpoints.incident.resolve(medical, hero.id, 'Unshared closure'),
+          () => endpoints.care.markReady(medical, hero.id),
+        ]) {
+          await expectLater(action(), throwsA(isA<CareGridException>()));
+        }
+        expect((await endpoints.incident.board(medical)).active, isEmpty);
+        expect(await endpoints.care.cases(medical), isEmpty);
+      },
+    );
+
+    test(
+      'admin summaries and details do not leak exact evidence context',
+      () async {
+        final cmd = await signedIn('cmd.night');
+        final hero = await heroVerified(cmd);
+        final incident = (await Incident.db.findById(session, hero.id))!;
+        await Incident.db.updateRow(
+          session,
+          incident.copyWith(
+            locationDetail: 'Sensitive room',
+            reasoning: ['Camera CAM-HB-B07 tracked T-41 at Sensitive room'],
+            negativeEvidence: ['Track T-41 context'],
+          ),
+        );
+        final admin = await signedIn('ops.admin');
+        final board = await endpoints.incident.board(admin);
+        expect(board.active.single.locationDetail, isNull);
+        final twin = await endpoints.campus.twin(admin);
+        expect(twin.activeIncidents.single.locationDetail, isNull);
+        final detail = await endpoints.incident.detail(admin, hero.id);
+        expect(detail.incident.locationDetail, isNull);
+        expect(detail.incident.reasoning, isEmpty);
+        expect(detail.incident.negativeEvidence, isEmpty);
+      },
+    );
 
     test(
       'applying the Readiness Lab fixes raises the readiness score',

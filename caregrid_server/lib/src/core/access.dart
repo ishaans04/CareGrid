@@ -26,10 +26,7 @@ class Access {
 
   /// Loads the caller and checks they hold one of [roles]. Throws a typed
   /// [CareGridException] the app can show.
-  static Future<Actor> require(
-    Session session,
-    Set<UserRole> roles,
-  ) async {
+  static Future<Actor> require(Session session, Set<UserRole> roles) async {
     final auth = session.authenticated;
     if (auth == null) {
       throw CareGridException(message: 'Sign in first.', code: 'forbidden');
@@ -55,6 +52,16 @@ class Access {
   /// Any signed-in role.
   static Future<Actor> any(Session session) =>
       require(session, UserRole.values.toSet());
+
+  /// Knowing an incident id does not grant a care team access to the case.
+  static void requireIncident(Actor actor, Incident incident) {
+    if (actor.role == UserRole.medical && !incident.hospitalNotified) {
+      throw CareGridException(
+        message: 'This incident has not been shared with the care team.',
+        code: 'forbidden',
+      );
+    }
+  }
 }
 
 CareGridException notFound(String what) =>
