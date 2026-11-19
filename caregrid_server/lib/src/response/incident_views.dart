@@ -11,8 +11,9 @@ class IncidentViews {
   static Future<List<IncidentSummary>> summaries(
     Session session,
     List<Incident> incidents,
-    TwinSnapshot twin,
-  ) async {
+    TwinSnapshot twin, {
+    UserRole? role,
+  }) async {
     if (incidents.isEmpty) return [];
     final ids = incidents.map((i) => i.id!).toSet();
     final dispatches = await Dispatch.db.find(
@@ -26,7 +27,7 @@ class IncidentViews {
     return [
       for (final i in incidents)
         summary(
-          i,
+          role == UserRole.admin ? i.copyWith(locationDetail: null) : i,
           twin.zoneName(i.zoneCode),
           dispatches
               .where((d) => d.incidentId == i.id && d.status.active)
@@ -98,7 +99,8 @@ class IncidentViews {
           i.copyWith(
             primaryCameraCode: null,
             trackId: null,
-            reasoning: i.reasoning.where((r) => !r.contains('CAM-')).toList(),
+            reasoning: [],
+            negativeEvidence: [],
           ),
           const [
             'Camera ids and anonymous track ids (not needed for care)',
@@ -111,6 +113,8 @@ class IncidentViews {
             primaryCameraCode: null,
             trackId: null,
             locationDetail: null,
+            reasoning: [],
+            negativeEvidence: [],
           ),
           const [
             'Exact location detail, camera and track ids '

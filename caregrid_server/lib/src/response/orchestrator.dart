@@ -370,7 +370,7 @@ class Orchestrator {
     return recompute(session, incident);
   }
 
-  /// Arrival is a verified state: by geofence telemetry or responder check-in.
+  /// Arrival is an explicit responder check-in, or labelled scenario telemetry.
   static Future<Incident> arrive(
     Session session,
     int dispatchId,
@@ -405,9 +405,9 @@ class Orchestrator {
       session,
       incident,
       TimelineKind.proof,
-      source == 'geofence' ? watchdogName : actorLabel,
-      source == 'geofence'
-          ? '${d.responderName} arrival verified by geofence at '
+      source == 'simulation' ? watchdogName : actorLabel,
+      source == 'simulation'
+          ? '${d.responderName} simulated arrival at '
                 '${incident.zoneCode}.'
           : '${d.responderName} checked in on scene.',
     );
@@ -627,6 +627,12 @@ class Orchestrator {
         'response; dismiss instead if this was a false alarm.',
       );
     }
+    if (incident.careAt == null) {
+      throw invalidState(
+        'Care / action has not been recorded. Confirm the response milestone '
+        'before resolving; closure cannot create evidence of care.',
+      );
+    }
     for (final d in await dispatchesOf(session, incident.id!)) {
       if (!d.status.active) continue;
       d
@@ -638,7 +644,6 @@ class Orchestrator {
     final now = CampusClock.now();
     incident
       ..state = IncidentState.resolved
-      ..careAt = incident.careAt ?? now
       ..resolvedAt = now
       ..closureNote = outcome
       ..nextAction = null

@@ -4,6 +4,8 @@
 
 > **Startup Buildathon India 2026 · Team Duality (Hriday Vig + Ishaan Sharma).** Start with the [submission package](docs/buildathon/README.md), [Google solution architecture](docs/buildathon/SOLUTION-ARCHITECTURE.md), and [interactive web prototype](caregrid_web/README.md). [Pitch assets](assets/pitch/README.md) include the architecture graphic and product captures. The older Flutter/Serverpod documentation below describes the inherited prototype; Serverpod Cloud is a historical deployment path. The proposed event architecture uses Google Cloud. No live Google resources or campus pilot are claimed.
 
+> **20 November update:** the [connected web MVP](docs/buildathon/CONNECTED-MVP.md) now runs member SOS, command dispatch, responder proof, care handoff, readiness and analytics against the actual Serverpod/PostgreSQL backend. Start on Windows with `powershell -File scripts/start-local.ps1` from this repository. [Connected product screenshots](assets/pitch/connected/README.md). Verification: 29 backend tests, 10 Node tests, three Chrome workflow tests; backend static analysis clean.
+
 **The AI emergency response operating system for campuses**
 
 *No emergency should wait in a queue, and no response should be trusted merely because an alert was sent.*
@@ -11,16 +13,16 @@
 [![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.13-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![Serverpod](https://img.shields.io/badge/Serverpod-4.0.4-6E4AFF)](https://serverpod.dev)
-[![Serverpod Cloud](https://img.shields.io/badge/Deploy-Serverpod%20Cloud-6E4AFF)](https://serverpod.dev/cloud)
+[![Google Cloud target](https://img.shields.io/badge/Target-Google%20Cloud-4285F4)](docs/buildathon/SOLUTION-ARCHITECTURE.md)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%2B-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org)
 [![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS%20%7C%20Web-success)](#run-it-locally)
-[![Tests](https://img.shields.io/badge/tests-25%20passing-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/backend%20tests-29%20passing-brightgreen)](#tests)
 
 </div>
 
-CareGrid turns existing campus signals (CCTV analytics, SOS buttons, IoT sensors, vehicle and access events) into **owned, verified incidents**, applies **site-specific policy**, dispatches **the fastest available human responders**, and then **proves** that care actually happened: acknowledgement, movement, geofenced arrival, care start and human closure. Every stage is timed, so the campus measures **Mean Time To Care (MTTC)**, not "alerts sent".
+CareGrid turns normalized campus signals (camera analytics fixtures, member SOS, IoT, vehicle and access events) into **owned, verified incidents**, applies **site-specific policy**, recommends **available human responders**, and records acknowledgement, departure, arrival, care start and human closure. Every stage is timed, so the campus measures **Mean Time To Care (MTTC)**. Current non-simulation arrival is an authenticated responder check-in; scenario travel is explicitly simulated.
 
-This repository is a working MVP with seeded data: a full-stack **Flutter + Serverpod** app with five role-based consoles, a deterministic incident agent, a Proof-of-Response watchdog, a Stress-Test Engine for compound failures, and a live simulation lab. It deploys to **Serverpod Cloud**.
+This repository is a local MVP with seeded fictional data: a **Flutter + Serverpod** application plus the connected editorial web workspace, deterministic incident policy, Proof-of-Response watchdog, compound-failure stress engine and simulation lab. The historical Serverpod Cloud deployment path is retained as manual reference; the buildathon target is Google Cloud.
 
 > Every component, screen, endpoint, model and seeded record is documented in **[docs/COMPONENTS.md](docs/COMPONENTS.md)**.
 
@@ -57,12 +59,12 @@ On a large campus, an emergency becomes care only at the end of a manual relay: 
 | **Decide** | Time-aware zone policies (SOPs) set severity, verification thresholds, required responders and SLAs. | `PolicyEngine`, `ZonePolicy` |
 | **Act** | The planner routes every available unit over the campus graph (closed gates, blocked roads) and recommends the fastest response; the operator confirms, or life-safety SOPs auto-dispatch. | `ResponsePlanner`, `CampusGraph`, `Orchestrator` |
 | **Verify** | **Proof-of-Response** tracks each unit against an expected trajectory: missed acknowledgement or a stall escalates and re-dispatches, never closes. | `ProofOfResponse` |
-| **Close** | Only a human resolves an incident, and only after arrival is verified. | `IncidentEndpoint.resolve` |
+| **Close** | Only a human resolves an incident, after arrival and care/action are recorded. Closure cannot create a care timestamp. | `IncidentEndpoint.resolve` |
 | **Learn** | Stage-by-stage MTTC, Response Completion Integrity (RCI), false escalations, blind spots; plus the **Stress-Test Engine** that rehearses compound failures and proposes fixes. | `MetricsService`, `StressTestEngine` |
 
 Two capabilities extend the loop beyond dispatch:
 
-- **Proof-of-Response**: `DISPATCHED > ACKNOWLEDGED > MOVING > ON SCENE > CARE > RESOLVED`, each state verified (responder check-in or geofence telemetry), each with a deadline.
+- **Proof-of-Response**: `DISPATCHED > ACKNOWLEDGED > MOVING > ON SCENE > CARE > RESOLVED`, with recorded milestones and deadlines. Travel-time simulation is restricted to explicit scenario runs; genuine cases require authenticated responder check-in.
 - **Stress-Test Engine**: rehearses an emergency plus things going wrong at once (ambulance busy, gate closed, camera degraded) on a private copy of the digital twin, predicts every stage, and finds fixes such as *alternate route via a service gate* or *re-stage an alternate responder*. Fixes can be applied to the live twin with one click.
 
 ## Architecture
@@ -135,7 +137,7 @@ stateDiagram-v2
     Dispatched --> Acknowledged: unit accepts
     Dispatched --> Dispatched: missed ack, escalate and re-dispatch
     Acknowledged --> EnRoute: unit moving
-    EnRoute --> OnScene: geofence or check-in
+    EnRoute --> OnScene: responder check-in / labelled simulation
     EnRoute --> EnRoute: road blocked, reroute
     OnScene --> Care: care / action started
     Care --> Resolved: human closes with outcome
@@ -172,7 +174,7 @@ sequenceDiagram
     O->>AM: confirm and dispatch
     D-->>P: acknowledged, moving
     AM-->>P: acknowledged, moving
-    P->>P: geofence verifies arrivals
+    P->>P: explicit scenario simulates arrivals
     D-->>P: care started (+28 s)
     AM-->>P: care started (+1 m 19 s)
     O->>O: resolve with outcome, MTTC recorded
@@ -307,7 +309,7 @@ serverpod cloud deploy         # every later deploy
 cd caregrid_server && dart test
 ```
 
-25 tests: 13 unit tests (routing, policy selection, planning, every stress rehearsal) and 12 integration tests against a real embedded PostgreSQL (full hero loop, resolve-before-arrival refusal, negative evidence, missed-ack re-dispatch, geofence arrival, multi-victim linking, SOS, role isolation, redaction, readiness fixes, analytics). CI runs analyze, format and tests on every push.
+29 backend tests: 13 unit tests (routing, policy selection, planning, every stress rehearsal) and 16 integration tests against real embedded PostgreSQL (full hero loop, closure guards, negative evidence, missed-ACK re-dispatch, simulation isolation, multi-victim linking, SOS, role/assignment access, care sharing, redaction, readiness fixes and analytics). The connected web package adds 10 Node tests and three Chrome workflow tests. [Current validation](docs/buildathon/VALIDATION.md). Connected MVP CI runs on `main`, `duality/google-buildathon` and relevant pull requests.
 
 ## Project structure
 

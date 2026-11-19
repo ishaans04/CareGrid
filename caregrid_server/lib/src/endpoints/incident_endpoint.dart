@@ -32,7 +32,12 @@ class IncidentEndpoint extends Endpoint {
     final visible = actor.role == UserRole.medical
         ? all.where((i) => i.hospitalNotified).toList()
         : all;
-    final summaries = await IncidentViews.summaries(session, visible, twin);
+    final summaries = await IncidentViews.summaries(
+      session,
+      visible,
+      twin,
+      role: actor.role,
+    );
     final active = summaries.where((s) => s.state.open).toList()
       ..sort(IncidentViews.byUrgency);
     final recent = summaries.where((s) => !s.state.open).toList();
@@ -59,6 +64,7 @@ class IncidentEndpoint extends Endpoint {
   Future<IncidentDetail> detail(Session session, int incidentId) async {
     final actor = await Access.any(session);
     final incident = await Orchestrator.load(session, incidentId);
+    Access.requireIncident(actor, incident);
     final dispatches = await Orchestrator.dispatchesOf(session, incidentId);
 
     switch (actor.role) {
@@ -159,13 +165,13 @@ class IncidentEndpoint extends Endpoint {
         'escalate',
         'note',
         'dismiss',
-        if (i.onSceneAt != null) 'resolve',
+        if (i.onSceneAt != null && i.careAt != null) 'resolve',
       ],
       UserRole.medical => [
         if (!i.hospitalReady && i.hospitalNotified) 'markReady',
         'careNote',
         'escalate',
-        if (i.onSceneAt != null) 'resolve',
+        if (i.onSceneAt != null && i.careAt != null) 'resolve',
       ],
       UserRole.admin => [if (beforeDispatch) 'note'],
       _ => const [],
@@ -180,6 +186,7 @@ class IncidentEndpoint extends Endpoint {
   ) async {
     final actor = await Access.require(session, {UserRole.command});
     var incident = await Orchestrator.load(session, incidentId);
+    Access.requireIncident(actor, incident);
     incident = await Orchestrator.confirmDispatch(
       session,
       incident,
@@ -199,6 +206,7 @@ class IncidentEndpoint extends Endpoint {
   Future<IncidentSummary> claim(Session session, int incidentId) async {
     final actor = await Access.require(session, {UserRole.command});
     var incident = await Orchestrator.load(session, incidentId);
+    Access.requireIncident(actor, incident);
     incident.ownerName = actor.name;
     await Orchestrator.log(
       session,
@@ -221,6 +229,7 @@ class IncidentEndpoint extends Endpoint {
       UserRole.medical,
     });
     var incident = await Orchestrator.load(session, incidentId);
+    Access.requireIncident(actor, incident);
     incident = await Orchestrator.escalate(
       session,
       incident,
@@ -249,6 +258,7 @@ class IncidentEndpoint extends Endpoint {
     });
     if (note.trim().isEmpty) throw badRequest('Note is empty.');
     var incident = await Orchestrator.load(session, incidentId);
+    Access.requireIncident(actor, incident);
     await Orchestrator.log(
       session,
       incident,
@@ -271,6 +281,7 @@ class IncidentEndpoint extends Endpoint {
     final actor = await Access.require(session, {UserRole.command});
     if (reason.trim().isEmpty) throw badRequest('A reason is required.');
     var incident = await Orchestrator.load(session, incidentId);
+    Access.requireIncident(actor, incident);
     incident = await Orchestrator.dismiss(
       session,
       incident,
@@ -298,6 +309,7 @@ class IncidentEndpoint extends Endpoint {
     });
     if (outcome.trim().isEmpty) throw badRequest('An outcome is required.');
     var incident = await Orchestrator.load(session, incidentId);
+    Access.requireIncident(actor, incident);
     incident = await Orchestrator.resolve(
       session,
       incident,

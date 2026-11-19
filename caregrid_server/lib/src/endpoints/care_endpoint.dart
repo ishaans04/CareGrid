@@ -85,6 +85,9 @@ class CareEndpoint extends Endpoint {
   Future<void> markReady(Session session, int incidentId) async {
     final actor = await Access.require(session, {UserRole.medical});
     final incident = await Orchestrator.load(session, incidentId);
+    Access.requireIncident(actor, incident);
+    if (!incident.state.open) throw invalidState('This incident is closed.');
+    if (incident.hospitalReady) return;
     incident.hospitalReady = true;
     await Orchestrator.log(
       session,

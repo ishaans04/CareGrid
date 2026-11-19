@@ -49,7 +49,12 @@ class CampusEndpoint extends Endpoint {
       roads: twin.roads,
       cameras: seesCameras ? twin.cameras.values.toList() : [],
       responders: seesOps ? twin.responders.values.toList() : [],
-      activeIncidents: await IncidentViews.summaries(session, visible, twin),
+      activeIncidents: await IncidentViews.summaries(
+        session,
+        visible,
+        twin,
+        role: role,
+      ),
       responderPositions: seesOps ? positions : {},
     );
   }

@@ -7,6 +7,7 @@ let count = 0;
 async function walk(dir) {
   let out = [];
   for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
+    if (["node_modules", "test-results", "playwright-report"].includes(entry.name)) continue;
     const p = path.join(dir, entry.name);
     if (entry.isDirectory()) out.push(...(await walk(p)));
     else out.push(p);

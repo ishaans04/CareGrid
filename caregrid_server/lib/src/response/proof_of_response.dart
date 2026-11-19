@@ -11,8 +11,8 @@ import 'orchestrator.dart';
 /// against an expected trajectory (acknowledge, move, arrive, start care). A
 /// missed milestone escalates and re-plans; nothing is ever closed silently.
 ///
-/// The watchdog also simulates responder telemetry (route progress and
-/// geofence arrival) and, for autopilot scenario runs, plays the operator,
+/// Explicit scenario runs simulate route progress and arrival. For autopilot
+/// scenario runs, the watchdog also plays the operator,
 /// responders and hospital so a demo can run unattended.
 class ProofOfResponse {
   ProofOfResponse._();
@@ -127,7 +127,15 @@ class ProofOfResponse {
 
     final dispatches = await Orchestrator.dispatchesOf(session, incident.id!);
     for (final d in dispatches.where((d) => d.status.active)) {
-      await _checkDispatch(session, incident, d, policy, autopilot, faults);
+      await _checkDispatch(
+        session,
+        incident,
+        d,
+        policy,
+        run != null,
+        autopilot,
+        faults,
+      );
     }
   }
 
@@ -136,6 +144,7 @@ class ProofOfResponse {
     Incident incident,
     Dispatch d,
     ZonePolicy? policy,
+    bool simulation,
     bool autopilot,
     List<String> faults,
   ) async {
@@ -163,7 +172,21 @@ class ProofOfResponse {
           );
         }
       case DispatchStatus.enRoute:
-        await _advance(session, incident, d);
+        if (simulation) {
+          await _advance(session, incident, d);
+        } else if (d.arrivalDeadline != null &&
+            now.isAfter(d.arrivalDeadline!) &&
+            !d.stalled) {
+          // An ETA is a prediction, never proof that a person has arrived.
+          d.stalled = true;
+          await Dispatch.db.updateRow(session, d);
+          await Orchestrator.escalate(
+            session,
+            incident,
+            '${d.responderName} has not confirmed arrival before the deadline. '
+            'Contact the unit to verify its location.',
+          );
+        }
       case DispatchStatus.onScene:
         final since = now.difference(d.onSceneAt!).inSeconds;
         final careSla = policy?.careSlaSeconds ?? 120;
@@ -287,7 +310,7 @@ class ProofOfResponse {
         session,
         d.id!,
         Orchestrator.watchdogName,
-        source: 'geofence',
+        source: 'simulation',
       );
       return;
     }
