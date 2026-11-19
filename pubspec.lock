@@ -739,7 +739,7 @@ packages:
     source: hosted
     version: "4.0.4"
   serverpod_shared:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: serverpod_shared
       sha256: f53f81b55bf4483cf352970da3c3fe63c6eeba9370f315d0d0720ae72c352717

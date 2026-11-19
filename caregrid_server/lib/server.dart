@@ -5,6 +5,7 @@ import 'package:serverpod_cloud_storage/serverpod_cloud_storage.dart';
 import 'src/cache_busting.dart';
 import 'src/core/access.dart';
 import 'src/core/clock.dart';
+import 'src/core/runtime_policy.dart';
 import 'src/engine/ops_ticker.dart';
 import 'src/generated/protocol.dart';
 import 'src/generated/serverpod.dart';
@@ -13,11 +14,13 @@ import 'src/simulation/simulation_engine.dart';
 import 'src/web/routes/app_config_route.dart';
 
 /// The starting point of the CareGrid server.
-void run(List<String> args) async {
+Future<void> run(List<String> args) async {
   final pod = Serverpod(
     args,
     authenticationHandler: _authenticate,
+    configOverride: RuntimePolicy.configure,
   );
+  final runtime = RuntimePolicy(pod.config.runMode);
 
   // Serve all files in the web/static relative directory under /web.
   pod.webServer.addRoute(
@@ -34,10 +37,7 @@ void run(List<String> args) async {
   // Serve the Flutter web app at / once it has been built.
   final appDir = Directory(Uri(path: 'web/app').toFilePath());
   if (appDir.existsSync()) {
-    pod.webServer.addRoute(
-      FlutterRoute(appDir, enableWasmHeaders: false),
-      '/',
-    );
+    pod.webServer.addRoute(FlutterRoute(appDir, enableWasmHeaders: false), '/');
   } else {
     final defaultRoute = StaticRoute.file(
       File(Uri(path: 'web/pages/build_flutter_app.html').toFilePath()),
@@ -68,18 +68,23 @@ void run(List<String> args) async {
 
   // Seed the reference campus on first boot, close scenario runs orphaned by
   // a restart, then start the Proof-of-Response / simulation heartbeat.
-  final session = await pod.createSession(enableLogging: false);
-  try {
-    await Seeder.seedIfEmpty(session);
-    await SimulationEngine.closeOrphans(session);
-  } finally {
-    await session.close();
+  if (runtime.demoEnabled) {
+    final session = await pod.createSession(enableLogging: false);
+    try {
+      await Seeder.seedIfEmpty(session);
+      await SimulationEngine.closeOrphans(session);
+    } finally {
+      await session.close();
+    }
   }
-  OpsTicker.start(pod);
+  if (runtime.watchdogEnabled) OpsTicker.start(pod);
 }
 
 /// Validates a CareGrid bearer token and grants the user's role as a scope.
 Future<AuthenticationInfo?> _authenticate(Session session, String token) async {
+  // Deployment identity is added separately. Never accept a seeded PIN token
+  // outside local development/tests, even if an old database contains one.
+  if (!RuntimePolicy.forSession(session).demoEnabled) return null;
   final row = await AuthToken.db.findFirstRow(
     session,
     where: (t) => t.token.equals(token),
@@ -87,9 +92,7 @@ Future<AuthenticationInfo?> _authenticate(Session session, String token) async {
   if (row == null || row.expiresAt.isBefore(CampusClock.now())) return null;
   final user = await AppUser.db.findById(session, row.userId);
   if (user == null) return null;
-  return AuthenticationInfo(
-    '${user.id}',
-    {Access.scopeFor(user.role)},
-    authId: token,
-  );
+  return AuthenticationInfo('${user.id}', {
+    Access.scopeFor(user.role),
+  }, authId: token);
 }

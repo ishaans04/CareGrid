@@ -1,0 +1,63 @@
+name: Google runtime checks
+
+on:
+  push:
+    branches: [main, duality/google-cloud-foundation]
+    paths: ['caregrid_server/**', 'pubspec.lock', '.dockerignore', '.github/workflows/google-runtime.yml']
+  pull_request:
+    paths: ['caregrid_server/**', 'pubspec.lock', '.dockerignore', '.github/workflows/google-runtime.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Linux runtime image
+        run: docker build -f caregrid_server/Dockerfile -t caregrid-runtime:test .
+      - name: Verify Cloud Run port, migrations and demo lockout
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker network create caregrid-test
+          docker run -d --name caregrid-db --network caregrid-test \
+            -e POSTGRES_DB=caregrid -e POSTGRES_USER=caregrid \
+            -e POSTGRES_PASSWORD=ephemeral-ci-only postgres:16-bookworm
+          for attempt in $(seq 1 30); do
+            if docker exec caregrid-db pg_isready -U caregrid -d caregrid; then break; fi
+            sleep 1
+          done
+          common=(--network caregrid-test -e SERVERPOD_DATABASE_HOST=caregrid-db
+            -e SERVERPOD_DATABASE_NAME=caregrid -e SERVERPOD_DATABASE_USER=caregrid
+            -e SERVERPOD_DATABASE_PASSWORD=ephemeral-ci-only
+            -e SERVERPOD_DATABASE_REQUIRE_SSL=false
+            -e SERVERPOD_SERVICE_SECRET=ephemeral-ci-service-secret)
+          docker run --rm "${common[@]}" -e CLOUD_RUN_JOB=caregrid-migrate \
+            caregrid-runtime:test --mode=production --role=maintenance --apply-migrations
+          docker run -d --name caregrid-api "${common[@]}" \
+            -e K_SERVICE=caregrid-api -e PORT=9099 -p 127.0.0.1:18080:9099 \
+            caregrid-runtime:test
+          for attempt in $(seq 1 40); do
+            if curl --fail --silent http://127.0.0.1:18080/startupz; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:18080/readyz
+          response=$(curl --silent -H 'Content-Type: application/json' -d '{}' \
+            http://127.0.0.1:18080/account/demoAccounts)
+          printf '%s' "$response" | python3 -c \
+            'import json,sys; value=json.load(sys.stdin); assert value["data"]["code"] == "forbidden", value'
+          count=$(docker exec caregrid-db psql -U caregrid -d caregrid -Atc 'SELECT count(*) FROM app_user')
+          test "$count" = '0'
+      - name: Show runtime diagnostics on failure
+        if: failure()
+        run: |
+          docker logs caregrid-api || true
+          docker logs caregrid-db || true
+      - name: Stop test containers
+        if: always()
+        run: |
+          docker rm -f caregrid-api caregrid-db || true
+          docker network rm caregrid-test || true

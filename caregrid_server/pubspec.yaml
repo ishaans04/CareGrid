@@ -10,6 +10,7 @@ resolution: workspace
 
 dependencies:
   serverpod: 4.0.4
+  serverpod_shared: 4.0.4
   serverpod_cloud_storage: 4.0.4
 
 dev_dependencies:

@@ -6,6 +6,7 @@ import 'package:serverpod/serverpod.dart';
 import '../core/access.dart';
 import '../core/audit.dart';
 import '../core/clock.dart';
+import '../core/runtime_policy.dart';
 import '../generated/protocol.dart';
 import '../seed/seed_data.dart';
 
@@ -16,6 +17,7 @@ class AccountEndpoint extends Endpoint {
 
   /// Accounts listed on the sign-in screen.
   Future<List<DemoAccount>> demoAccounts(Session session) async {
+    RuntimePolicy.requireDemo(session);
     final users = await AppUser.db.find(session, orderBy: (t) => t.id);
     final descriptions = {
       for (final (handle, _, _, _, _, _, description) in SeedData.users)
@@ -39,6 +41,7 @@ class AccountEndpoint extends Endpoint {
     String handle,
     String pin,
   ) async {
+    RuntimePolicy.requireDemo(session);
     final user = await AppUser.db.findFirstRow(
       session,
       where: (t) => t.handle.equals(handle.trim()),
