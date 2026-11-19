@@ -482,7 +482,13 @@ void main() {
           await expectLater(action(), throwsA(isA<CareGridException>()));
         }
         expect((await endpoints.incident.board(medical)).active, isEmpty);
-        expect(await endpoints.care.cases(medical), isEmpty);
+        // Other legitimate seeded cases can fall in the 12-hour care window
+        // depending on the runner's local time zone. Only this case is hidden.
+        final visibleCases = await endpoints.care.cases(medical);
+        expect(
+          visibleCases.map((item) => item.incidentId),
+          isNot(contains(hero.id)),
+        );
       },
     );
 
