@@ -10,15 +10,27 @@ This record supplements the [deployment runbook](../../infra/google/README.md), 
 
 | Item | Live value |
 | --- | --- |
-| Web (public entry) | <https://caregrid-demo-web-959096744456.asia-south1.run.app> — revision `caregrid-demo-web-00001-zhb` |
+| Web (public entry) | <https://caregrid-demo-web-959096744456.asia-south1.run.app> — revision `caregrid-demo-web-00002-pgb` (UI release, see below; first revision `00001-zhb`) |
 | API (private; only the web identity may invoke) | `caregrid-demo-api` — revision `caregrid-demo-api-00001-m5n`, min 0 / max 2 |
 | Watchdog (private; min 1, CPU always allocated) | `caregrid-demo-watchdog` — revision `caregrid-demo-watchdog-00001-l2d` |
 | Release commit | `a899540` (PR #7 merge). Application code is unchanged through `9a01b7f`; later commits touch docs, infrastructure and CI only |
 | Cloud Build | `a2932f8a-a73b-49ff-9bce-98fbcc16a757`, images tagged with the release commit |
 | Server image | `asia-south1-docker.pkg.dev/caregrid-staging/caregrid-demo-images/server@sha256:9f06dfa7684e2827d7775e4e5db00c452180551993e051edd77586426bab03ca` |
-| Web image | `asia-south1-docker.pkg.dev/caregrid-staging/caregrid-demo-images/web@sha256:a189db6601426ba6566c4da016c06ab1b43534c297471b0dd0fe51ee323f1efb` |
+| Web image | `asia-south1-docker.pkg.dev/caregrid-staging/caregrid-demo-images/web@sha256:735ef85169a16cdd175e7af68086ac76a80b56a3c6a8197632314bead720cd05` (UI release; first release `a189db66…1efb`) |
 | Database schema | `20261120081217125-multi-campus`. The database was empty, so Serverpod applied the latest complete definition in one step |
 | Terraform inputs | `rollout_stage="services"`, `migration_verified=true`, `public_web=true`, `enable_gemini=false`, `enable_evidence=false`, `secret_revision=1` |
+
+### Web UI release — 20 November 2026, 22:17 IST
+
+Web-only release of the UI redesign (`UI-redesign` fast-forwarded into `main` at `aa9e40d`). Only the browser gateway changed, so only the web image was rebuilt and only the web service was updated.
+
+| Item | Value |
+| --- | --- |
+| Cloud Build | `7061d5d2-4726-444d-a196-0527dc1de399` — web image only, 38 s, tag `aa9e40d`; server image not rebuilt |
+| Terraform | Reviewed saved plan: 0 add / 1 change / 0 destroy — `google_cloud_run_v2_service.web` container image only |
+| Revision | `caregrid-demo-web-00002-pgb`, 100% traffic |
+| Not touched | API, watchdog, Cloud Run jobs, Cloud SQL, migrations, seed, secrets (read per process, version 1), Gemini and evidence (both still disabled) |
+| Live checks | `/` (landing), `/console`, `/demo`, scripts, styles and fonts return 200; `/api/config` reports Firebase sign-in with demo PINs disabled; CSP and HSTS unchanged |
 
 ### Execution record
 
