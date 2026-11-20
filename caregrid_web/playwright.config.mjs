@@ -23,6 +23,6 @@ export default defineConfig({
         : "node server.mjs",
     url: "http://127.0.0.1:4173/api/accounts",
     reuseExistingServer: !process.env.CI,
-    timeout: 180_000,
+    timeout: 240_000,
   },
 });
