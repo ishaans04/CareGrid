@@ -41,6 +41,14 @@ test("member SOS crosses authenticated command, responder and care sessions", as
   browser,
 }) => {
   const contexts = [];
+  let releaseDetail;
+  const detailGate = new Promise((resolve) => {
+    releaseDetail = resolve;
+  });
+  let detailRequested;
+  const detailEntered = new Promise((resolve) => {
+    detailRequested = resolve;
+  });
   try {
     const member = await login(browser, "student.aanya", "5501", {
       width: 390,
@@ -84,10 +92,27 @@ test("member SOS crosses authenticated command, responder and care sessions", as
         return Boolean(incident);
       })
       .toBe(true);
+    await command.page.route("**/api/rpc/incident/detail", async (route) => {
+      if (route.request().postDataJSON().incidentId === incident.id) {
+        detailRequested();
+        await detailGate;
+      }
+      await route.continue();
+    });
     await command.page
       .locator(".incident-row")
       .filter({ hasText: incident.code })
       .click();
+    await detailEntered;
+    await expect(command.page.locator(".detail-heading")).toHaveCount(0);
+    await expect(
+      command.page.getByRole("button", { name: "Draft handoff brief" }),
+    ).toHaveCount(0);
+    releaseDetail();
+    await expect(command.page.locator(".detail-heading")).toContainText(
+      incident.code,
+    );
+    await command.page.unroute("**/api/rpc/incident/detail");
     await expect(command.page.locator(".detail-heading")).toContainText(marker);
     await command.page
       .getByRole("button", { name: "Draft handoff brief", exact: true })
@@ -216,6 +241,7 @@ test("member SOS crosses authenticated command, responder and care sessions", as
     ).toBe(true);
     expect(errors).toEqual([]);
   } finally {
+    releaseDetail();
     for (const context of contexts) await context.close();
   }
 });

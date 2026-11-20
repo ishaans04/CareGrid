@@ -243,8 +243,12 @@ function incidentDetail() {
     return panel(
       "Incident workspace",
       empty(
-        "Choose an incident",
-        "The evidence, recommended plan and response record will appear here.",
+        state.selected == null
+          ? "Choose an incident"
+          : "Loading selected incident",
+        state.selected == null
+          ? "The evidence, recommended plan and response record will appear here."
+          : "Retrieving the selected response record.",
       ),
     );
   const incident = detail.incident;
@@ -585,8 +589,11 @@ document.addEventListener("click", async (event) => {
   }
   if (action === "select-incident") {
     clearBriefing();
+    state.epoch++;
     state.selected = numericId;
+    state.detail = null;
     state.detailKey = null;
+    shell();
     await sync({ force: true });
     return;
   }
