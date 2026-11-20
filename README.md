@@ -6,7 +6,7 @@
 
 [Explore the website ↗](https://caregrid-demo-web-959096744456.asia-south1.run.app/) · [Enter the console ↗](https://caregrid-demo-web-959096744456.asia-south1.run.app/console) · [Try the presentation ↗](https://caregrid-demo-web-959096744456.asia-south1.run.app/demo)
 
-[**Watch the 2:50 product demo ↗**](output/video/CareGrid-Team-Duality.mp4) · [Video, captions and editable project](output/video/README.md)
+[**Watch the 2:00 product demo ↗**](output/video/CareGrid-Team-Duality.mp4) · [Video, captions and editable project](output/video/README.md)
 
 [![Connected MVP checks](https://github.com/ishaans04/CareGrid/actions/workflows/web-prototype.yml/badge.svg?branch=main)](https://github.com/ishaans04/CareGrid/actions/workflows/web-prototype.yml)
 [![Google runtime checks](https://github.com/ishaans04/CareGrid/actions/workflows/google-runtime.yml/badge.svg?branch=main)](https://github.com/ishaans04/CareGrid/actions/workflows/google-runtime.yml)

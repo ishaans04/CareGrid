@@ -1,51 +1,56 @@
-# CareGrid — Every second, accounted for.
+# CareGrid — From signal to response
 
 **Team Duality · Ishaan Sharma and Hriday Vig**
 
-Final film: 2 minutes 50 seconds, 1920 × 1080, 30 fps, H.264 video and stereo AAC audio. English captions are burned into the picture; the SRT is also supplied separately.
+120 seconds · 1920 × 1080 · 30 fps · H.264 / AAC stereo. English captions are burned into the picture and supplied separately. This revision replaces the earlier 170-second film.
 
-The film follows one clear story: ask for help, review and approve dispatch, record the crew's progress, prepare the receiving team, and close with a recorded outcome. It then shows readiness rehearsal, the Google Cloud deployment, and the proposed pilot.
+## Chapters
 
-| Time | Scene |
+| Time | Chapter |
 | --- | --- |
-| 00:00 | 02:17 at Birch Hostel — who is actually coming? |
-| 00:13 | The gaps between phone calls and handoffs |
-| 00:25 | Meet CareGrid |
-| 00:35 | Student SOS |
-| 00:48 | Command review, ownership and approved dispatch |
-| 01:05 | Crew acceptance, departure and on-scene check-in |
-| 01:20 | Care readiness, recorded care and human closure |
-| 01:34 | Proof of Response and missed-step escalation |
-| 01:50 | Readiness lab and one predicted improvement |
-| 02:10 | Google Cloud |
-| 02:23 | Proposed supervised pilot |
-| 02:36 | Team Duality and closing promise |
+| 00:00 | 02:17 / BIRCH HOSTEL |
+| 00:06 | ONE CAMPUS RESPONSE SYSTEM |
+| 00:13 | 01 / VERIFY THE SIGNAL |
+| 00:23 | 02 / TAKE OWNERSHIP |
+| 00:31 | 03 / COORDINATE THE CAMPUS |
+| 00:39 | 04 / PROVE THE RESPONSE |
+| 00:48 | 05 / REACH CARE |
+| 00:55 | SILENCE NEVER COUNTS AS SUCCESS |
+| 01:04 | REHEARSE / FIX / REPEAT |
+| 01:15 | LEARN FROM EVERY RESPONSE |
+| 01:23 | THE RIGHT CONTEXT / THE RIGHT ROLE |
+| 01:31 | BUILT ON GOOGLE CLOUD |
+| 01:43 | ONE CAMPUS / MANY POSSIBILITIES |
+| 01:51 | TEAM DUALITY |
+
+## Visual direction
+
+The film uses the application's Inter and Geist Mono fonts, real CareGrid logo, white/blue/butter-yellow palette and captured UI. Camera scanning, device pulses, moving campus routes, per-unit progress, kinetic typography and wipes are original canvas animation. The CCTV illustration and campus plan are extracted from CareGrid's own presentation and landing assets. No stock footage or invented live surveillance footage is used.
 
 ## Source and truth boundaries
 
-- The creative direction was based on all 13 pages of the supplied **CareGrid Team Duality Pitch Deck.pdf**. The PDF itself is not redistributed in the source archive.
-- Product screens were captured from the finalized UI at main `6335dc0`, using an isolated local Serverpod/PostgreSQL database and authenticated synthetic personas. There are no mocked provider responses. The underlying application source was not changed.
-- The exported captures follow **INC-1027** through actual UI actions. Screen changes are edited captures, with an illustrated cursor added to make the recorded actions clear. The film is a designed demo, not an unedited real-time screen recording.
-- All campus incidents, people and milestones shown are synthetic. The opening campus drawing is an original schematic, not a surveyed map or live location display.
-- The readiness engine returned **6m 41s predicted arrival**, a **5m target**, and **4m 12s with the combined proposed fixes**. The film displays this prediction; it does not claim a measured improvement in a real emergency or a deployed campus pilot.
-- The Google Cloud section describes the existing staging deployment. The UI filming used local PIN personas, not a new acceptance test of live Google OAuth. Gemini drafting, live camera ingestion, push notification integrations and clinical outcomes are not claimed in this film.
-- Narration was synthesized with Google Cloud Text-to-Speech (`en-US-Chirp3-HD-Charon`). This API was enabled in `caregrid-staging` for production of the film. Credentials stayed in process memory and are not included in the project.
-- The stereo score and transition swells were composed procedurally for this film. No third-party music, stock footage, celebrity voice, or external sample pack is used.
-- Inter and Geist Mono are the project's self-hosted fonts. Their SIL Open Font License notices are included in the source archive.
-- Captions are timed within each synthesized scene recording. Their short phrase timings are proportional estimates, rather than forced word alignment.
+- The supplied 13-page **CareGrid Team Duality Pitch Deck.pdf** informed the story. The PDF is not redistributed.
+- Screens were captured from main commit **0628a012c289112ebff32933b8215054e94a52cf** with an isolated local Serverpod/PostgreSQL database and authenticated synthetic personas. Application code was not changed. The movie is an edited demonstration, not a real-time screen recording.
+- CCTV case **INC-1025**, scenario **SC-HOSTEL-0217**, uses two normalized synthetic camera signals, CAM-HB-B07 and CAM-HB-B08. The application verifies the case against **SOP-HST-MED-NIGHT**; a human operator owns and dispatches it. The camera drawing and tracking overlay are illustrative; live inference and hardware adapters are not demonstrated.
+- Both security and ambulance actually accepted, departed, checked in and recorded care through the application. A human recorded the closing outcome. Supplied synthetic case JSON preserves the final evidence. Scene timing compresses these actions for presentation.
+- The smoke case **SC-LAB-SMOKE** uses actual normalized camera and **iotSensor** inputs through the local scenario engine. CCTV, IoT, staff and SOS share the response model. Access-control and vehicle connectors in the device graphic describe intended integrations, not completed hardware deployments.
+- The animated route follows the actual recommended campus path **HOS → J4 → HB**: 458 m / 85 s estimated mobilization and travel. It is a campus schematic, not GPS telemetry.
+- The readiness baseline predicted **6m 41s** against a **5m** target. Three fixes were applied through the real UI: open gate G4, restage ambulance A1 at HOS, and restore CAM-HB-B08. The actual rerun predicted **2m 22s** for the hostel case; the full suite passed **3/4 cases (75%)**. These are model predictions, not measured emergency outcomes. The earlier proposed combined estimate of 4m 12s is not the rerun result.
+- Countdown and escalation graphics explain deadline behavior; they do not represent a newly staged live production incident. Audit and after-action screens contain fictional data. Campus scope is enforced by the application backend; filming used local personas rather than retesting live Google OAuth.
+- The Google section describes the existing staging architecture: Firebase Authentication, Cloud Run, Cloud SQL, deadline watchdog, Logging and Monitoring. Gemini handoff drafting is implemented but gated for evaluation. No new app deployment was made to produce the film.
+- Narration uses Google Cloud Text-to-Speech, **en-US-Chirp3-HD-Charon**, with scene-level retiming. Captions use proportional phrase timings rather than forced alignment. No credentials are included.
+- The original 120 BPM stereo score and transition sounds are procedural, with no external music or samples. Inter and Geist Mono SIL Open Font License notices are included.
 
-## FFmpeg
+## Reproduction
 
-FFmpeg performs frame encoding, narration placement, music ducking, loudness treatment, audio/video muxing and final playback checks. The browser canvas supplies deterministic motion-graphic frames; FFmpeg encodes the finished movie.
+Extract the editable project and follow its README. It includes the composition, renderer, story, captures, synthetic case evidence, narration stems, original score, brand files and font licenses. It excludes credentials, private database configuration, Terraform state and FFmpeg binaries.
 
-- [FFmpeg source mirror requested for the project](https://github.com/FFmpeg/FFmpeg)
-- [Official download page](https://ffmpeg.org/download.html)
-- [Windows build linked from the official page](https://www.gyan.dev/ffmpeg/builds/)
-- [FFmpeg filter reference](https://ffmpeg.org/ffmpeg-filters.html)
+FFmpeg performs frame encoding, narration retiming and placement, sidechain music ducking, loudness treatment, muxing and playback checks. Canvas renders animation deterministically at a 60 fps internal timebase; the delivery is 30 fps.
+
+- [FFmpeg source](https://github.com/FFmpeg/FFmpeg)
+- [Official downloads](https://ffmpeg.org/download.html)
+- [Windows build](https://www.gyan.dev/ffmpeg/builds/)
+- [FFmpeg filters](https://ffmpeg.org/ffmpeg-filters.html)
 - [Google narration documentation](https://docs.cloud.google.com/text-to-speech/docs/chirp3-hd)
 
-Tool used: **FFmpeg 9.1 essentials build**. The downloaded build archive SHA-256 matched its publisher's checksum:
-
-`835b9a733445ba7a56a37a26cf7bde84e2f3ce7da2a8ec984276bb2abb1b922c`
-
-The source archive contains the composition, narration script, captured UI, voice stems, original score, fonts and render tools. It contains no cloud credentials, database secrets, FFmpeg executable, or production Terraform state.
+Tool: FFmpeg 9.1 essentials build. Download archive SHA-256 matched the publisher: `835b9a733445ba7a56a37a26cf7bde84e2f3ce7da2a8ec984276bb2abb1b922c`.

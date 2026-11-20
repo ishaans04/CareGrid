@@ -1,20 +1,27 @@
 {
   "file": "CareGrid-Team-Duality.mp4",
-  "duration": 170,
+  "duration": 120,
   "video": {
     "codec": "h264",
     "width": 1920,
     "height": 1080,
     "fps": "30/1",
-    "frames": "5100",
-    "pixelFormat": "yuv420p"
+    "frames": "3600",
+    "pixelFormat": "yuv420p",
+    "colorRange": "tv",
+    "colorSpace": "bt709"
   },
   "audio": {
     "codec": "aac",
     "sampleRate": "48000",
-    "channels": 2
+    "channels": 2,
+    "integratedLoudnessLUFS": -16.5,
+    "truePeakDBFS": -4.4
   },
-  "bytes": 12995132,
+  "bytes": 8015458,
   "fullDecode": "passed",
-  "syntheticData": true
+  "syntheticData": true,
+  "revision": "CCTV and IoT; full response workflow",
+  "sourcePackagePreview": "passed",
+  "archiveIntegrity": "passed"
 }

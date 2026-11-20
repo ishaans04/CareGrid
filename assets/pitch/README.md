@@ -1,6 +1,6 @@
 # Pitch visuals · CareGrid / Team Duality
 
-**Demo film:** [watch/download the 2:50 CareGrid video](../../output/video/CareGrid-Team-Duality.mp4), or open the [video package](../../output/video/README.md) for the poster, captions, storyboard and editable source.
+**Demo film:** [watch/download the 2:00 CareGrid video](../../output/video/CareGrid-Team-Duality.mp4), or open the [video package](../../output/video/README.md) for the poster, captions, storyboard and editable source.
 
 **Finalized UI:** use the [20 November launch gallery](launch/README.md) and [three slide-panel exports](launch/deck/README.md). They match the current blue/butter website and connected console. The older designs below remain historical references.
 
