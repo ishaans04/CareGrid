@@ -57,6 +57,8 @@ fields:
   nextDeadline: DateTime?
   nextDeadlineLabel: String?
   updatedAt: DateTime
+  ### Optimistic concurrency: every save must start from the latest revision, so a stale copy (for example a watchdog pass that began before an operator dispatched) can never overwrite newer state.
+  revision: int, default=0
 indexes:
   incident_state_idx:
     fields: state

@@ -2,6 +2,7 @@ import 'package:serverpod/serverpod.dart' hide Responder;
 
 import '../core/access.dart';
 import '../core/clock.dart';
+import '../core/locks.dart';
 import '../core/ops_bus.dart';
 import '../generated/protocol.dart';
 import '../twin/twin_snapshot.dart';
@@ -10,6 +11,14 @@ import 'response_planner.dart';
 /// The response orchestrator: owns every incident state transition, writes the
 /// timeline, and keeps responders and incidents consistent. Endpoints, the
 /// incident agent and the Proof-of-Response watchdog all go through here.
+///
+/// Concurrency rules:
+/// * a unit is reserved under its row lock, so two incidents (or two
+///   operators) can never hold the same ambulance;
+/// * every dispatch transition re-reads the dispatch under its row lock, so a
+///   responder's tap and the watchdog's timeout cannot both win;
+/// * incidents are saved only from their latest revision; a stale copy raises
+///   a typed conflict instead of overwriting newer state.
 class Orchestrator {
   Orchestrator._();
 
@@ -39,9 +48,32 @@ class Orchestrator {
     );
   }
 
+  /// Saves [incident] if nobody has saved it since it was read. The caller's
+  /// object receives the new revision, so a flow can save the same copy
+  /// several times in sequence.
   static Future<Incident> save(Session session, Incident incident) async {
-    incident.updatedAt = CampusClock.now();
-    final saved = await Incident.db.updateRow(session, incident);
+    final saved = await RowLock.on(
+      session,
+      LockedTable.incident,
+      incident.id!,
+      (transaction) async {
+        final current = await RowLock.incidentRevision(
+          session,
+          incident.id!,
+          transaction,
+        );
+        if (current == null) throw notFound('Incident ${incident.code}');
+        if (current != incident.revision) throw staleIncident(incident.code);
+        incident
+          ..revision = current + 1
+          ..updatedAt = CampusClock.now();
+        return Incident.db.updateRow(
+          session,
+          incident,
+          transaction: transaction,
+        );
+      },
+    );
     await OpsBus.publish(session, 'incident', incidentId: saved.id);
     return saved;
   }
@@ -70,6 +102,50 @@ class Orchestrator {
         where: (t) => t.incidentId.equals(incidentId),
         orderBy: (t) => t.offeredAt,
       );
+
+  /// Re-reads [dispatchId] under its row lock and stores [apply]'s result.
+  /// [apply] throws (typically [invalidState]) when the transition no longer
+  /// fits the dispatch's current status.
+  static Future<Dispatch> transition(
+    Session session,
+    int dispatchId,
+    Dispatch Function(Dispatch current) apply,
+  ) => RowLock.on(session, LockedTable.dispatch, dispatchId, (
+    transaction,
+  ) async {
+    final current = await Dispatch.db.findById(
+      session,
+      dispatchId,
+      transaction: transaction,
+    );
+    if (current == null) throw notFound('Dispatch $dispatchId');
+    return Dispatch.db.updateRow(
+      session,
+      apply(current),
+      transaction: transaction,
+    );
+  });
+
+  /// Like [transition], but returns null instead of throwing when the
+  /// dispatch has moved on. Used by the watchdog, which simply re-evaluates
+  /// on its next pass.
+  static Future<Dispatch?> tryTransition(
+    Session session,
+    int dispatchId,
+    Dispatch? Function(Dispatch current) apply,
+  ) => RowLock.on(session, LockedTable.dispatch, dispatchId, (
+    transaction,
+  ) async {
+    final current = await Dispatch.db.findById(
+      session,
+      dispatchId,
+      transaction: transaction,
+    );
+    if (current == null) return null;
+    final next = apply(current);
+    if (next == null) return null;
+    return Dispatch.db.updateRow(session, next, transaction: transaction);
+  });
 
   // ------------------------------------------------------------ verification
 
@@ -140,6 +216,8 @@ class Orchestrator {
   // ---------------------------------------------------------------- dispatch
 
   /// Creates one [Dispatch] per option and moves the incident to dispatched.
+  /// Each unit is reserved atomically: a unit taken by another incident since
+  /// the plan was computed is skipped and recorded, never double-assigned.
   static Future<Incident> dispatch(
     Session session,
     Incident incident,
@@ -155,11 +233,8 @@ class Orchestrator {
     var dispatched = 0;
 
     for (final option in options) {
-      final responder = await Responder.db.findFirstRow(
-        session,
-        where: (t) => t.code.equals(option.responderCode),
-      );
-      if (responder == null || responder.status != ResponderStatus.available) {
+      final reserved = await _reserve(session, incident, option, now, ackSla);
+      if (reserved == null) {
         await log(
           session,
           incident,
@@ -169,26 +244,7 @@ class Orchestrator {
         );
         continue;
       }
-      final d = await Dispatch.db.insertRow(
-        session,
-        Dispatch(
-          incidentId: incident.id!,
-          responderCode: responder.code,
-          responderName: responder.name,
-          responderType: responder.type,
-          role: option.role,
-          status: DispatchStatus.offered,
-          route: option.route,
-          distanceMeters: option.distanceMeters,
-          etaSeconds: option.etaSeconds,
-          offeredAt: now,
-          ackDeadline: now.add(Duration(seconds: ackSla)),
-        ),
-      );
-      responder
-        ..status = ResponderStatus.assigned
-        ..activeDispatchId = d.id;
-      await Responder.db.updateRow(session, responder);
+      final (responder, _) = reserved;
       dispatched++;
       await log(
         session,
@@ -216,7 +272,62 @@ class Orchestrator {
     }
     incident.verifiedAt ??= now;
     await OpsBus.publish(session, 'dispatch', incidentId: incident.id);
+    await OpsBus.publish(session, 'twin');
     return recompute(session, incident);
+  }
+
+  /// Claims an available unit and creates its dispatch in one transaction.
+  static Future<(Responder, Dispatch)?> _reserve(
+    Session session,
+    Incident incident,
+    PlanOption option,
+    DateTime now,
+    int ackSla,
+  ) async {
+    final found = await Responder.db.findFirstRow(
+      session,
+      where: (t) => t.code.equals(option.responderCode),
+    );
+    if (found == null) return null;
+    return RowLock.on(session, LockedTable.responder, found.id!, (
+      transaction,
+    ) async {
+      final responder = await Responder.db.findById(
+        session,
+        found.id!,
+        transaction: transaction,
+      );
+      if (responder == null || responder.status != ResponderStatus.available) {
+        return null;
+      }
+      final d = await Dispatch.db.insertRow(
+        session,
+        Dispatch(
+          incidentId: incident.id!,
+          responderCode: responder.code,
+          responderName: responder.name,
+          responderType: responder.type,
+          role: option.role,
+          status: DispatchStatus.offered,
+          route: option.route,
+          distanceMeters: option.distanceMeters,
+          etaSeconds: option.etaSeconds,
+          offeredAt: now,
+          ackDeadline: now.add(Duration(seconds: ackSla)),
+        ),
+        transaction: transaction,
+      );
+      responder
+        ..status = ResponderStatus.assigned
+        ..activeDispatchId = d.id
+        ..statusNote = null;
+      await Responder.db.updateRow(
+        session,
+        responder,
+        transaction: transaction,
+      );
+      return (responder, d);
+    });
   }
 
   /// Operator confirmation: dispatch the recommended plan, or the units the
@@ -227,6 +338,9 @@ class Orchestrator {
     List<String>? responderCodes,
     String actorLabel,
   ) async {
+    if (!incident.state.open) {
+      throw invalidState('${incident.code} is already closed.');
+    }
     if (incident.state == IncidentState.detected ||
         incident.state == IncidentState.review) {
       incident.state = IncidentState.verified;
@@ -261,13 +375,14 @@ class Orchestrator {
           .options;
     } else {
       options = [];
-      for (final code in responderCodes) {
+      for (final code in responderCodes.toSet()) {
+        if (active.contains(code)) continue;
         final r = twin.responders[code];
-        if (r == null) continue;
+        if (r == null) throw badRequest('Unknown unit $code.');
         final option = planner.optionFor(
           r,
           incident.zoneCode,
-          role: options.isEmpty ? 'primary' : 'support',
+          role: options.isEmpty && active.isEmpty ? 'primary' : 'support',
           slaRemaining: policy.arrivalSlaSeconds - secondsSinceOnset(incident),
         );
         if (option != null) options.add(option);
@@ -294,31 +409,22 @@ class Orchestrator {
 
   // ------------------------------------------------- responder transitions
 
-  static Future<(Dispatch, Incident)> _loadDispatch(
-    Session session,
-    int dispatchId,
-  ) async {
-    final d = await Dispatch.db.findById(session, dispatchId);
-    if (d == null) throw notFound('Dispatch $dispatchId');
-    final incident = await load(session, d.incidentId);
-    return (d, incident);
-  }
-
   static Future<Incident> acknowledge(
     Session session,
     int dispatchId,
     String actorLabel,
   ) async {
-    var (d, incident) = await _loadDispatch(session, dispatchId);
-    if (d.status != DispatchStatus.offered) {
-      throw invalidState('Dispatch is ${d.status.label}, not offered.');
-    }
     final now = CampusClock.now();
-    d
-      ..status = DispatchStatus.acknowledged
-      ..acknowledgedAt = now
-      ..stalled = false;
-    await Dispatch.db.updateRow(session, d);
+    final d = await transition(session, dispatchId, (d) {
+      if (d.status != DispatchStatus.offered) {
+        throw invalidState('Dispatch is ${d.status.label}, not offered.');
+      }
+      return d
+        ..status = DispatchStatus.acknowledged
+        ..acknowledgedAt = now
+        ..stalled = false;
+    });
+    final incident = await load(session, d.incidentId);
     incident.acknowledgedAt ??= now;
     await log(
       session,
@@ -336,28 +442,30 @@ class Orchestrator {
     int dispatchId,
     String actorLabel,
   ) async {
-    var (d, incident) = await _loadDispatch(session, dispatchId);
-    if (d.status == DispatchStatus.offered) {
-      incident = await acknowledge(session, dispatchId, actorLabel);
-      d = (await Dispatch.db.findById(session, dispatchId))!;
+    final current = await Dispatch.db.findById(session, dispatchId);
+    if (current == null) throw notFound('Dispatch $dispatchId');
+    if (current.status == DispatchStatus.offered) {
+      await acknowledge(session, dispatchId, actorLabel);
     }
-    if (d.status != DispatchStatus.acknowledged) {
-      throw invalidState('Dispatch is ${d.status.label}.');
-    }
-    final now = CampusClock.now();
     final responder = await Responder.db.findFirstRow(
       session,
-      where: (t) => t.code.equals(d.responderCode),
+      where: (t) => t.code.equals(current.responderCode),
     );
-    final travel = d.etaSeconds - (responder?.mobilizationSeconds ?? 0);
-    d
-      ..status = DispatchStatus.enRoute
-      ..enRouteAt = now
-      ..arrivalDeadline = now.add(
-        Duration(seconds: (travel * 1.5).round() + 30),
-      )
-      ..stalled = false;
-    await Dispatch.db.updateRow(session, d);
+    final now = CampusClock.now();
+    final d = await transition(session, dispatchId, (d) {
+      if (d.status != DispatchStatus.acknowledged) {
+        throw invalidState('Dispatch is ${d.status.label}.');
+      }
+      final travel = d.etaSeconds - (responder?.mobilizationSeconds ?? 0);
+      return d
+        ..status = DispatchStatus.enRoute
+        ..enRouteAt = now
+        ..arrivalDeadline = now.add(
+          Duration(seconds: (travel * 1.5).round() + 30),
+        )
+        ..stalled = false;
+    });
+    final incident = await load(session, d.incidentId);
     incident.enRouteAt ??= now;
     await log(
       session,
@@ -377,28 +485,30 @@ class Orchestrator {
     String actorLabel, {
     required String source,
   }) async {
-    var (d, incident) = await _loadDispatch(session, dispatchId);
-    if (d.status == DispatchStatus.offered ||
-        d.status == DispatchStatus.acknowledged) {
-      d.acknowledgedAt ??= CampusClock.now();
-      d.enRouteAt ??= CampusClock.now();
-      incident.acknowledgedAt ??= d.acknowledgedAt;
-      incident.enRouteAt ??= d.enRouteAt;
-    } else if (d.status != DispatchStatus.enRoute) {
-      throw invalidState('Dispatch is ${d.status.label}.');
-    }
     final now = CampusClock.now();
-    d
-      ..status = DispatchStatus.onScene
-      ..onSceneAt = now
-      ..progress = 1
-      ..arrivalSource = source
-      ..stalled = false;
-    await Dispatch.db.updateRow(session, d);
+    final d = await transition(session, dispatchId, (d) {
+      if (d.status == DispatchStatus.offered ||
+          d.status == DispatchStatus.acknowledged) {
+        d.acknowledgedAt ??= now;
+        d.enRouteAt ??= now;
+      } else if (d.status != DispatchStatus.enRoute) {
+        throw invalidState('Dispatch is ${d.status.label}.');
+      }
+      return d
+        ..status = DispatchStatus.onScene
+        ..onSceneAt = now
+        ..progress = 1
+        ..arrivalSource = source
+        ..stalled = false;
+    });
+    final incident = await load(session, d.incidentId);
+    incident.acknowledgedAt ??= d.acknowledgedAt;
+    incident.enRouteAt ??= d.enRouteAt;
     await Responder.db.updateWhere(
       session,
       columnValues: (t) => [t.zoneCode(incident.zoneCode)],
-      where: (t) => t.code.equals(d.responderCode),
+      where: (t) =>
+          t.code.equals(d.responderCode) & t.activeDispatchId.equals(d.id),
     );
     incident.onSceneAt ??= now;
     await log(
@@ -419,16 +529,17 @@ class Orchestrator {
     int dispatchId,
     String actorLabel,
   ) async {
-    var (d, incident) = await _loadDispatch(session, dispatchId);
-    if (d.status != DispatchStatus.onScene) {
-      throw invalidState('Care can start once the unit is on scene.');
-    }
     final now = CampusClock.now();
-    d
-      ..status = DispatchStatus.care
-      ..careAt = now
-      ..stalled = false;
-    await Dispatch.db.updateRow(session, d);
+    final d = await transition(session, dispatchId, (d) {
+      if (d.status != DispatchStatus.onScene) {
+        throw invalidState('Care can start once the unit is on scene.');
+      }
+      return d
+        ..status = DispatchStatus.care
+        ..careAt = now
+        ..stalled = false;
+    });
+    final incident = await load(session, d.incidentId);
     incident.careAt ??= now;
     await log(
       session,
@@ -447,17 +558,19 @@ class Orchestrator {
     String actorLabel,
     String? note,
   ) async {
-    var (d, incident) = await _loadDispatch(session, dispatchId);
-    if (!d.status.active) throw invalidState('Dispatch already closed.');
-    if (d.status != DispatchStatus.care && d.status != DispatchStatus.onScene) {
-      throw invalidState('Complete is only possible on scene.');
-    }
-    d
-      ..status = DispatchStatus.completed
-      ..completedAt = CampusClock.now()
-      ..note = note;
-    await Dispatch.db.updateRow(session, d);
-    await _release(session, d.responderCode);
+    final d = await transition(session, dispatchId, (d) {
+      if (!d.status.active) throw invalidState('Dispatch already closed.');
+      if (d.status != DispatchStatus.care &&
+          d.status != DispatchStatus.onScene) {
+        throw invalidState('Complete is only possible on scene.');
+      }
+      return d
+        ..status = DispatchStatus.completed
+        ..completedAt = CampusClock.now()
+        ..note = note;
+    });
+    await _release(session, d);
+    final incident = await load(session, d.incidentId);
     await log(
       session,
       incident,
@@ -476,18 +589,19 @@ class Orchestrator {
     String actorLabel,
     String reason,
   ) async {
-    var (d, incident) = await _loadDispatch(session, dispatchId);
-    if (d.status != DispatchStatus.offered &&
-        d.status != DispatchStatus.acknowledged) {
-      throw invalidState(
-        'Only an offered or acknowledged task can be declined.',
-      );
-    }
-    d
-      ..status = DispatchStatus.declined
-      ..note = reason;
-    await Dispatch.db.updateRow(session, d);
-    await _release(session, d.responderCode);
+    final d = await transition(session, dispatchId, (d) {
+      if (d.status != DispatchStatus.offered &&
+          d.status != DispatchStatus.acknowledged) {
+        throw invalidState(
+          'Only an offered or acknowledged task can be declined.',
+        );
+      }
+      return d
+        ..status = DispatchStatus.declined
+        ..note = reason;
+    });
+    await _release(session, d);
+    final incident = await load(session, d.incidentId);
     await log(
       session,
       incident,
@@ -496,6 +610,40 @@ class Orchestrator {
       '${d.responderName} declined: $reason',
     );
     return redispatch(session, incident, d, 'declined');
+  }
+
+  /// Command stands down one unit (for example a second ambulance that is no
+  /// longer needed). The unit is released; the rest of the response continues.
+  static Future<Incident> recallUnit(
+    Session session,
+    Incident incident,
+    int dispatchId,
+    String reason,
+    String actorLabel,
+  ) async {
+    if (!incident.state.open) throw invalidState('${incident.code} is closed.');
+    final d = await transition(session, dispatchId, (d) {
+      if (d.incidentId != incident.id) {
+        throw badRequest('That unit is not assigned to ${incident.code}.');
+      }
+      if (!d.status.active) {
+        throw invalidState('${d.responderName} is already ${d.status.label}.');
+      }
+      return d
+        ..status = DispatchStatus.recalled
+        ..note = 'Recalled by command: $reason';
+    });
+    await _release(session, d);
+    incident = await load(session, incident.id!);
+    await log(
+      session,
+      incident,
+      TimelineKind.operatorAction,
+      actorLabel,
+      'Stood down ${d.responderName}: $reason',
+    );
+    await OpsBus.publish(session, 'dispatch', incidentId: incident.id);
+    return recompute(session, incident);
   }
 
   /// Finds a replacement of the same responder type after a decline or a
@@ -522,12 +670,13 @@ class Orchestrator {
     );
     if (plan.options.isEmpty) {
       incident.needsHumanReview = true;
-      return escalate(
+      incident = await escalate(
         session,
         incident,
         'No replacement for ${failed.responderName} ($why). '
         'Incident commander must assign a unit manually.',
       );
+      return recompute(session, incident);
     }
     final replacement = plan.options.first;
     incident = await escalate(
@@ -567,12 +716,16 @@ class Orchestrator {
   ) async {
     if (!incident.state.open) throw invalidState('${incident.code} is closed.');
     for (final d in await dispatchesOf(session, incident.id!)) {
-      if (!d.status.active) continue;
-      d
-        ..status = DispatchStatus.recalled
-        ..note = 'Recalled: incident dismissed';
-      await Dispatch.db.updateRow(session, d);
-      await _release(session, d.responderCode);
+      final recalled = await tryTransition(
+        session,
+        d.id!,
+        (current) => current.status.active
+            ? (current
+                ..status = DispatchStatus.recalled
+                ..note = 'Recalled: incident dismissed')
+            : null,
+      );
+      if (recalled != null) await _release(session, recalled);
     }
     incident
       ..state = IncidentState.dismissed
@@ -589,8 +742,9 @@ class Orchestrator {
       actorLabel,
       'Dismissed: $reason',
     );
-    await _closeVictims(session, incident);
-    return save(session, incident);
+    final saved = await save(session, incident);
+    await _closeVictims(session, saved);
+    return saved;
   }
 
   /// Victim sub-records close with their parent incident.
@@ -608,12 +762,16 @@ class Orchestrator {
         ..careAt = parent.careAt
         ..onSceneAt = parent.onSceneAt
         ..closureNote = 'Closed with ${parent.code}: ${parent.closureNote}'
-        ..updatedAt = now;
-      await Incident.db.updateRow(session, v);
+        ..nextAction = null
+        ..nextDeadline = null
+        ..nextDeadlineLabel = null;
+      await save(session, v);
     }
   }
 
-  /// The incident ends only when a human says it is resolved.
+  /// The incident ends only when a human says it is resolved. Units that
+  /// arrived are completed; units still travelling are recorded as stood
+  /// down, never as completed, so the response record stays truthful.
   static Future<Incident> resolve(
     Session session,
     Incident incident,
@@ -633,15 +791,26 @@ class Orchestrator {
         'before resolving; closure cannot create evidence of care.',
       );
     }
-    for (final d in await dispatchesOf(session, incident.id!)) {
-      if (!d.status.active) continue;
-      d
-        ..status = DispatchStatus.completed
-        ..completedAt = CampusClock.now();
-      await Dispatch.db.updateRow(session, d);
-      await _release(session, d.responderCode);
-    }
+    final stoodDown = <String>[];
     final now = CampusClock.now();
+    for (final d in await dispatchesOf(session, incident.id!)) {
+      final closed = await tryTransition(session, d.id!, (current) {
+        if (!current.status.active) return null;
+        final arrived =
+            current.status == DispatchStatus.onScene ||
+            current.status == DispatchStatus.care;
+        if (!arrived) stoodDown.add(current.responderName);
+        return current
+          ..status = arrived
+              ? DispatchStatus.completed
+              : DispatchStatus.recalled
+          ..completedAt = arrived ? now : null
+          ..note = arrived
+              ? current.note
+              : 'Stood down at closure before arrival';
+      });
+      if (closed != null) await _release(session, closed);
+    }
     incident
       ..state = IncidentState.resolved
       ..resolvedAt = now
@@ -655,25 +824,69 @@ class Orchestrator {
       incident,
       TimelineKind.closure,
       actorLabel,
-      'Resolved: $outcome. MTTC ${formatSeconds(incident.careAt!.difference(incident.onsetAt).inSeconds)}.',
+      'Resolved: $outcome. MTTC ${formatSeconds(incident.careAt!.difference(incident.onsetAt).inSeconds)}.'
+      '${stoodDown.isEmpty ? '' : ' Stood down before arrival: ${stoodDown.join(', ')}.'}',
     );
-    await _closeVictims(session, incident);
-    return save(session, incident);
+    final saved = await save(session, incident);
+    await _closeVictims(session, saved);
+    return saved;
   }
 
-  static Future<void> _release(Session session, String responderCode) async {
-    final r = await Responder.db.findFirstRow(
+  /// Returns a unit to service, but only if it is still held by [d]. A unit
+  /// that has since been re-assigned elsewhere is left alone.
+  static Future<void> _release(Session session, Dispatch d) async {
+    final found = await Responder.db.findFirstRow(
       session,
-      where: (t) => t.code.equals(responderCode),
+      where: (t) => t.code.equals(d.responderCode),
     );
-    if (r == null) return;
-    r
-      ..status = r.status == ResponderStatus.assigned
-          ? ResponderStatus.available
-          : r.status
-      ..activeDispatchId = null
-      ..zoneCode = r.baseZoneCode;
-    await Responder.db.updateRow(session, r);
+    if (found == null) return;
+    final released = await RowLock.on(
+      session,
+      LockedTable.responder,
+      found.id!,
+      (transaction) async {
+        final r = await Responder.db.findById(
+          session,
+          found.id!,
+          transaction: transaction,
+        );
+        if (r == null || r.activeDispatchId != d.id) return false;
+        r
+          ..status = r.status == ResponderStatus.assigned
+              ? ResponderStatus.available
+              : r.status
+          ..activeDispatchId = null
+          ..zoneCode = r.baseZoneCode;
+        await Responder.db.updateRow(session, r, transaction: transaction);
+        return true;
+      },
+    );
+    if (released) await OpsBus.publish(session, 'twin');
+  }
+
+  /// Marks a unit unreachable after a missed acknowledgement, if it is still
+  /// held by [d].
+  static Future<void> markUnreachable(Session session, Dispatch d) async {
+    final found = await Responder.db.findFirstRow(
+      session,
+      where: (t) => t.code.equals(d.responderCode),
+    );
+    if (found == null) return;
+    await RowLock.on(session, LockedTable.responder, found.id!, (
+      transaction,
+    ) async {
+      final r = await Responder.db.findById(
+        session,
+        found.id!,
+        transaction: transaction,
+      );
+      if (r == null || r.activeDispatchId != d.id) return;
+      r
+        ..status = ResponderStatus.offline
+        ..activeDispatchId = null
+        ..statusNote = 'Missed acknowledgement: radio check required';
+      await Responder.db.updateRow(session, r, transaction: transaction);
+    });
     await OpsBus.publish(session, 'twin');
   }
 
@@ -685,9 +898,15 @@ class Orchestrator {
     if (!incident.state.open) return save(session, incident);
     final dispatches = await dispatchesOf(session, incident.id!);
     final policy = await policyOf(session, incident);
-    if (dispatches.isNotEmpty) {
+    final committed = dispatches.where(
+      (d) =>
+          d.status != DispatchStatus.declined &&
+          d.status != DispatchStatus.timedOut &&
+          d.status != DispatchStatus.recalled,
+    );
+    if (committed.isNotEmpty) {
       var stage = IncidentState.dispatched;
-      for (final d in dispatches) {
+      for (final d in committed) {
         final s = switch (d.status) {
           DispatchStatus.acknowledged => IncidentState.acknowledged,
           DispatchStatus.enRoute => IncidentState.enRoute,
@@ -698,6 +917,19 @@ class Orchestrator {
         if (s.stage > stage.stage) stage = s;
       }
       incident.state = stage;
+    } else if (dispatches.isNotEmpty) {
+      // Every unit declined, timed out or was recalled. Nobody is coming, so
+      // the case returns to the operator with a live deadline the watchdog
+      // keeps escalating, instead of sitting "dispatched" with no unit.
+      incident
+        ..state = IncidentState.verified
+        ..nextAction =
+            'No unit is assigned: dispatch a unit or stand down with a reason'
+        ..nextDeadline = CampusClock.now().add(
+          Duration(seconds: policy?.verifySlaSeconds ?? 60),
+        )
+        ..nextDeadlineLabel = 'Re-dispatch';
+      return save(session, incident);
     }
 
     DateTime? deadline;
@@ -732,6 +964,15 @@ class Orchestrator {
       }
     }
     if (dispatches.isNotEmpty) {
+      final travelling = active
+          .where(
+            (d) =>
+                d.status == DispatchStatus.offered ||
+                d.status == DispatchStatus.acknowledged ||
+                d.status == DispatchStatus.enRoute,
+          )
+          .map((d) => d.responderName)
+          .toList();
       incident.nextDeadline = deadline;
       incident.nextDeadlineLabel = label;
       incident.nextAction = switch (incident.state) {
@@ -740,11 +981,17 @@ class Orchestrator {
               '${active.map((d) => d.responderName).join(', ')}',
         IncidentState.acknowledged ||
         IncidentState.enRoute => 'Track units en route; keep the route clear',
-        IncidentState.onScene => 'Confirm care has started',
+        IncidentState.onScene =>
+          travelling.isEmpty
+              ? 'Confirm care has started'
+              : 'Confirm care has started; still awaiting '
+                    '${travelling.join(', ')}',
         IncidentState.care =>
           active.isEmpty
               ? 'All units done: resolve with outcome'
-              : 'Coordinate handover; resolve when care is complete',
+              : travelling.isEmpty
+              ? 'Coordinate handover; resolve when care is complete'
+              : 'Care started; ${travelling.join(', ')} still on the way',
         _ => incident.nextAction,
       };
     }

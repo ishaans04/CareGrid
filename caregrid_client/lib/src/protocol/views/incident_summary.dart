@@ -42,6 +42,8 @@ abstract class IncidentSummary
     required this.onsetAt,
     required this.updatedAt,
     required this.responders,
+    required this.unitsAssigned,
+    required this.unitsArrived,
     required this.victimCount,
     this.parentIncidentId,
     required this.fromScenario,
@@ -68,6 +70,8 @@ abstract class IncidentSummary
     required DateTime onsetAt,
     required DateTime updatedAt,
     required List<String> responders,
+    required int unitsAssigned,
+    required int unitsArrived,
     required int victimCount,
     int? parentIncidentId,
     required bool fromScenario,
@@ -117,6 +121,8 @@ abstract class IncidentSummary
       responders: _i3n4vhm4.Protocol().deserialize<List<String>>(
         jsonSerialization['responders'],
       ),
+      unitsAssigned: jsonSerialization['unitsAssigned'] as int,
+      unitsArrived: jsonSerialization['unitsArrived'] as int,
       victimCount: jsonSerialization['victimCount'] as int,
       parentIncidentId: jsonSerialization['parentIncidentId'] as int?,
       fromScenario: _isc.BoolJsonExtension.fromJson(
@@ -165,6 +171,12 @@ abstract class IncidentSummary
 
   List<String> responders;
 
+  /// Units committed to the response (excludes declined, timed-out and recalled assignments).
+  int unitsAssigned;
+
+  /// Committed units with a recorded arrival. Incident state is the furthest unit; this shows the rest.
+  int unitsArrived;
+
   int victimCount;
 
   int? parentIncidentId;
@@ -195,6 +207,8 @@ abstract class IncidentSummary
     DateTime? onsetAt,
     DateTime? updatedAt,
     List<String>? responders,
+    int? unitsAssigned,
+    int? unitsArrived,
     int? victimCount,
     int? parentIncidentId,
     bool? fromScenario,
@@ -223,6 +237,8 @@ abstract class IncidentSummary
       'onsetAt': onsetAt.toJson(),
       'updatedAt': updatedAt.toJson(),
       'responders': responders.toJson(),
+      'unitsAssigned': unitsAssigned,
+      'unitsArrived': unitsArrived,
       'victimCount': victimCount,
       if (parentIncidentId != null) 'parentIncidentId': parentIncidentId,
       'fromScenario': fromScenario,
@@ -253,6 +269,8 @@ abstract class IncidentSummary
       'onsetAt': onsetAt.toJson(),
       'updatedAt': updatedAt.toJson(),
       'responders': responders.toJson(),
+      'unitsAssigned': unitsAssigned,
+      'unitsArrived': unitsArrived,
       'victimCount': victimCount,
       if (parentIncidentId != null) 'parentIncidentId': parentIncidentId,
       'fromScenario': fromScenario,
@@ -289,6 +307,8 @@ class _IncidentSummaryImpl extends IncidentSummary {
     required DateTime onsetAt,
     required DateTime updatedAt,
     required List<String> responders,
+    required int unitsAssigned,
+    required int unitsArrived,
     required int victimCount,
     int? parentIncidentId,
     required bool fromScenario,
@@ -313,6 +333,8 @@ class _IncidentSummaryImpl extends IncidentSummary {
          onsetAt: onsetAt,
          updatedAt: updatedAt,
          responders: responders,
+         unitsAssigned: unitsAssigned,
+         unitsArrived: unitsArrived,
          victimCount: victimCount,
          parentIncidentId: parentIncidentId,
          fromScenario: fromScenario,
@@ -343,6 +365,8 @@ class _IncidentSummaryImpl extends IncidentSummary {
     DateTime? onsetAt,
     DateTime? updatedAt,
     List<String>? responders,
+    int? unitsAssigned,
+    int? unitsArrived,
     int? victimCount,
     Object? parentIncidentId = _Undefined,
     bool? fromScenario,
@@ -374,6 +398,8 @@ class _IncidentSummaryImpl extends IncidentSummary {
       onsetAt: onsetAt ?? this.onsetAt,
       updatedAt: updatedAt ?? this.updatedAt,
       responders: responders ?? this.responders.map((e0) => e0).toList(),
+      unitsAssigned: unitsAssigned ?? this.unitsAssigned,
+      unitsArrived: unitsArrived ?? this.unitsArrived,
       victimCount: victimCount ?? this.victimCount,
       parentIncidentId: parentIncidentId is int?
           ? parentIncidentId

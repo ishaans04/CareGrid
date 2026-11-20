@@ -1,6 +1,7 @@
 import 'package:serverpod/serverpod.dart' hide Responder;
 
 import '../core/clock.dart';
+import '../core/locks.dart';
 import '../core/ops_bus.dart';
 import '../generated/protocol.dart';
 import '../twin/campus_graph.dart';
@@ -14,6 +15,10 @@ import 'orchestrator.dart';
 /// Explicit scenario runs simulate route progress and arrival. For autopilot
 /// scenario runs, the watchdog also plays the operator,
 /// responders and hospital so a demo can run unattended.
+///
+/// Every change the watchdog makes is conditional on the record still being
+/// in the state it observed. If a responder or operator acts first, the
+/// watchdog's change is skipped and the case is re-evaluated next pass.
 class ProofOfResponse {
   ProofOfResponse._();
 
@@ -43,6 +48,10 @@ class ProofOfResponse {
             : runs[runId] ??= await ScenarioRun.db.findById(session, runId);
         await _checkIncident(session, incident, run);
       } catch (e, st) {
+        if (isConflict(e)) {
+          // Someone changed the case during this pass; check again next tick.
+          continue;
+        }
         session.log(
           'Proof-of-Response failed on ${incident.code}: $e',
           level: LogLevel.error,
@@ -98,16 +107,19 @@ class ProofOfResponse {
           return;
         }
         if (deadlinePassed) {
+          final what = switch (incident.nextDeadlineLabel) {
+            'Re-dispatch' || 'Re-dispatch (escalated)' => 'Re-dispatch',
+            _ when incident.state == IncidentState.review => 'Human review',
+            _ => 'Operator confirmation',
+          };
           incident
             ..nextDeadline = now.add(Duration(seconds: verifySla))
-            ..nextDeadlineLabel = incident.state == IncidentState.review
-                ? 'Human review (escalated)'
-                : 'Operator confirmation (escalated)';
+            ..nextDeadlineLabel = '$what (escalated)';
           await Orchestrator.escalate(
             session,
             incident,
-            '${incident.state == IncidentState.review ? 'Human review' : 'Operator confirmation'} '
-            'overdue (${formatSeconds(verifySla)} SLA). Supervisor notified.',
+            '$what overdue (${formatSeconds(verifySla)} SLA). '
+            'Supervisor notified.',
           );
         }
         return;
@@ -128,14 +140,17 @@ class ProofOfResponse {
         'Hospital (simulated)',
         'ER bay prepared; team ready to receive.',
       );
-      incident = await Orchestrator.save(session, incident);
+      await Orchestrator.save(session, incident);
     }
 
     final dispatches = await Orchestrator.dispatchesOf(session, incident.id!);
     for (final d in dispatches.where((d) => d.status.active)) {
+      // Each check may change the case, so start each one from fresh state.
+      final fresh = await Orchestrator.load(session, incident.id!);
+      if (!fresh.state.open) return;
       await _checkDispatch(
         session,
-        incident,
+        fresh,
         d,
         policy,
         run != null,
@@ -160,20 +175,24 @@ class ProofOfResponse {
       case DispatchStatus.offered:
         final noAck = faults.contains('noAck:${d.responderCode}');
         if (autopilot && !noAck && now.difference(d.offeredAt).inSeconds >= 5) {
-          await Orchestrator.acknowledge(session, d.id!, crew);
+          await _ignoringRaces(
+            () => Orchestrator.acknowledge(session, d.id!, crew),
+          );
         } else if (now.isAfter(d.ackDeadline)) {
           await _missedAck(session, incident, d);
         }
       case DispatchStatus.acknowledged:
         final since = now.difference(d.acknowledgedAt!).inSeconds;
         if (autopilot && since >= 3) {
-          await Orchestrator.startEnRoute(session, d.id!, crew);
-        } else if (since > 45 && !d.stalled) {
-          d.stalled = true;
-          await Dispatch.db.updateRow(session, d);
-          await Orchestrator.escalate(
+          await _ignoringRaces(
+            () => Orchestrator.startEnRoute(session, d.id!, crew),
+          );
+        } else if (since > 45) {
+          await _stall(
             session,
             incident,
+            d,
+            DispatchStatus.acknowledged,
             '${d.responderName} acknowledged but has not started moving.',
           );
         }
@@ -181,14 +200,13 @@ class ProofOfResponse {
         if (simulation) {
           await _advance(session, incident, d);
         } else if (d.arrivalDeadline != null &&
-            now.isAfter(d.arrivalDeadline!) &&
-            !d.stalled) {
+            now.isAfter(d.arrivalDeadline!)) {
           // An ETA is a prediction, never proof that a person has arrived.
-          d.stalled = true;
-          await Dispatch.db.updateRow(session, d);
-          await Orchestrator.escalate(
+          await _stall(
             session,
             incident,
+            d,
+            DispatchStatus.enRoute,
             '${d.responderName} has not confirmed arrival before the deadline. '
             'Contact the unit to verify its location.',
           );
@@ -197,13 +215,15 @@ class ProofOfResponse {
         final since = now.difference(d.onSceneAt!).inSeconds;
         final careSla = policy?.careSlaSeconds ?? 120;
         if (autopilot && since >= 6) {
-          await Orchestrator.startCare(session, d.id!, crew);
-        } else if (since > careSla && !d.stalled) {
-          d.stalled = true;
-          await Dispatch.db.updateRow(session, d);
-          await Orchestrator.escalate(
+          await _ignoringRaces(
+            () => Orchestrator.startCare(session, d.id!, crew),
+          );
+        } else if (since > careSla) {
+          await _stall(
             session,
             incident,
+            d,
+            DispatchStatus.onScene,
             '${d.responderName} is on scene but care has not started '
             '(${formatSeconds(careSla)} SLA).',
           );
@@ -213,26 +233,54 @@ class ProofOfResponse {
     }
   }
 
+  /// Simulated crews race real check-ins; whoever records first wins.
+  static Future<void> _ignoringRaces(Future<void> Function() action) async {
+    try {
+      await action();
+    } on CareGridException catch (e) {
+      if (e.code != 'invalidState' && e.code != 'conflict') rethrow;
+    }
+  }
+
+  /// Flags a stall once per milestone, only if the unit is still where the
+  /// watchdog saw it.
+  static Future<void> _stall(
+    Session session,
+    Incident incident,
+    Dispatch d,
+    DispatchStatus expected,
+    String reason,
+  ) async {
+    final flagged = await Orchestrator.tryTransition(
+      session,
+      d.id!,
+      (current) => current.status == expected && !current.stalled
+          ? (current..stalled = true)
+          : null,
+    );
+    if (flagged == null) return;
+    await Orchestrator.escalate(session, incident, reason);
+  }
+
   static Future<void> _missedAck(
     Session session,
     Incident incident,
     Dispatch d,
   ) async {
-    d
-      ..status = DispatchStatus.timedOut
-      ..note = 'No acknowledgement within the SLA';
-    await Dispatch.db.updateRow(session, d);
-    final responder = await Responder.db.findFirstRow(
+    final now = CampusClock.now();
+    final timedOut = await Orchestrator.tryTransition(
       session,
-      where: (t) => t.code.equals(d.responderCode),
+      d.id!,
+      (current) =>
+          current.status == DispatchStatus.offered &&
+              now.isAfter(current.ackDeadline)
+          ? (current
+              ..status = DispatchStatus.timedOut
+              ..note = 'No acknowledgement within the SLA')
+          : null,
     );
-    if (responder != null) {
-      responder
-        ..status = ResponderStatus.offline
-        ..activeDispatchId = null
-        ..statusNote = 'Missed acknowledgement: radio check required';
-      await Responder.db.updateRow(session, responder);
-    }
+    if (timedOut == null) return; // The unit acknowledged in time after all.
+    await Orchestrator.markUnreachable(session, timedOut);
     await Orchestrator.log(
       session,
       incident,
@@ -245,7 +293,7 @@ class ProofOfResponse {
     await Orchestrator.redispatch(
       session,
       incident,
-      d,
+      timedOut,
       'missed acknowledgement',
     );
   }
@@ -278,16 +326,22 @@ class ProofOfResponse {
         final newTravel =
             CampusGraph.etaSeconds(responder, reroute) -
             responder.mobilizationSeconds;
-        d
-          ..route = reroute.path
-          ..distanceMeters = reroute.meters
-          ..etaSeconds = responder.mobilizationSeconds + newTravel
-          ..enRouteAt = now
-          ..progress = 0
-          ..arrivalDeadline = now.add(
-            Duration(seconds: (newTravel * 1.5).round() + 30),
-          );
-        await Dispatch.db.updateRow(session, d);
+        final rerouted = await Orchestrator.tryTransition(
+          session,
+          d.id!,
+          (current) => current.status == DispatchStatus.enRoute
+              ? (current
+                  ..route = reroute.path
+                  ..distanceMeters = reroute.meters
+                  ..etaSeconds = responder.mobilizationSeconds + newTravel
+                  ..enRouteAt = now
+                  ..progress = 0
+                  ..arrivalDeadline = now.add(
+                    Duration(seconds: (newTravel * 1.5).round() + 30),
+                  ))
+              : null,
+        );
+        if (rerouted == null) return;
         await Orchestrator.log(
           session,
           incident,
@@ -298,12 +352,12 @@ class ProofOfResponse {
           '(new travel time ${formatSeconds(newTravel)}).',
         );
         await Orchestrator.recompute(session, incident);
-      } else if (!d.stalled) {
-        d.stalled = true;
-        await Dispatch.db.updateRow(session, d);
-        await Orchestrator.escalate(
+      } else {
+        await _stall(
           session,
           incident,
+          d,
+          DispatchStatus.enRoute,
           '${d.responderName} is blocked on ${blocked.name} and no '
           'alternate route exists.',
         );
@@ -312,30 +366,37 @@ class ProofOfResponse {
     }
 
     if (progress >= 1) {
-      await Orchestrator.arrive(
-        session,
-        d.id!,
-        Orchestrator.watchdogName,
-        source: 'simulation',
+      await _ignoringRaces(
+        () => Orchestrator.arrive(
+          session,
+          d.id!,
+          Orchestrator.watchdogName,
+          source: 'simulation',
+        ),
       );
       return;
     }
     if (d.arrivalDeadline != null && now.isAfter(d.arrivalDeadline!)) {
-      if (!d.stalled) {
-        d.stalled = true;
-        await Dispatch.db.updateRow(session, d);
-        await Orchestrator.escalate(
-          session,
-          incident,
-          '${d.responderName} is behind its expected trajectory (stall).',
-        );
-      }
+      await _stall(
+        session,
+        incident,
+        d,
+        DispatchStatus.enRoute,
+        '${d.responderName} is behind its expected trajectory (stall).',
+      );
       return;
     }
     if (progress - d.progress >= 0.04) {
-      d.progress = progress;
-      await Dispatch.db.updateRow(session, d);
-      await OpsBus.publish(session, 'dispatch', incidentId: incident.id);
+      final moved = await Orchestrator.tryTransition(
+        session,
+        d.id!,
+        (current) => current.status == DispatchStatus.enRoute
+            ? (current..progress = progress)
+            : null,
+      );
+      if (moved != null) {
+        await OpsBus.publish(session, 'dispatch', incidentId: incident.id);
+      }
     }
   }
 

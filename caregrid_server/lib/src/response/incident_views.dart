@@ -29,19 +29,22 @@ class IncidentViews {
         summary(
           role == UserRole.admin ? i.copyWith(locationDetail: null) : i,
           twin.zoneName(i.zoneCode),
-          dispatches
-              .where((d) => d.incidentId == i.id && d.status.active)
-              .map((d) => '${d.responderName}: ${d.status.label}')
-              .toList(),
+          dispatches.where((d) => d.incidentId == i.id).toList(),
           victims.where((v) => v.parentIncidentId == i.id).length,
         ),
     ];
   }
 
+  /// Assignments that still count toward the response.
+  static bool committed(Dispatch d) =>
+      d.status != DispatchStatus.declined &&
+      d.status != DispatchStatus.timedOut &&
+      d.status != DispatchStatus.recalled;
+
   static IncidentSummary summary(
     Incident i,
     String zoneName,
-    List<String> responders,
+    List<Dispatch> dispatches,
     int victimCount,
   ) => IncidentSummary(
     id: i.id!,
@@ -63,7 +66,14 @@ class IncidentViews {
     nextDeadlineLabel: i.nextDeadlineLabel,
     onsetAt: i.onsetAt,
     updatedAt: i.updatedAt,
-    responders: responders,
+    responders: dispatches
+        .where((d) => d.status.active)
+        .map((d) => '${d.responderName}: ${d.status.label}')
+        .toList(),
+    unitsAssigned: dispatches.where(committed).length,
+    unitsArrived: dispatches
+        .where((d) => committed(d) && d.onSceneAt != null)
+        .length,
     victimCount: victimCount,
     parentIncidentId: i.parentIncidentId,
     fromScenario: i.scenarioRunId != null,

@@ -40,6 +40,7 @@ const methods = new Set([
   "incident/addNote",
   "incident/dismiss",
   "incident/resolve",
+  "incident/releaseUnit",
   "briefing/generate",
   "evidence/list",
   "evidence/upload",

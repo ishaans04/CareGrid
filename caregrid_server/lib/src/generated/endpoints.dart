@@ -676,6 +676,37 @@ class Endpoints extends _is.EndpointDispatch {
                     params['responderCodes'],
                   ),
         ),
+        'releaseUnit': _is.MethodConnector(
+          name: 'releaseUnit',
+          params: {
+            'incidentId': _is.ParameterDescription(
+              name: 'incidentId',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'dispatchId': _is.ParameterDescription(
+              name: 'dispatchId',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'reason': _is.ParameterDescription(
+              name: 'reason',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['incident'] as _idvfe0v9.IncidentEndpoint)
+                  .releaseUnit(
+                    session,
+                    params['incidentId'],
+                    params['dispatchId'],
+                    params['reason'],
+                  ),
+        ),
         'claim': _is.MethodConnector(
           name: 'claim',
           params: {

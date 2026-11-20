@@ -1239,6 +1239,43 @@ class _IncidentEndpoint {
     });
   }
 
+  _ida.Future<_ihbu8vwq.IncidentSummary> releaseUnit(
+    _ist.TestSessionBuilder sessionBuilder,
+    int incidentId,
+    int dispatchId,
+    String reason,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'incident',
+            method: 'releaseUnit',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'incident',
+          methodName: 'releaseUnit',
+          parameters: _ist.testObjectToJson({
+            'incidentId': incidentId,
+            'dispatchId': dispatchId,
+            'reason': reason,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_ihbu8vwq.IncidentSummary>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
   _ida.Future<_ihbu8vwq.IncidentSummary> claim(
     _ist.TestSessionBuilder sessionBuilder,
     int incidentId,

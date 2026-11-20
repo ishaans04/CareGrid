@@ -146,7 +146,7 @@ class IncidentEndpoint extends Endpoint {
       policy: policy,
       plan: plan,
       victims: await IncidentViews.summaries(session, victims, twin),
-      allowedActions: _actionsFor(actor.role, incident),
+      allowedActions: _actionsFor(actor.role, incident, dispatches),
       viewerRole: actor.role,
       redactions: [
         ...redactions,
@@ -155,13 +155,18 @@ class IncidentEndpoint extends Endpoint {
     );
   }
 
-  List<String> _actionsFor(UserRole role, Incident i) {
+  List<String> _actionsFor(
+    UserRole role,
+    Incident i, [
+    List<Dispatch> dispatches = const [],
+  ]) {
     if (!i.state.open) return const [];
     final beforeDispatch = i.dispatchedAt == null;
     return switch (role) {
       UserRole.command => [
         'confirmDispatch',
         if (i.ownerName == null) 'claim',
+        if (dispatches.any((d) => d.status.active)) 'releaseUnit',
         'escalate',
         'note',
         'dismiss',
@@ -199,6 +204,35 @@ class IncidentEndpoint extends Endpoint {
       responderCodes == null ? 'confirm-dispatch' : 'override-dispatch',
       target: incident.code,
       detail: responderCodes?.join(', '),
+    );
+    return _summary(session, incident);
+  }
+
+  /// Stand down one assigned unit with a reason; the rest of the response
+  /// continues. A unit that is no longer needed is released for other calls.
+  Future<IncidentSummary> releaseUnit(
+    Session session,
+    int incidentId,
+    int dispatchId,
+    String reason,
+  ) async {
+    final actor = await Access.require(session, {UserRole.command});
+    if (reason.trim().isEmpty) throw badRequest('A reason is required.');
+    var incident = await Orchestrator.load(session, incidentId);
+    Access.requireIncident(actor, incident);
+    incident = await Orchestrator.recallUnit(
+      session,
+      incident,
+      dispatchId,
+      reason.trim(),
+      actor.label,
+    );
+    await Audit.log(
+      session,
+      actor,
+      'recall-unit',
+      target: incident.code,
+      detail: 'dispatch $dispatchId: ${reason.trim()}',
     );
     return _summary(session, incident);
   }

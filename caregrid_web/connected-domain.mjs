@@ -35,6 +35,10 @@ export const clock = (value) =>
     : "Awaiting";
 export const openIncident = (incident) =>
   !["resolved", "dismissed"].includes(incident.state);
+export const activeDispatch = (dispatch) =>
+  ["offered", "acknowledged", "enRoute", "onScene", "care"].includes(
+    dispatch.status,
+  );
 export const proofSteps = (dispatch) =>
   ["offeredAt", "acknowledgedAt", "enRouteAt", "onSceneAt", "careAt"].map(
     (key) => Boolean(dispatch[key]),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:serverpod/serverpod.dart';
 
 import '../core/access.dart';
@@ -24,11 +26,14 @@ class IncidentAgent {
   /// Same-camera persistence that counts as temporal corroboration.
   static const persistenceSeconds = 8;
 
+  /// [targetIncidentId] binds negative evidence to one known incident (a
+  /// member withdrawing their own SOS) instead of searching the zone.
   static Future<SensorEvent> ingest(
     Session session,
     SignalInput input, {
     int? scenarioRunId,
     int? reporterUserId,
+    int? targetIncidentId,
   }) async {
     final now = CampusClock.now();
     final twin = await TwinSnapshot.load(session);
@@ -80,17 +85,14 @@ class IncidentAgent {
     }
 
     if (input.eventType.negative) {
-      final incident = await _applyNegativeEvidence(
+      final (incident, outcome) = await _applyNegativeEvidence(
         session,
         input,
         scenarioRunId,
+        targetIncidentId: targetIncidentId,
+        reporterUserId: reporterUserId,
       );
-      return finish(
-        incident == null
-            ? 'No open incident to update.'
-            : 'Negative evidence for ${incident.code}.',
-        incident,
-      );
+      return finish(outcome, incident);
     }
 
     final family = PolicyEngine.familyOf(input.eventType);
@@ -98,11 +100,12 @@ class IncidentAgent {
         ? input.confidence * 0.85
         : input.confidence;
 
-    final existing = await _findFusionTarget(
+    final (existing, keptSeparate) = await _findFusionTarget(
       session,
       input,
       family,
       scenarioRunId,
+      reporterUserId,
     );
     if (existing != null) {
       final incident = await _fuse(
@@ -132,8 +135,16 @@ class IncidentAgent {
       confidence,
       scenarioRunId: scenarioRunId,
       reporterUserId: reporterUserId,
+      keptSeparateFrom: keptSeparate,
     );
-    return finish('Created ${incident.code}.', incident);
+    return finish(
+      keptSeparate.isEmpty
+          ? 'Created ${incident.code}.'
+          : 'Created ${incident.code}; kept separate from '
+                '${keptSeparate.map((i) => i.code).join(', ')} '
+                '(different reporter and location).',
+      incident,
+    );
   }
 
   // ----------------------------------------------------------------- create
@@ -149,6 +160,7 @@ class IncidentAgent {
     int? scenarioRunId,
     int? reporterUserId,
     int? parentIncidentId,
+    List<Incident> keptSeparateFrom = const [],
   }) async {
     final now = CampusClock.now();
     final hour = input.contextHour ?? CampusClock.localHour(now);
@@ -178,13 +190,17 @@ class IncidentAgent {
             'The agent will not assume continuity it cannot see.',
       if (humanReport)
         'Human report counts as a witness: corroboration satisfied.',
+      if (keptSeparateFrom.isNotEmpty)
+        'Another open request in ${zone.name} '
+            '(${keptSeparateFrom.map((i) => i.code).join(', ')}) came from a '
+            'different reporter and location. Kept separate so neither person '
+            'is hidden; command can coordinate both.',
     ];
 
-    final code = await _nextCode(session);
     var incident = await Incident.db.insertRow(
       session,
       Incident(
-        code: code,
+        code: _provisionalCode(),
         title: '${input.eventType.label} at ${zone.name}',
         eventType: input.eventType,
         family: family,
@@ -211,6 +227,8 @@ class IncidentAgent {
         updatedAt: now,
       ),
     );
+    incident = await _assignCode(session, incident);
+    final code = incident.code;
     await Orchestrator.log(
       session,
       incident,
@@ -291,11 +309,17 @@ class IncidentAgent {
 
   /// Scenario signals only fuse within their own run, so repeated demos never
   /// contaminate each other or real incidents.
-  static Future<Incident?> _findFusionTarget(
+  ///
+  /// Member SOS requests are people, not pixels: two members asking for help
+  /// in the same building are only merged when the request is evidently the
+  /// same one. Returns the fusion target (if any) and the open requests the
+  /// signal was deliberately kept apart from.
+  static Future<(Incident?, List<Incident>)> _findFusionTarget(
     Session session,
     SignalInput input,
     EventFamily family,
     int? scenarioRunId,
+    int? reporterUserId,
   ) async {
     final since = CampusClock.now().subtract(fusionWindow);
     final candidates = await Incident.db.find(
@@ -307,16 +331,58 @@ class IncidentAgent {
           t.scenarioRunId.equals(scenarioRunId),
       orderBy: (t) => t.onsetAt.desc(),
     );
+    final separate = <Incident>[];
     for (final c in candidates.where((c) => c.state.open)) {
-      if (c.family == family) return c;
       // A person down at a collision or crowd surge belongs to that incident.
       final related =
-          family == EventFamily.medical &&
-          (c.family == EventFamily.mobility || c.family == EventFamily.crowd);
-      if (related) return c;
+          c.family == family ||
+          (family == EventFamily.medical &&
+              (c.family == EventFamily.mobility ||
+                  c.family == EventFamily.crowd));
+      if (!related) continue;
+      if (input.source == SignalSource.sos &&
+          !await _sosMayJoin(session, c, input, reporterUserId)) {
+        separate.add(c);
+        continue;
+      }
+      return (c, const <Incident>[]);
     }
-    return null;
+    return (null, separate);
   }
+
+  /// A member SOS joins an open incident only when it is evidently the same
+  /// request: the same member pressing again, the same stated location as
+  /// another member's request, or a camera/sensor detection with no stated
+  /// location that it can corroborate.
+  static Future<bool> _sosMayJoin(
+    Session session,
+    Incident candidate,
+    SignalInput input,
+    int? reporterUserId,
+  ) async {
+    if (reporterUserId != null) {
+      final sameReporter = await SensorEvent.db.count(
+        session,
+        where: (t) =>
+            t.incidentId.equals(candidate.id) &
+            t.reporterUserId.equals(reporterUserId),
+      );
+      if (sameReporter > 0) return true;
+    }
+    final mine = normalizeLocation(input.locationDetail);
+    final theirs = normalizeLocation(candidate.locationDetail);
+    if (candidate.reporterUserId != null) {
+      // Another member's request: same stated place, or keep both visible.
+      return mine.isNotEmpty && mine == theirs;
+    }
+    // A detection without a stated location: the SOS corroborates it unless
+    // the member names a different place than the incident already records.
+    return mine.isEmpty || theirs.isEmpty || mine == theirs;
+  }
+
+  /// Lower-case, punctuation-free, single-spaced location text.
+  static String normalizeLocation(String? text) =>
+      (text ?? '').toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), ' ').trim();
 
   static Future<Incident> _fuse(
     Session session,
@@ -420,11 +486,10 @@ class IncidentAgent {
       session,
       where: (t) => t.parentIncidentId.equals(parent.id),
     );
-    final code = await _nextCode(session);
-    final victim = await Incident.db.insertRow(
+    var victim = await Incident.db.insertRow(
       session,
       Incident(
-        code: code,
+        code: _provisionalCode(),
         title: 'Victim ${victims + 1} of ${parent.code}',
         eventType: input.eventType,
         family: EventFamily.medical,
@@ -457,6 +522,8 @@ class IncidentAgent {
         updatedAt: now,
       ),
     );
+    victim = await _assignCode(session, victim);
+    final code = victim.code;
     await Orchestrator.log(
       session,
       victim,
@@ -515,36 +582,83 @@ class IncidentAgent {
 
   // -------------------------------------------------------- negative evidence
 
-  /// The agent actively looks for evidence against an emergency. Before
-  /// dispatch it may dismiss with a reason; after dispatch it only informs:
-  /// humans own escalation and closure.
-  static Future<Incident?> _applyNegativeEvidence(
+  /// The agent actively looks for evidence against an emergency, but acts
+  /// only on evidence that clearly refers to the incident: a matching
+  /// anonymous track, a reporter withdrawing a request only they made, or the
+  /// single untracked hazard in the zone. Before dispatch, decisive evidence
+  /// dismisses with a reason and ambiguous evidence goes to a human. After
+  /// dispatch it only informs: humans own escalation and closure.
+  static Future<(Incident?, String)> _applyNegativeEvidence(
     Session session,
     SignalInput input,
-    int? scenarioRunId,
-  ) async {
-    final family = PolicyEngine.familyOf(input.eventType);
-    final candidates = await Incident.db.find(
-      session,
-      where: (t) =>
-          t.zoneCode.equals(input.zoneCode) &
-          t.family.equals(family) &
-          t.scenarioRunId.equals(scenarioRunId) &
-          (t.onsetAt > CampusClock.now().subtract(fusionWindow)),
-      orderBy: (t) => t.onsetAt.desc(),
-    );
-    final open = candidates.where((c) => c.state.open).toList();
-    if (open.isEmpty) return null;
-    final incident = input.trackId == null
-        ? open.first
-        : open.firstWhere(
-            (c) => c.trackId == input.trackId,
-            orElse: () => open.first,
-          );
+    int? scenarioRunId, {
+    int? targetIncidentId,
+    int? reporterUserId,
+  }) async {
+    Incident incident;
+    var decisive = false;
+    String? ambiguity;
 
-    final line =
-        '${input.eventType.label}${input.cameraCode == null ? '' : ' on ${input.cameraCode}'}'
-        '${input.detail == null ? '' : ': ${input.detail}'}';
+    if (targetIncidentId != null) {
+      final target = await Incident.db.findById(session, targetIncidentId);
+      if (target == null || !target.state.open) {
+        return (null, 'No open incident to update.');
+      }
+      incident = target;
+      if (input.eventType == EventType.reporterCancelled) {
+        decisive = await _onlyReporter(session, target, reporterUserId);
+        if (!decisive) {
+          ambiguity =
+              'Other sources still support ${target.code}: the withdrawal is '
+              'recorded but cannot stand the incident down on its own.';
+        }
+      } else {
+        decisive = true;
+      }
+    } else {
+      final family = PolicyEngine.familyOf(input.eventType);
+      final candidates = (await Incident.db.find(
+        session,
+        where: (t) =>
+            t.zoneCode.equals(input.zoneCode) &
+            t.family.equals(family) &
+            t.scenarioRunId.equals(scenarioRunId) &
+            (t.onsetAt > CampusClock.now().subtract(fusionWindow)),
+        orderBy: (t) => t.onsetAt.desc(),
+      )).where((c) => c.state.open).toList();
+      if (candidates.isEmpty) return (null, 'No open incident to update.');
+
+      if (input.trackId != null) {
+        // Evidence about one anonymous person only ever concerns that person.
+        final matched = candidates
+            .where((c) => c.trackId == input.trackId)
+            .firstOrNull;
+        if (matched == null) {
+          return (
+            null,
+            'No open incident follows track ${input.trackId}: recorded only, '
+                'no incident changed.',
+          );
+        }
+        if (matched.parentIncidentId != null) {
+          return _victimRecovered(session, matched, input);
+        }
+        incident = matched;
+        decisive = true;
+      } else {
+        incident = candidates.first;
+        decisive = candidates.length == 1 && incident.trackId == null;
+        if (!decisive) {
+          ambiguity = candidates.length > 1
+              ? '${candidates.length} open incidents in this zone: evidence '
+                    'without a track cannot be tied to one of them.'
+              : '${incident.code} follows an anonymous person; evidence '
+                    'without a track cannot confirm it is the same person.';
+        }
+      }
+    }
+
+    final line = _evidenceLine(input);
     incident.negativeEvidence = [...incident.negativeEvidence, line];
     await Orchestrator.log(
       session,
@@ -555,30 +669,107 @@ class IncidentAgent {
       sensitive: input.source == SignalSource.camera,
     );
 
-    if (incident.dispatchedAt == null) {
-      return Orchestrator.dismiss(
+    if (incident.dispatchedAt != null) {
+      await Orchestrator.log(
+        session,
+        incident,
+        TimelineKind.agent,
+        Orchestrator.agentName,
+        'Units are already dispatched: they continue. A human decides closure.',
+      );
+      final saved = await Orchestrator.save(session, incident);
+      return (saved, 'Negative evidence for ${saved.code}; units continue.');
+    }
+    if (decisive) {
+      final dismissed = await Orchestrator.dismiss(
         session,
         incident,
         'Negative evidence (${input.eventType.label.toLowerCase()}): '
         '${input.detail ?? 'emergency no longer supported by evidence'}',
         Orchestrator.agentName,
       );
+      return (dismissed, 'Negative evidence dismissed ${dismissed.code}.');
     }
+    incident
+      ..needsHumanReview = true
+      ..nextAction = 'Conflicting evidence: review, then confirm or stand down';
     await Orchestrator.log(
       session,
       incident,
       TimelineKind.agent,
       Orchestrator.agentName,
-      'Units are already dispatched: they continue. A human decides closure.',
+      '$ambiguity Routed to human review; nothing was dismissed.',
     );
-    return Orchestrator.save(session, incident);
+    final saved = await Orchestrator.save(session, incident);
+    return (saved, 'Negative evidence for ${saved.code} needs human review.');
   }
 
-  static Future<String> _nextCode(Session session) async {
-    final last = await Incident.db.findFirstRow(
+  /// One victim of a multi-casualty incident recovering never stands the
+  /// parent response down; it is recorded on both records.
+  static Future<(Incident?, String)> _victimRecovered(
+    Session session,
+    Incident victim,
+    SignalInput input,
+  ) async {
+    final line = _evidenceLine(input);
+    victim.negativeEvidence = [...victim.negativeEvidence, line];
+    await Orchestrator.log(
       session,
-      orderBy: (t) => t.id.desc(),
+      victim,
+      TimelineKind.signal,
+      input.source.label,
+      'Negative evidence: $line',
+      sensitive: input.source == SignalSource.camera,
     );
-    return 'INC-${1001 + (last?.id ?? 0)}';
+    await Orchestrator.save(session, victim);
+    final parent = await Orchestrator.load(session, victim.parentIncidentId!);
+    await Orchestrator.log(
+      session,
+      parent,
+      TimelineKind.agent,
+      Orchestrator.agentName,
+      '${victim.code}: $line. The response to ${parent.code} continues; '
+      'command decides whether that person still needs care.',
+    );
+    final saved = await Orchestrator.save(session, parent);
+    return (saved, 'Victim ${victim.code} update recorded on ${saved.code}.');
+  }
+
+  /// True when every supporting signal of [incident] is an SOS from
+  /// [reporterUserId], so their withdrawal removes all positive evidence.
+  static Future<bool> _onlyReporter(
+    Session session,
+    Incident incident,
+    int? reporterUserId,
+  ) async {
+    if (reporterUserId == null) return false;
+    final supporting = (await SensorEvent.db.find(
+      session,
+      where: (t) => t.incidentId.equals(incident.id),
+    )).where((e) => !e.eventType.negative).toList();
+    return supporting.isNotEmpty &&
+        supporting.every(
+          (e) =>
+              e.source == SignalSource.sos &&
+              e.reporterUserId == reporterUserId,
+        );
+  }
+
+  static String _evidenceLine(SignalInput input) =>
+      '${input.eventType.label}${input.cameraCode == null ? '' : ' on ${input.cameraCode}'}'
+      '${input.detail == null ? '' : ': ${input.detail}'}';
+
+  static final _random = Random.secure();
+
+  /// Unique placeholder used only between insert and [_assignCode].
+  static String _provisionalCode() =>
+      'NEW-${DateTime.now().microsecondsSinceEpoch}-'
+      '${_random.nextInt(1 << 32).toRadixString(16)}';
+
+  /// Derives the public code from the database id, so concurrent signals can
+  /// never compute the same code.
+  static Future<Incident> _assignCode(Session session, Incident incident) {
+    incident.code = 'INC-${1000 + incident.id!}';
+    return Incident.db.updateRow(session, incident);
   }
 }

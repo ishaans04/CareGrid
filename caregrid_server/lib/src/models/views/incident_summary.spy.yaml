@@ -21,6 +21,10 @@ fields:
   onsetAt: DateTime
   updatedAt: DateTime
   responders: List<String>
+  ### Units committed to the response (excludes declined, timed-out and recalled assignments).
+  unitsAssigned: int
+  ### Committed units with a recorded arrival. Incident state is the furthest unit; this shows the rest.
+  unitsArrived: int
   victimCount: int
   parentIncidentId: int?
   fromScenario: bool

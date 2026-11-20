@@ -203,7 +203,8 @@ Used by command and admin. Tabs over `campus.twin()`:
 | | `escalate(id, note)` | command, medical | escalation +1 |
 | | `addNote(id, note)` | command, medical, admin | timeline note |
 | | `dismiss(id, reason)` | command | recalls units, closes; audit `override-dismiss` |
-| | `resolve(id, outcome)` | command, medical | requires verified arrival; closes |
+| | `releaseUnit(id, dispatchId, reason)` | command | stands down one assigned unit (recorded as recalled, unit released); the rest of the response continues; audit `recall-unit` |
+| | `resolve(id, outcome)` | command, medical | requires verified arrival and recorded care; arrived units complete, units still travelling are recorded as stood down (recalled), never completed |
 | `responder` | `home()` | responder (own unit) | `ResponderHome` |
 | | `acknowledge`, `enRoute`, `arrive`, `startCare` `(dispatchId)` | responder (own task) | Proof-of-Response transitions |
 | | `complete(dispatchId, note?)` | responder | completes own task, unit back to base |
@@ -229,7 +230,7 @@ Used by command and admin. Tabs over `campus.twin()`:
 | | `resetDemo()` | admin | reseeds twin and history; keeps users and audit |
 | `analytics` | `metrics()` | command, admin | `OpsMetrics` |
 
-Errors reach the app as `CareGridException(message, code)` with `code` one of `forbidden`, `notFound`, `invalidState`, `badRequest`.
+Errors reach the app as `CareGridException(message, code)` with `code` one of `forbidden`, `notFound`, `invalidState`, `badRequest`, `conflict` (the incident changed since it was read; review the latest record), `unavailable`, `busy`.
 
 ---
 
@@ -342,9 +343,10 @@ Source: `caregrid_server/lib/src/models/**/*.spy.yaml`, generated into server an
 - **Offline camera:** its signals are suppressed and recorded as untrusted.
 - **Degraded camera:** confidence discounted by 15%.
 - **Fusion:** a signal joins the newest open incident in the same zone within 10 minutes with the same family (a medical event also joins an open mobility or crowd incident), only within the same scenario run (real signals never join simulated incidents).
+- **Member SOS separation:** an SOS joins an open incident only when it is evidently the same request: the same member pressing again, another member naming the same normalized location, or a camera/sensor detection with no conflicting stated location. Otherwise a separate incident is opened and its reasoning names the open request it was kept apart from, so no person is hidden behind another's case.
 - **Corroboration:** adjacent camera, an independent source type, or the same camera still seeing the event 8 s or more after onset. SOS and operator reports count as a witness.
 - **Victims:** a person event with a different anonymous track, or a person event joining a mobility/crowd incident, becomes a linked victim record. The parent's severity rises one level when it has two or more victims or is non-medical; the hospital is pre-alerted.
-- **Negative evidence:** before dispatch the incident is dismissed with the reason; after dispatch it is recorded and units continue.
+- **Negative evidence:** acts only on evidence that clearly refers to the incident: a matching anonymous track, a member withdrawing a request that only they support (bound to that incident, never searched by zone), or the single untracked hazard in the zone. Decisive evidence before dispatch dismisses with the reason; ambiguous evidence (another track, several open incidents, untracked evidence about a tracked person, a withdrawal while cameras still support the case) is recorded and routed to human review. A recovery on a victim's track is recorded on the victim and the parent; the parent response continues. After dispatch, evidence is recorded and units continue.
 - **Decision:** verified when confidence ≥ SOP minimum and (corroborated or not required). Confidence below 70% of the minimum goes to human review. Otherwise the agent waits a 20 s corroboration window, then routes to human review. No matching SOP means human review.
 - **On verification:** hospital pre-alert if the SOP says so; auto-dispatch SOPs dispatch at once; otherwise next action "Confirm & dispatch ..." with the SOP confirmation SLA as deadline.
 
@@ -367,8 +369,10 @@ Most specific match wins: zone-type match +2, hour window +1; ties go to the mor
   - en route in an explicit scenario → simulated progress (elapsed / travel time), rerouting around blocked roads and labelled simulated arrival;
   - en route outside a scenario → no generated route progress or arrival; passing the arrival deadline escalates once until the unit confirms its status;
   - on scene past the care SLA without care → escalation.
-- Decline → unit released, same-type replacement dispatched.
-- Resolve requires a verified arrival; closes active dispatches, returns units to base, closes victim records. Dismiss recalls active dispatches.
+- Decline → unit released, same-type replacement (or SOP fallback type) dispatched. If no replacement exists the case returns to `verified` with a `Re-dispatch` deadline that keeps escalating until an operator acts; it never sits "dispatched" with nobody coming.
+- Resolve requires a verified arrival and recorded care; arrived units complete, units still travelling are recorded as recalled, units return to base, victim records close. Dismiss recalls active dispatches. Command can stand down a single unit mid-response (`releaseUnit`).
+- **Concurrency:** units are reserved under a row lock (check available → insert dispatch → mark assigned in one transaction), so two incidents or operators can never hold the same unit. Every dispatch transition re-reads the dispatch under its row lock: a responder's tap and the watchdog's timeout cannot both win. Incidents carry a `revision`; a save from an outdated copy raises `conflict` instead of overwriting newer state (the watchdog simply re-evaluates on its next pass). Incident codes derive from the record id (`INC-{1000+id}`).
+- Queue rows report `unitsArrived / unitsAssigned`, because the incident state alone is the furthest unit.
 - Queue order: severity, escalation level (high first), nearest deadline, oldest onset.
 
 ### 6.5 Autopilot (simulation runs only)

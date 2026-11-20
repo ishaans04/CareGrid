@@ -410,6 +410,22 @@ class EndpointIncident extends _isc.EndpointRef {
     },
   );
 
+  /// Stand down one assigned unit with a reason; the rest of the response
+  /// continues. A unit that is no longer needed is released for other calls.
+  _ida.Future<_iok9p1hs.IncidentSummary> releaseUnit(
+    int incidentId,
+    int dispatchId,
+    String reason,
+  ) => caller.callServerEndpoint<_iok9p1hs.IncidentSummary>(
+    'incident',
+    'releaseUnit',
+    {
+      'incidentId': incidentId,
+      'dispatchId': dispatchId,
+      'reason': reason,
+    },
+  );
+
   _ida.Future<_iok9p1hs.IncidentSummary> claim(int incidentId) =>
       caller.callServerEndpoint<_iok9p1hs.IncidentSummary>(
         'incident',
@@ -720,8 +736,10 @@ class EndpointSos extends _isc.EndpointRef {
         {},
       );
 
-  /// Reporter withdraws the SOS. This is negative evidence: before dispatch
-  /// the incident is stood down; after dispatch a human decides.
+  /// Reporter withdraws the SOS. This is negative evidence bound to their own
+  /// incident: before dispatch it stands the incident down only if nobody
+  /// else (camera, sensor, another member) supports it; after dispatch a
+  /// human decides.
   _ida.Future<_i5mcf2sk.SosStatus> cancel(
     int incidentId,
     String reason,

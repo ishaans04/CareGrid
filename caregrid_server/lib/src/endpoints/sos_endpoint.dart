@@ -57,8 +57,10 @@ class SosEndpoint extends Endpoint {
     return result;
   }
 
-  /// Reporter withdraws the SOS. This is negative evidence: before dispatch
-  /// the incident is stood down; after dispatch a human decides.
+  /// Reporter withdraws the SOS. This is negative evidence bound to their own
+  /// incident: before dispatch it stands the incident down only if nobody
+  /// else (camera, sensor, another member) supports it; after dispatch a
+  /// human decides.
   Future<SosStatus> cancel(
     Session session,
     int incidentId,
@@ -86,6 +88,7 @@ class SosEndpoint extends Endpoint {
             : reason.trim(),
       ),
       reporterUserId: actor.id,
+      targetIncidentId: incident.id,
     );
     await Audit.log(session, actor, 'sos-cancelled', target: incident.code);
     return _status(

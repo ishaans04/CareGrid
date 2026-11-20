@@ -65,12 +65,14 @@ abstract class Incident
     this.nextDeadline,
     this.nextDeadlineLabel,
     required this.updatedAt,
+    int? revision,
   }) : corroborated = corroborated ?? false,
        observability = observability ?? _iz9xj5p4.Observability.full,
        escalationLevel = escalationLevel ?? 0,
        needsHumanReview = needsHumanReview ?? false,
        hospitalNotified = hospitalNotified ?? false,
-       hospitalReady = hospitalReady ?? false;
+       hospitalReady = hospitalReady ?? false,
+       revision = revision ?? 0;
 
   factory Incident({
     int? id,
@@ -115,6 +117,7 @@ abstract class Incident
     DateTime? nextDeadline,
     String? nextDeadlineLabel,
     required DateTime updatedAt,
+    int? revision,
   }) = _IncidentImpl;
 
   factory Incident.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -227,6 +230,7 @@ abstract class Incident
       updatedAt: _isc.DateTimeJsonExtension.fromJson(
         jsonSerialization['updatedAt'],
       ),
+      revision: jsonSerialization['revision'] as int?,
     );
   }
 
@@ -329,6 +333,9 @@ abstract class Incident
 
   DateTime updatedAt;
 
+  /// Optimistic concurrency: every save must start from the latest revision, so a stale copy (for example a watchdog pass that began before an operator dispatched) can never overwrite newer state.
+  int revision;
+
   /// Returns a shallow copy of this [Incident]
   /// with some or all fields replaced by the given arguments.
   @_isc.useResult
@@ -375,6 +382,7 @@ abstract class Incident
     DateTime? nextDeadline,
     String? nextDeadlineLabel,
     DateTime? updatedAt,
+    int? revision,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -422,6 +430,7 @@ abstract class Incident
       if (nextDeadline != null) 'nextDeadline': nextDeadline?.toJson(),
       if (nextDeadlineLabel != null) 'nextDeadlineLabel': nextDeadlineLabel,
       'updatedAt': updatedAt.toJson(),
+      'revision': revision,
     };
   }
 
@@ -471,6 +480,7 @@ abstract class Incident
       if (nextDeadline != null) 'nextDeadline': nextDeadline?.toJson(),
       if (nextDeadlineLabel != null) 'nextDeadlineLabel': nextDeadlineLabel,
       'updatedAt': updatedAt.toJson(),
+      'revision': revision,
     };
   }
 
@@ -526,6 +536,7 @@ class _IncidentImpl extends Incident {
     DateTime? nextDeadline,
     String? nextDeadlineLabel,
     required DateTime updatedAt,
+    int? revision,
   }) : super._(
          id: id,
          code: code,
@@ -569,6 +580,7 @@ class _IncidentImpl extends Incident {
          nextDeadline: nextDeadline,
          nextDeadlineLabel: nextDeadlineLabel,
          updatedAt: updatedAt,
+         revision: revision,
        );
 
   /// Returns a shallow copy of this [Incident]
@@ -618,6 +630,7 @@ class _IncidentImpl extends Incident {
     Object? nextDeadline = _Undefined,
     Object? nextDeadlineLabel = _Undefined,
     DateTime? updatedAt,
+    int? revision,
   }) {
     return Incident(
       id: id is int? ? id : this.id,
@@ -677,6 +690,7 @@ class _IncidentImpl extends Incident {
           ? nextDeadlineLabel
           : this.nextDeadlineLabel,
       updatedAt: updatedAt ?? this.updatedAt,
+      revision: revision ?? this.revision,
     );
   }
 }

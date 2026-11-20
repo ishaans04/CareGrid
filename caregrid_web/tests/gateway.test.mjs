@@ -35,6 +35,19 @@ async function fixture(t, options = {}) {
         expiresAt: new Date(time + 100_000).toISOString(),
       });
     }
+    if (url.pathname === "/incident/releaseUnit")
+      return Response.json(
+        {
+          className: "CareGridException",
+          data: {
+            __className__: "CareGridException",
+            code: "conflict",
+            message:
+              "INC-1042 changed while this action was being recorded. Review the latest record before acting again.",
+          },
+        },
+        { status: 400 },
+      );
     if (url.pathname === "/account/me")
       return Response.json({
         id: 1,
@@ -247,6 +260,25 @@ test("only explicitly allowed RPC methods and bounded JSON objects are accepted"
     ).status,
     413,
   );
+});
+test("standing down a unit is allowlisted and a stale-record conflict stays a typed 409", async (t) => {
+  const f = await fixture(t);
+  const { cookie } = await f.login();
+  const result = await f.request(
+    "/api/rpc/incident/releaseUnit",
+    "POST",
+    { incidentId: 42, dispatchId: 7, reason: "Not needed" },
+    { cookie },
+  );
+  assert.equal(result.status, 409);
+  const body = await result.json();
+  assert.equal(body.error.code, "conflict");
+  assert.match(body.error.message, /Review the latest record/);
+  assert.deepEqual(f.calls.at(-1).args, {
+    incidentId: 42,
+    dispatchId: 7,
+    reason: "Not needed",
+  });
 });
 test("Serverpod's typed error envelope is translated without exposing internals", async (t) => {
   const f = await fixture(t);

@@ -4,6 +4,7 @@ import {
   duration,
   clock,
   openIncident,
+  activeDispatch,
   proofSteps,
   nextResponderAction,
   navigationFor,
@@ -248,7 +249,7 @@ function overview() {
   }</div><div>${incidentDetail()}</div></div>`;
 }
 function incidentRow(incident) {
-  return `<button class="incident-row ${state.selected === incident.id ? "selected" : ""}" data-action="select-incident" data-id="${incident.id}" data-focus="incident-${incident.id}"><div><div class="row"><span class="eyebrow ${incident.severity === "p0" || incident.severity === "p1" ? "orange" : "cyan"}">${e(incident.code)}</span>${pill(incident.severity.toUpperCase(), "warn")}${incident.fromScenario ? pill("SIMULATION") : ""}</div><strong>${e(incident.title)}</strong><p>${e(incident.zoneName)} · ${e(label(incident.state))}${incident.escalationLevel ? ` · Escalation ${incident.escalationLevel}` : ""}</p></div><span class="muted mono">${clock(incident.onsetAt).slice(0, 5)}</span></button>`;
+  return `<button class="incident-row ${state.selected === incident.id ? "selected" : ""}" data-action="select-incident" data-id="${incident.id}" data-focus="incident-${incident.id}"><div><div class="row"><span class="eyebrow ${incident.severity === "p0" || incident.severity === "p1" ? "orange" : "cyan"}">${e(incident.code)}</span>${pill(incident.severity.toUpperCase(), "warn")}${incident.fromScenario ? pill("SIMULATION") : ""}</div><strong>${e(incident.title)}</strong><p>${e(incident.zoneName)} · ${e(label(incident.state))}${incident.unitsAssigned ? ` · ${incident.unitsArrived}/${incident.unitsAssigned} units arrived` : ""}${incident.escalationLevel ? ` · Escalation ${incident.escalationLevel}` : ""}</p></div><span class="muted mono">${clock(incident.onsetAt).slice(0, 5)}</span></button>`;
 }
 function incidentDetail() {
   const detail = state.detail;
@@ -279,7 +280,7 @@ function incidentDetail() {
                 .map((done) => `<span class="${done ? "done" : ""}"></span>`)
                 .join(
                   "",
-                )}</div><p>ACK ${clock(dispatch.acknowledgedAt)} · Arrival ${clock(dispatch.onSceneAt)} · Care ${clock(dispatch.careAt)}</p><p>${dispatch.arrivalSource ? `Arrival source: ${e(label(dispatch.arrivalSource))}` : `Arrival is unconfirmed · ETA estimate ${duration(dispatch.etaSeconds)}`}${dispatch.stalled ? " · Unit contact required" : ""}</p></article>`,
+                )}</div><p>ACK ${clock(dispatch.acknowledgedAt)} · Arrival ${clock(dispatch.onSceneAt)} · Care ${clock(dispatch.careAt)}</p><p>${dispatch.arrivalSource ? `Arrival source: ${e(label(dispatch.arrivalSource))}` : `Arrival is unconfirmed · ETA estimate ${duration(dispatch.etaSeconds)}`}${dispatch.stalled ? " · Unit contact required" : ""}</p>${dispatch.note ? `<p class="muted small">${e(dispatch.note)}</p>` : ""}${can("releaseUnit") && activeDispatch(dispatch) ? `<div class="actions" style="margin-top:12px">${button("Stand down this unit", "release-unit", { id: dispatch.id })}</div>` : ""}</article>`,
           )
           .join("")}</div>`
       : ""
@@ -733,6 +734,18 @@ document.addEventListener("click", async (event) => {
         "The backend will seek an alternative unit and escalate the failed assignment.",
       action: (message) =>
         rpc("responder", "decline", { dispatchId: numericId, reason: message }),
+    },
+    "release-unit": {
+      title: "Stand down this unit",
+      description:
+        "The unit is released for other calls and its assignment is recorded as recalled. The rest of the response continues.",
+      submit: "Stand down unit",
+      action: (message) =>
+        rpc("incident", "releaseUnit", {
+          incidentId: state.selected,
+          dispatchId: numericId,
+          reason: message,
+        }),
     },
     "cancel-sos": {
       title: "Withdraw your request",
