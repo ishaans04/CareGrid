@@ -8,6 +8,8 @@ Prepared 12 November 2026 (Asia/Kolkata). Founders: Hriday Vig and Ishaan Sharma
 
 ## Start here
 
+**Demo preparation, 20 November:** [current operations](DEMO-OPERATIONS.md) records the two successful Google role bindings, team alert routing, corrected Terraform settings and observed credit balance. The [repository README](../../README.md) is the current product entry point; older dated research remains source material.
+
 | Deliverable | Purpose |
 | --- | --- |
 | [Solution architecture](SOLUTION-ARCHITECTURE.md) | Submission narrative, Google architecture, data flow, AI boundaries, resilience, migration and delivery plan |
@@ -22,6 +24,7 @@ Prepared 12 November 2026 (Asia/Kolkata). Founders: Hriday Vig and Ishaan Sharma
 | [Private evidence broker](GOOGLE-EVIDENCE.md) | Command-only image attachments, GCS generation/digest checks, optional bucket permissions and live acceptance gates |
 | [Google infrastructure](../../infra/google/README.md) | Validated Terraform, phased deployment, build pipeline and recovery runbook; applied to `caregrid-staging` through the services stage |
 | [Google provisioning record](GOOGLE-PROVISIONING.md) | Live account/project, billing, Firebase, private state, local tools, planned hosting and ordered continuation for deployment agents |
+| [Demo operations](DEMO-OPERATIONS.md) | Team Google access, reusable binding helper, current Terraform inputs, team alerts and credit expiry |
 | [Connected MVP](CONNECTED-MVP.md) | Working local architecture, response fixes, role boundaries and launch instructions |
 | [Visual assets](../../assets/pitch/README.md) | Architecture exports and product captures for the deck |
 | [Interactive submission prototype](../../caregrid_web/README.md) | Locally runnable console matching the Claude Design visual direction |

@@ -57,13 +57,19 @@ Web-only release of the UI redesign (`UI-redesign` fast-forwarded into `main` at
 
 An external request to `/healthz` returns 404 because Google's front end reserves that path. The container probes use it internally and pass.
 
-### Not yet verified
+### Team access and operations update — 20 November 2026, 22:45 IST
 
-- **Real sign-in.** Zero Firebase users exist. The first Google sign-in on the web URL creates one; then bind it with `bootstrap bind HANDLE FIREBASE_UID` (runbook step 8). One Google account takes one handle, and a bound handle cannot move to another account.
+Both existing Google identities were successfully bound through the private bootstrap job: Ishaan to `niet.command` (`caregrid-demo-bootstrap-6scl4`), Hriday to `niet.admin` (`caregrid-demo-bootstrap-kvr7x`). The missing ignored Bash helper is replaced by the tracked [PowerShell binding helper](../../scripts/bind-google-user.ps1). No authentication, campus or role restriction was removed.
+
+Both local Terraform configurations now retain the services stage and current web digest. The refreshed safety plan reported no changes. A subsequent reviewed plan changed only the two alert policies to attach both requested team email channels: **0 add / 2 change / 0 destroy**. The same channels are linked to the existing $5 budget. The owner can view billing: the console showed $4.85 credit remaining, ending 21 November. See [demo operations](DEMO-OPERATIONS.md) for the dated evidence, limitations and operator commands.
+
+### Remaining acceptance checks
+
+- **Browser sign-in after binding.** Both Google user records and successful membership-binding jobs are verified. Each teammate must still reload the console and exercise their own browser sign-in. One Google account takes one handle, and a bound handle cannot move to another account.
 - Role and campus denial with real tokens, sign-out, reauthentication and membership disable.
 - Watchdog restart and overdue recovery with a live incident.
-- Alert delivery: the alert policies exist but have no notification channels.
-- Spend. The always-on SQL instance and watchdog run from 16:32 IST. The deploying operator has no billing-account role, so check Billing → Reports from the owner account before the 21 November credit expiry.
+- Alert delivery: both team email channels are now attached to the API/watchdog policies and budget. Confirm actual receipt in both inboxes; channel configuration alone is not delivery evidence.
+- Spend. The always-on SQL instance and watchdog run from 16:32 IST. The owner has billing access; recheck Reports and Credits before the 21 November expiry because reporting lags incurred usage.
 
 ### Second operator
 

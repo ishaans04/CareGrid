@@ -1,6 +1,8 @@
 # CareGrid Google deployment foundation
 
-20 November 2026. **Application module prepared, not applied.** The billed `caregrid-staging` project, Firebase setup, budget and private state bucket now exist. A real GCS-backed foundation plan passed; no application workloads or SQL instance have been created. See the [provisioning record](../../docs/buildathon/GOOGLE-PROVISIONING.md) for exact identifiers, local tooling and remaining deployment work. Planning and mocked checks do not establish a working deployment. This module is for the synthetic staging MVP; the broader [solution architecture](../../docs/buildathon/SOLUTION-ARCHITECTURE.md) remains the pilot/expansion design.
+20 November 2026. **Applied through the services stage on `caregrid-staging`.** Cloud SQL, the private API/watchdog, maintenance jobs and the public browser gateway are live. The finalized web UI is revision `caregrid-demo-web-00002-pgb`. See the [provisioning record](../../docs/buildathon/GOOGLE-PROVISIONING.md) for release identifiers and [demo operations](../../docs/buildathon/DEMO-OPERATIONS.md) for role bindings, email alerts, credit expiry and safe local settings. The broader [solution architecture](../../docs/buildathon/SOLUTION-ARCHITECTURE.md) remains the pilot/expansion design.
+
+**Existing staging:** retain `rollout_stage="services"`, `migration_verified=true`, `public_web=true` and the current immutable image digests. The initial-rollout examples below describe a new environment; moving the existing deployment back to `foundation` or `jobs` plans service deletion. A refreshed plan with corrected local inputs matched live infrastructure before the notification-only update.
 
 ## What is concrete
 
