@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f3eee7" />
+    <meta name="theme-color" content="#07080a" />
     <meta
       name="description"
       content="CareGrid is the response operating system for campuses: from the first signal to verified care, every second accounted for."
@@ -12,14 +12,14 @@
     <link rel="icon" type="image/svg+xml" href="assets/mark.svg" />
     <link
       rel="preload"
-      href="assets/fonts/instrument-sans.woff2"
+      href="assets/fonts/archivo.woff2"
       as="font"
       type="font/woff2"
       crossorigin
     />
     <link
       rel="preload"
-      href="assets/fonts/plex-mono-500.woff2"
+      href="assets/fonts/geist.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -31,7 +31,8 @@
   <body>
     <a class="skip" href="#main">Skip to content</a>
 
-    <!-- Shared campus drawing. Reused by the exploded hero and the replay. -->
+    <!-- Shared campus drawing (top-down, 600 × 600). The hero projects it
+         isometrically with a flat SVG matrix; the replay shows it from above. -->
     <svg width="0" height="0" class="defs" aria-hidden="true" focusable="false">
       <defs>
         <pattern
@@ -40,7 +41,12 @@
           height="30"
           patternUnits="userSpaceOnUse"
         >
-          <path d="M30 0H0V30" fill="none" stroke="#ece5da" stroke-width="1" />
+          <path
+            d="M30 0H0V30"
+            fill="none"
+            stroke="#ffffff"
+            stroke-opacity=".045"
+          />
         </pattern>
         <pattern
           id="hatch"
@@ -51,13 +57,17 @@
         >
           <path
             d="M0 0V6"
-            stroke="#b4441b"
+            stroke="#ff5a1f"
             stroke-width="1.4"
-            stroke-opacity=".55"
+            stroke-opacity=".6"
           />
         </pattern>
+        <radialGradient id="floor-shadow">
+          <stop offset="0" stop-color="#000" stop-opacity=".75" />
+          <stop offset="1" stop-color="#000" stop-opacity="0" />
+        </radialGradient>
         <symbol id="plan" viewBox="0 0 600 600">
-          <rect x="6" y="6" width="588" height="588" rx="30" fill="#faf7f2" />
+          <rect x="6" y="6" width="588" height="588" rx="30" fill="#0e1014" />
           <rect
             x="6"
             y="6"
@@ -73,7 +83,7 @@
             height="587"
             rx="29.5"
             fill="none"
-            stroke="#d8cec1"
+            stroke="#2a2f37"
           />
           <rect
             x="150"
@@ -81,7 +91,7 @@
             width="150"
             height="136"
             rx="14"
-            fill="#e3ebd8"
+            fill="#0e1d16"
           />
           <rect
             x="480"
@@ -89,8 +99,8 @@
             width="66"
             height="154"
             rx="33"
-            fill="#e3ebd8"
-            stroke="#c9d6ba"
+            fill="#0e1d16"
+            stroke="#1e3b2d"
           />
           <rect
             x="495"
@@ -99,22 +109,22 @@
             height="114"
             rx="18"
             fill="none"
-            stroke="#c9d6ba"
+            stroke="#1e3b2d"
           />
           <g fill="none" stroke-linecap="round">
             <path
               d="M42 128H558M42 318H558M42 492H558M132 42V558M318 42V558M462 42V558"
-              stroke="#e7dfd3"
+              stroke="#181b21"
               stroke-width="22"
             />
             <path
               d="M42 128H558M42 318H558M42 492H558M132 42V558M318 42V558M462 42V558"
-              stroke="#fffdf9"
+              stroke="#2b3038"
               stroke-width="1.2"
               stroke-dasharray="6 7"
             />
           </g>
-          <g fill="#ece5db" stroke="#c4b6a6" stroke-width="1.2">
+          <g fill="#15181e" stroke="#2c323b" stroke-width="1.2">
             <path d="M152 150H296V296H254V188H194V296H152Z" />
             <rect x="54" y="150" width="58" height="146" rx="4" />
             <path
@@ -132,14 +142,14 @@
             <rect x="54" y="340" width="58" height="62" rx="4" />
             <rect x="54" y="416" width="58" height="56" rx="4" />
           </g>
-          <rect x="360" y="174" width="60" height="98" fill="#e3ebd8" />
-          <g fill="none" stroke="#cfc3b5" stroke-dasharray="3 4">
+          <rect x="360" y="174" width="60" height="98" fill="#0e1d16" />
+          <g fill="none" stroke="#23282f" stroke-dasharray="3 4">
             <rect x="152" y="512" width="144" height="34" rx="4" />
             <rect x="338" y="512" width="104" height="34" rx="4" />
             <rect x="482" y="512" width="62" height="34" rx="4" />
             <rect x="54" y="512" width="58" height="34" rx="4" />
           </g>
-          <g fill="#b9c9a8">
+          <g fill="#173528">
             <circle cx="176" cy="366" r="7" />
             <circle cx="198" cy="378" r="5" />
             <circle cx="272" cy="364" r="8" />
@@ -149,20 +159,20 @@
           </g>
           <path
             d="M507 390h12v10h10v12h-10v10h-12v-10h-10v-12h10z"
-            fill="#2f6a43"
+            fill="#3fe0a1"
           />
           <path
             d="M304 46H332"
-            stroke="#b4441b"
+            stroke="#ffc247"
             stroke-width="4"
             stroke-dasharray="4 3"
           />
           <g
-            font-family="IBM Plex Mono, monospace"
+            font-family="Geist Mono, monospace"
             font-size="8.5"
             font-weight="500"
             letter-spacing="1.1"
-            fill="#75675c"
+            fill="#5f666f"
           >
             <text x="162" y="173">BIRCH HOSTEL</text>
             <text x="64" y="226">ASTER</text>
@@ -177,9 +187,27 @@
             <text x="489" y="446">HOSPITAL</text>
             <text x="60" y="375">CONTROL</text>
             <text x="66" y="448">CEDAR</text>
-            <text x="490" y="226" fill="#5d7a4f">FIELD</text>
-            <text x="186" y="414" fill="#5d7a4f">CENTRAL GREEN</text>
-            <text x="338" y="40" fill="#b4441b">N. GATE CLOSED</text>
+            <text x="490" y="226" fill="#3d7a5c">FIELD</text>
+            <text x="186" y="414" fill="#3d7a5c">CENTRAL GREEN</text>
+            <text x="338" y="40" fill="#ffc247">N. GATE CLOSED</text>
+          </g>
+        </symbol>
+        <!-- Isometric projection of the plate outline into an 880 × 540 layer. -->
+        <symbol id="iso-plane" viewBox="0 0 880 540">
+          <g
+            transform="translate(440 250) scale(1 .56) rotate(-38) translate(-300 -300)"
+          >
+            <rect
+              x="6"
+              y="6"
+              width="588"
+              height="588"
+              rx="30"
+              fill="#ffffff"
+              fill-opacity=".028"
+              stroke="#ffffff"
+              stroke-opacity=".16"
+            />
           </g>
         </symbol>
       </defs>
@@ -188,7 +216,7 @@
     <header class="gbar" data-gbar>
       <div class="gbar-inner">
         <a class="gbar-brand" href="/" aria-label="CareGrid home">
-          <img src="assets/mark.svg" alt="" width="26" height="26" />
+          <img src="assets/mark.svg" alt="" width="24" height="24" />
           <span>CareGrid</span>
         </a>
         <nav class="gbar-nav" aria-label="Sections" data-spy>
@@ -200,7 +228,7 @@
           <a class="gbar-link" href="#roles">Roles</a>
         </nav>
         <div class="gbar-end">
-          <a class="btn ghost hide-sm" href="index.html">Interactive demo</a>
+          <a class="btn hide-sm" href="/demo">Interactive demo</a>
           <a class="btn primary" href="/console">Sign in</a>
         </div>
       </div>
@@ -222,18 +250,18 @@
             </p>
             <h1 id="hero-title" class="display">
               <span class="line"
-                ><span style="--d: 0.12s">Every second,</span></span
+                ><span style="--d: 0.1s">Every second,</span></span
               >
               <span class="line"
-                ><span style="--d: 0.22s"><em>accounted for.</em></span></span
+                ><span style="--d: 0.2s"><em>accounted for.</em></span></span
               >
             </h1>
-            <p class="hero-lead rise" style="--d: 0.38s">
+            <p class="hero-lead rise" style="--d: 0.36s">
               CareGrid turns the first alarm on campus into an owned incident, a
               dispatched unit into a recorded arrival, and a closed case into
               proof that care was delivered.
             </p>
-            <div class="hero-actions rise" style="--d: 0.48s">
+            <div class="hero-actions rise" style="--d: 0.46s">
               <a class="btn primary lg" href="/console">
                 Enter the console
                 <svg
@@ -248,15 +276,8 @@
                   <path d="M5 12h14m-5-5 5 5-5 5" />
                 </svg>
               </a>
-              <a class="btn lg" href="index.html"
-                >Explore the interactive demo</a
-              >
+              <a class="btn lg" href="/demo">Explore the interactive demo</a>
             </div>
-            <p class="hero-meta rise" style="--d: 0.58s">
-              <span>Running on Google Cloud staging</span>
-              <span>Two campuses</span>
-              <span>Synthetic data only</span>
-            </p>
           </div>
 
           <ol
@@ -314,21 +335,78 @@
 
           <div class="scene" aria-hidden="true">
             <div class="rig" data-rig>
-              <div class="shadow"></div>
-              <i class="edge"></i><i class="edge"></i><i class="edge"></i
-              ><i class="edge"></i>
-              <div class="layer l0">
-                <svg viewBox="0 0 600 600"><use href="#plan" /></svg>
-              </div>
-              <div class="layer l1">
-                <i class="plane"></i>
-                <svg viewBox="0 0 600 600">
+              <svg class="floor" viewBox="0 0 880 540">
+                <ellipse
+                  cx="440"
+                  cy="300"
+                  rx="430"
+                  ry="215"
+                  fill="url(#floor-shadow)"
+                />
+              </svg>
+              <!-- Base: slab edge and campus plan -->
+              <svg class="layer" viewBox="0 0 880 540">
+                <g stroke="#20252c">
+                  <g transform="translate(0 18)">
+                    <g
+                      transform="translate(440 250) scale(1 .56) rotate(-38) translate(-300 -300)"
+                    >
+                      <rect
+                        x="6"
+                        y="6"
+                        width="588"
+                        height="588"
+                        rx="30"
+                        fill="#08090b"
+                      />
+                    </g>
+                  </g>
+                  <g transform="translate(0 12)">
+                    <g
+                      transform="translate(440 250) scale(1 .56) rotate(-38) translate(-300 -300)"
+                    >
+                      <rect
+                        x="6"
+                        y="6"
+                        width="588"
+                        height="588"
+                        rx="30"
+                        fill="#0b0c10"
+                      />
+                    </g>
+                  </g>
+                  <g transform="translate(0 6)">
+                    <g
+                      transform="translate(440 250) scale(1 .56) rotate(-38) translate(-300 -300)"
+                    >
+                      <rect
+                        x="6"
+                        y="6"
+                        width="588"
+                        height="588"
+                        rx="30"
+                        fill="#101217"
+                      />
+                    </g>
+                  </g>
+                </g>
+                <g
+                  transform="translate(440 250) scale(1 .56) rotate(-38) translate(-300 -300)"
+                >
+                  <use href="#plan" width="600" height="600" />
+                </g>
+              </svg>
+              <!-- Sensing -->
+              <svg class="layer" viewBox="0 0 880 540">
+                <use href="#iso-plane" />
+                <g
+                  transform="translate(440 250) scale(1 .56) rotate(-38) translate(-300 -300)"
+                >
                   <g
-                    fill="#e2be5a"
-                    fill-opacity=".2"
-                    stroke="#d9b24a"
-                    stroke-opacity=".7"
-                    stroke-width="1"
+                    fill="#ffc247"
+                    fill-opacity=".16"
+                    stroke="#ffc247"
+                    stroke-opacity=".55"
                   >
                     <path d="M300 158 224 170 246 226Z" />
                     <path d="M300 302 252 238 284 230Z" />
@@ -337,7 +415,7 @@
                     <path d="M466 486 520 452 528 480Z" />
                     <path d="M326 62 270 92 290 112Z" />
                   </g>
-                  <g fill="#2b211b" stroke="#edd27e" stroke-width="2.4">
+                  <g fill="#07080a" stroke="#ffc247" stroke-width="2.6">
                     <circle cx="300" cy="158" r="5.5" />
                     <circle cx="300" cy="302" r="5.5" />
                     <circle cx="446" cy="140" r="5.5" />
@@ -350,45 +428,48 @@
                     cy="444"
                     r="24"
                     fill="url(#hatch)"
-                    stroke="#b4441b"
+                    stroke="#ff5a1f"
                     stroke-dasharray="4 3"
                   />
-                  <g fill="#edd27e" stroke="#2b211b" stroke-width="1.6">
+                  <g fill="#8fb4ff" stroke="#07080a" stroke-width="1.6">
                     <path d="M225 324l7 7-7 7-7-7Z" />
                     <path d="M392 500l7 7-7 7-7-7Z" />
                     <path d="M94 122l7 7-7 7-7-7Z" />
                   </g>
                   <g
-                    font-family="IBM Plex Mono, monospace"
+                    font-family="Geist Mono, monospace"
                     font-size="9"
                     font-weight="500"
                     letter-spacing=".8"
-                    fill="#2b211b"
+                    fill="#c9ced4"
                   >
                     <text x="306" y="150">CAM-B07</text>
                     <text x="306" y="296">CAM-B08</text>
-                    <text x="236" y="342">SOS</text>
-                    <text x="58" y="486" fill="#b4441b">BLIND SPOT</text>
+                    <text x="236" y="342" fill="#8fb4ff">SOS</text>
+                    <text x="58" y="486" fill="#ff7d4a">BLIND SPOT</text>
                   </g>
-                </svg>
-              </div>
-              <div class="layer l2">
-                <i class="plane"></i>
-                <svg viewBox="0 0 600 600">
+                </g>
+              </svg>
+              <!-- Decision -->
+              <svg class="layer" viewBox="0 0 880 540">
+                <use href="#iso-plane" />
+                <g
+                  transform="translate(440 250) scale(1 .56) rotate(-38) translate(-300 -300)"
+                >
                   <rect
                     x="242"
                     y="182"
                     width="66"
                     height="66"
                     rx="12"
-                    fill="#b4441b"
-                    fill-opacity=".08"
-                    stroke="#b4441b"
+                    fill="#ff5a1f"
+                    fill-opacity=".1"
+                    stroke="#ff5a1f"
                     stroke-dasharray="5 4"
                   />
                   <g
-                    stroke="#b4441b"
-                    stroke-opacity=".55"
+                    stroke="#ff5a1f"
+                    stroke-opacity=".6"
                     stroke-dasharray="3 5"
                     stroke-width="1.4"
                     fill="none"
@@ -402,54 +483,56 @@
                     cy="214"
                     r="17"
                     fill="none"
-                    stroke="#b4441b"
-                    stroke-opacity=".5"
+                    stroke="#ff5a1f"
+                    stroke-opacity=".55"
                   />
-                  <circle cx="275" cy="214" r="7" fill="#b4441b" />
+                  <circle cx="275" cy="214" r="7" fill="#ff5a1f" />
                   <g
-                    font-family="IBM Plex Mono, monospace"
+                    font-family="Geist Mono, monospace"
                     font-size="9"
                     font-weight="500"
                     letter-spacing=".6"
                   >
                     <g transform="translate(470 310)">
-                      <rect width="84" height="20" rx="10" fill="#2b211b" />
-                      <text x="11" y="13.5" fill="#f3eee7">A2 · 1M 25S</text>
+                      <rect width="84" height="20" rx="10" fill="#f2f3ef" />
+                      <text x="11" y="13.5" fill="#07080a">A2 · 1M 25S</text>
                     </g>
                     <g transform="translate(470 118)">
                       <rect
                         width="84"
                         height="20"
                         rx="10"
-                        fill="#faf7f2"
-                        stroke="#b9ab9b"
+                        fill="#14171c"
+                        stroke="#373d47"
                       />
-                      <text x="11" y="13.5" fill="#5a4d43">A1 · 2M 42S</text>
+                      <text x="11" y="13.5" fill="#a9afb7">A1 · 2M 42S</text>
                     </g>
                     <g transform="translate(140 204)">
                       <rect
                         width="78"
                         height="20"
                         rx="10"
-                        fill="#faf7f2"
-                        stroke="#b9ab9b"
+                        fill="#14171c"
+                        stroke="#373d47"
                       />
-                      <text x="10" y="13.5" fill="#5a4d43">DESK · 24S</text>
+                      <text x="10" y="13.5" fill="#a9afb7">DESK · 24S</text>
                     </g>
-                    <text x="246" y="270" fill="#b4441b">
+                    <text x="246" y="270" fill="#ff7d4a">
                       SOP-HST-MED-NIGHT
                     </text>
                   </g>
-                </svg>
-                <span class="pulse" style="left: 45.83%; top: 35.67%"></span>
-              </div>
-              <div class="layer l3">
-                <i class="plane"></i>
-                <svg viewBox="0 0 600 600">
+                </g>
+              </svg>
+              <!-- Response -->
+              <svg class="layer" viewBox="0 0 880 540">
+                <use href="#iso-plane" />
+                <g
+                  transform="translate(440 250) scale(1 .56) rotate(-38) translate(-300 -300)"
+                >
                   <path
                     d="M512 406H462V318H318V214H296"
                     fill="none"
-                    stroke="#2b211b"
+                    stroke="#f2f3ef"
                     stroke-width="7"
                     stroke-linejoin="round"
                     stroke-linecap="round"
@@ -457,42 +540,45 @@
                   <path
                     d="M512 406H462V318H318V214H296"
                     fill="none"
-                    stroke="#edd27e"
+                    stroke="#ff5a1f"
                     stroke-width="2"
                     stroke-dasharray="1 7"
                     stroke-linecap="round"
                   />
                   <path
                     d="M292 214V188l16 6-16 6"
-                    fill="#b4441b"
-                    stroke="#b4441b"
+                    fill="#ff5a1f"
+                    stroke="#ff5a1f"
                     stroke-width="2"
                     stroke-linejoin="round"
                   />
                   <g transform="translate(390 318)">
                     <circle
                       r="13"
-                      fill="#2b211b"
-                      stroke="#faf7f2"
+                      fill="#f2f3ef"
+                      stroke="#07080a"
                       stroke-width="3"
                     />
                     <path
                       d="m-6 4 6-11 6 11-6-3Z"
-                      fill="#edd27e"
+                      fill="#07080a"
                       transform="rotate(-90)"
                     />
                   </g>
-                  <g
-                    font-family="IBM Plex Mono, monospace"
+                  <text
+                    x="364"
+                    y="300"
+                    font-family="Geist Mono, monospace"
                     font-size="9"
                     font-weight="500"
                     letter-spacing=".8"
-                    fill="#2b211b"
+                    fill="#f2f3ef"
                   >
-                    <text x="364" y="300">AMB-A2 · EN ROUTE</text>
-                  </g>
-                </svg>
-              </div>
+                    AMB-A2 · EN ROUTE
+                  </text>
+                </g>
+              </svg>
+              <span class="pulse" style="left: 41.7%; top: 40.9%"></span>
             </div>
           </div>
 
@@ -501,13 +587,36 @@
             style="--d: 0.9s"
             href="#response"
             aria-label="Scroll to the response replay"
-          >
-            <span>Scroll to take it apart</span><i></i>
-          </a>
+            ><span>Scroll to take it apart</span><i></i
+          ></a>
         </div>
       </section>
 
-      <!-- 02 · Scroll-scrubbed replay of one response -->
+      <!-- Live record ticker -->
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker-track">
+          <span><b>02:17:00</b> CAM-B07 · Person down · Birch Hostel</span
+          ><span><b>02:17:02</b> CAM-B08 · Corroborated</span
+          ><span
+            ><b>02:17:05</b> SOP-HST-MED-NIGHT · Human decision required</span
+          ><span><b>02:17:08</b> Dispatch approved · Desk + AMB-A2</span
+          ><span><b>02:17:13</b> AMB-A2 · Acknowledged</span
+          ><span><b>02:18:22</b> AMB-A2 · Arrival recorded</span
+          ><span><b>02:18:28</b> Care started</span
+          ><span><b>02:18:40</b> Closed with outcome</span>
+          <span><b>02:17:00</b> CAM-B07 · Person down · Birch Hostel</span
+          ><span><b>02:17:02</b> CAM-B08 · Corroborated</span
+          ><span
+            ><b>02:17:05</b> SOP-HST-MED-NIGHT · Human decision required</span
+          ><span><b>02:17:08</b> Dispatch approved · Desk + AMB-A2</span
+          ><span><b>02:17:13</b> AMB-A2 · Acknowledged</span
+          ><span><b>02:18:22</b> AMB-A2 · Arrival recorded</span
+          ><span><b>02:18:28</b> Care started</span
+          ><span><b>02:18:40</b> Closed with outcome</span>
+        </div>
+      </div>
+
+      <!-- 02 · Scroll-scrubbed replay -->
       <section
         class="replay"
         id="response"
@@ -632,21 +741,35 @@
         </div>
       </section>
 
-      <!-- 03 · Proof of response -->
-      <section class="night" id="proof" aria-labelledby="proof-title">
+      <!-- 03 · Proof of response (inverted) -->
+      <section class="bone proof" id="proof" aria-labelledby="proof-title">
         <div class="wrap">
-          <p class="eyebrow on-dark" data-reveal>
-            <b>03</b> / Proof of response
-          </p>
+          <p class="eyebrow" data-reveal><b>03</b> / Proof of response</p>
           <h2 id="proof-title" class="statement" data-reveal>
             A notification is <em>not</em> a response.
           </h2>
-          <p class="night-lead" data-reveal>
-            Most alerting tools stop at “sent”. CareGrid keeps every assignment
-            open until the people on the ground record each step, and an
-            incident cannot close until care is on the record.
-          </p>
-          <ol class="proof-steps" data-reveal-group>
+          <div class="proof-intro">
+            <p class="lead" data-reveal>
+              Most alerting tools stop at “sent”. CareGrid keeps every
+              assignment open until the people on the ground record each step,
+              and an incident cannot close until care is on the record.
+            </p>
+            <dl class="figures" data-reveal>
+              <div>
+                <dt>Milestones per unit</dt>
+                <dd>5</dd>
+              </div>
+              <div>
+                <dt>Owner per incident</dt>
+                <dd>1</dd>
+              </div>
+              <div>
+                <dt>Automatic closures</dt>
+                <dd>0</dd>
+              </div>
+            </dl>
+          </div>
+          <ol class="proof-steps">
             <li>
               <span>01</span>
               <h3>Dispatch approved</h3>
@@ -680,29 +803,6 @@
               <p>Only once every required step is on the record.</p>
             </li>
           </ol>
-          <div class="principles">
-            <div data-reveal>
-              <strong>One owner</strong>
-              <p>
-                Every incident has a named operator from the moment it is
-                claimed.
-              </p>
-            </div>
-            <div data-reveal>
-              <strong>Escalation on silence</strong>
-              <p>
-                A missed acknowledgement raises a deadline, not a quiet gap in
-                the queue.
-              </p>
-            </div>
-            <div data-reveal>
-              <strong>No automatic closure</strong>
-              <p>
-                The server refuses to close a case while a required milestone is
-                missing.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -718,7 +818,7 @@
             <h2 id="readiness-title" class="section-title" data-reveal>
               Rehearse the bad night <em>before it happens.</em>
             </h2>
-            <p class="section-lead" data-reveal>
+            <p class="lead" data-reveal>
               Failures rarely arrive alone. CareGrid replays them together
               against the campus twin and shows where the response breaks,
               without touching a real gate, unit or procedure.
@@ -761,8 +861,8 @@
           </div>
           <div class="lab-result" data-reveal aria-live="polite">
             <div class="lab-top">
-              <span class="eyebrow">Predicted arrival</span>
-              <span class="verdict" data-verdict>Objective missed</span>
+              <span class="eyebrow">Predicted arrival</span
+              ><span class="verdict" data-verdict>Objective missed</span>
             </div>
             <p class="lab-time tnum" data-time>6m 41s</p>
             <p class="lab-objective">
@@ -772,7 +872,7 @@
               <div class="lab-track">
                 <i data-total></i><b class="lab-sla" aria-hidden="true"></b>
               </div>
-              <div class="lab-ticks mono">
+              <div class="lab-ticks">
                 <span>0</span><span>5m objective</span><span>7m</span>
               </div>
             </div>
@@ -792,11 +892,11 @@
           <h2 id="roles-title" class="section-title" data-reveal>
             One record. <em>Five vantage points.</em>
           </h2>
-          <p class="section-lead" data-reveal>
+          <p class="lead" data-reveal>
             Each person sees what their part of the response requires, and
             nothing more. The server enforces every boundary.
           </p>
-          <div class="role-grid">
+          <div class="role-table">
             <article data-reveal>
               <span class="role-code">CMD</span>
               <h3>Command</h3>
@@ -923,15 +1023,30 @@
         </div>
       </section>
 
-      <!-- Closing -->
+      <!-- Closing poster -->
       <section class="closing" aria-labelledby="closing-title">
         <div class="wrap">
-          <h2 id="closing-title" class="display-2" data-reveal>
-            See the response <em>for yourself.</em>
+          <p class="eyebrow">CareGrid · Team Duality</p>
+          <h2 id="closing-title" class="poster" data-reveal>
+            See the response<br />for yourself.
           </h2>
-          <div class="hero-actions" data-reveal>
-            <a class="btn primary lg" href="/console">Enter the console</a>
-            <a class="btn lg" href="index.html">Explore the interactive demo</a>
+          <div class="closing-actions" data-reveal>
+            <a class="btn lg ink" href="/console"
+              >Enter the console
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14m-5-5 5 5-5 5" /></svg
+            ></a>
+            <a class="btn lg outline-ink" href="/demo"
+              >Explore the interactive demo</a
+            >
           </div>
         </div>
       </section>
@@ -940,7 +1055,7 @@
     <footer class="foot">
       <div class="wrap foot-grid">
         <a class="gbar-brand" href="/"
-          ><img src="assets/mark.svg" alt="" width="26" height="26" /><span
+          ><img src="assets/mark.svg" alt="" width="24" height="24" /><span
             >CareGrid</span
           ></a
         >
@@ -950,7 +1065,7 @@
           services.
         </p>
         <nav aria-label="Footer">
-          <a href="/console">Console</a><a href="index.html">Interactive demo</a
+          <a href="/console">Console</a><a href="/demo">Interactive demo</a
           ><a href="#platform">Back to top</a>
         </nav>
       </div>

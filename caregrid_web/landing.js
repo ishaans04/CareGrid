@@ -39,17 +39,17 @@ const spyObserver = new IntersectionObserver(
   { rootMargin: "-50% 0px -50% 0px" },
 );
 for (const section of $$("main > section")) spyObserver.observe(section);
-// The bar turns to smoked glass while a dark section sits beneath it.
+// The bar turns to light glass while a bone section sits beneath it.
 const toneObserver = new IntersectionObserver(
   (entries) => {
     for (const entry of entries)
       entry.isIntersecting
-        ? bar.setAttribute("data-tone", "dark")
+        ? bar.setAttribute("data-tone", "light")
         : bar.removeAttribute("data-tone");
   },
   { rootMargin: "-4% 0px -95% 0px" },
 );
-for (const section of $$(".night")) toneObserver.observe(section);
+for (const section of $$(".bone")) toneObserver.observe(section);
 
 /* ───────── Pinned, scroll-scrubbed sections ───────── */
 const pins = [];
@@ -96,25 +96,24 @@ addEventListener("resize", () => {
   resizeTimer = setTimeout(measure, 80);
 });
 
-/* 01 · Exploded campus */
+/* 01 · Exploded campus: flat isometric layers separated in 2D */
 {
   const section = $("[data-pin='reveal']");
   const copy = $("[data-hero-copy]");
   const rig = $("[data-rig]");
   const layers = $$(".layer", rig);
-  const planes = $$(".plane", rig);
+  const pulse = $(".pulse", rig);
   const chapters = $("[data-chapters]");
   const chapterItems = $$("li", chapters);
   const coda = $("[data-coda]");
   const cue = $(".scroll-cue");
   const scene = $(".scene");
-  let S = 600;
+  let H = 540;
   let chapter = -1;
   pin(
     section,
     (p) => {
       const wide = vw > 960;
-      const still = reduceMotion.matches;
       const arrive = easeInOut(range(p, 0.02, 0.19));
       const open = easeOut(range(p, 0.18, 0.32));
       const close = easeInOut(range(p, 0.84, 0.96));
@@ -125,26 +124,24 @@ addEventListener("resize", () => {
       copy.style.visibility = p > 0.15 ? "hidden" : "";
       cue.style.opacity = String(1 - range(p, 0, 0.03));
 
-      const x = wide ? lerp(0, vw * 0.2, arrive) : 0;
+      const scale = lerp(0.94, wide ? 0.8 : 0.86, arrive);
+      const gap = H * (wide ? 0.24 : 0.2) * explode;
+      const x = wide ? lerp(0, vw * 0.19, arrive) : 0;
       const y =
-        lerp(vh * 0.43, wide ? vh * 0.02 : -vh * 0.1, arrive) +
-        explode * S * (wide ? 0.25 : 0.2) +
-        close * (wide ? vh * 0.02 : 0);
-      const tiltX = lerp(56, 57, arrive);
-      const turn = still ? -38 : -38 + p * 18;
-      const scale = lerp(0.94, wide ? 0.9 : 0.8, arrive);
-      rig.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotateX(${tiltX.toFixed(2)}deg) rotateZ(${turn.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
+        lerp(vh * (wide ? 0.47 : 0.37), wide ? vh * 0.04 : -vh * 0.12, arrive) +
+        1.5 * gap * scale;
+      rig.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${scale.toFixed(4)})`;
 
-      const gap = S * (wide ? 0.2 : 0.17) * explode;
       const next =
         p < 0.3 ? 0 : Math.min(3, Math.floor((p - 0.3) / ((0.84 - 0.3) / 4)));
       const focus = range(p, 0.28, 0.32) * (1 - range(p, 0.82, 0.86));
       layers.forEach((layer, index) => {
-        layer.style.transform = `translateZ(${(index * gap).toFixed(1)}px)`;
-        const dim = index === next ? 0 : index === 0 ? 0.3 : 0.55;
+        layer.style.transform = `translate(0, ${(-index * gap).toFixed(1)}px)`;
+        const dim = index === next ? 0 : index === 0 ? 0.45 : 0.6;
         layer.style.opacity = String(1 - focus * dim);
       });
-      for (const plane of planes) plane.style.opacity = String(explode * 0.42);
+      // The decision layer carries the incident pulse.
+      pulse.style.translate = `0 ${(-2 * gap).toFixed(1)}px`;
 
       chapters.style.opacity = String(
         range(p, 0.19, 0.26) * (1 - range(p, 0.83, 0.87)),
@@ -163,7 +160,7 @@ addEventListener("resize", () => {
         : `translateY(${((1 - outro) * 24).toFixed(1)}px)`;
     },
     () => {
-      S = scene.offsetWidth;
+      H = scene.offsetHeight;
     },
   );
 }
@@ -249,7 +246,7 @@ addEventListener("resize", () => {
       const scale = size / 600;
       const ux = point.x * scale;
       const uy = point.y * scale;
-      unit.style.transform = `translate3d(${ux.toFixed(1)}px, ${uy.toFixed(1)}px, 0) rotate(${point.angle}deg)`;
+      unit.style.transform = `translate(${ux.toFixed(1)}px, ${uy.toFixed(1)}px) rotate(${point.angle}deg)`;
       if (index !== step) {
         step = index;
         const visible = index >= 3;
@@ -277,7 +274,7 @@ addEventListener("resize", () => {
       }
       const tagX =
         ux + 22 + tagWidth > size - 12 ? ux - 22 - tagWidth : ux + 22;
-      tag.style.transform = `translate3d(${tagX.toFixed(1)}px, ${(uy - 36).toFixed(1)}px, 0)`;
+      tag.style.transform = `translate(${tagX.toFixed(1)}px, ${(uy - 36).toFixed(1)}px)`;
     },
     () => {
       size = frameEl.offsetWidth;

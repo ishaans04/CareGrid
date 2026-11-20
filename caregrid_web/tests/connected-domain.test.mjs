@@ -6,6 +6,7 @@ import {
   escapeHtml,
   label,
   navigationFor,
+  incidentStage,
   nextResponderAction,
   openIncident,
   proofSteps,
@@ -29,7 +30,13 @@ test("enum labels and durations read as operators speak", () => {
 });
 
 test("only live assignments can be stood down", () => {
-  for (const status of ["offered", "acknowledged", "enRoute", "onScene", "care"])
+  for (const status of [
+    "offered",
+    "acknowledged",
+    "enRoute",
+    "onScene",
+    "care",
+  ])
     assert.equal(activeDispatch({ status }), true, status);
   for (const status of ["completed", "declined", "timedOut", "recalled"])
     assert.equal(activeDispatch({ status }), false, status);
@@ -67,4 +74,13 @@ test("navigation follows the server role, and closed cases are not open", () => 
   assert.equal(openIncident({ state: "care" }), true);
   assert.equal(openIncident({ state: "resolved" }), false);
   assert.equal(openIncident({ state: "dismissed" }), false);
+});
+
+test("the progress spine follows the measured incident state", () => {
+  assert.equal(incidentStage("detected"), 0);
+  assert.equal(incidentStage("review"), incidentStage("verified"));
+  assert.equal(incidentStage("onScene"), 5);
+  assert.equal(incidentStage("resolved"), 7);
+  assert.equal(incidentStage("dismissed"), 7);
+  assert.equal(incidentStage("unexpected"), 0);
 });

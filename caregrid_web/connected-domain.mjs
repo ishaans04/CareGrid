@@ -69,3 +69,18 @@ export const navigationFor = (role) =>
     responder: [["response", "My assignment"]],
     member: [["sos", "Request help"]],
   })[role] || [];
+// Position of an incident on the console's progress spine:
+// Signal, Verified, Dispatched, Acknowledged, En route, On scene, Care, Closed.
+export const incidentStage = (state) =>
+  ({
+    detected: 0,
+    review: 1,
+    verified: 1,
+    dispatched: 2,
+    acknowledged: 3,
+    enRoute: 4,
+    onScene: 5,
+    care: 6,
+    resolved: 7,
+    dismissed: 7,
+  })[state] ?? 0;
