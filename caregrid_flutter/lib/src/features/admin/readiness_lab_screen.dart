@@ -429,8 +429,15 @@ class _CustomScenarioDialogState extends State<_CustomScenarioDialog> {
               : () async {
                   StressTestRun? run;
                   final ok = await runAction(context, () async {
+                    final campusId = (await _twin).campus.id;
+                    if (campusId == null) {
+                      throw StateError(
+                        'The campus must be saved before rehearsal.',
+                      );
+                    }
                     run = await client.readiness.runCustom(
                       StressScenario(
+                        campusId: campusId,
                         code: 'custom',
                         name: _name.text.trim().isEmpty
                             ? 'Custom rehearsal'
