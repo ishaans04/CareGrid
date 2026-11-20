@@ -4,7 +4,6 @@ import '../core/access.dart';
 import '../generated/protocol.dart';
 import '../response/incident_views.dart';
 import '../response/proof_of_response.dart';
-import '../seed/seed_data.dart';
 import '../twin/campus_graph.dart';
 import '../twin/twin_snapshot.dart';
 
@@ -14,7 +13,7 @@ class CampusEndpoint extends Endpoint {
   /// cameras are visible to command and admin only.
   Future<CampusTwin> twin(Session session) async {
     final actor = await Access.any(session);
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, actor.campusId);
     final role = actor.role;
     final seesOps = role != UserRole.member;
     final seesCameras = role == UserRole.command || role == UserRole.admin;
@@ -22,6 +21,7 @@ class CampusEndpoint extends Endpoint {
     final open = await Incident.db.find(
       session,
       where: (t) =>
+          t.campusId.equals(actor.campusId) &
           t.resolvedAt.equals(null) &
           t.dismissedAt.equals(null) &
           t.parentIncidentId.equals(null),
@@ -32,7 +32,14 @@ class CampusEndpoint extends Endpoint {
       _ => <Incident>[],
     };
 
-    final active = await Dispatch.db.find(session);
+    final active = await Dispatch.db.find(
+      session,
+      where: (t) =>
+          t.campusId.equals(actor.campusId) &
+          t.status.inSet(
+            DispatchStatus.values.where((s) => s.active).toSet(),
+          ),
+    );
     final positions = <String, String>{
       for (final r in twin.responders.values)
         r.code: ProofOfResponse.positionOf(
@@ -44,7 +51,9 @@ class CampusEndpoint extends Endpoint {
     };
 
     return CampusTwin(
-      campusName: SeedData.campusName,
+      campusName: twin.campus.name,
+      // Live state only; the static map layers come once from [profile].
+      campus: twin.campus.copyWith(mapLayers: null),
       zones: twin.zones.values.toList(),
       roads: twin.roads,
       cameras: seesCameras ? twin.cameras.values.toList() : [],
@@ -59,14 +68,24 @@ class CampusEndpoint extends Endpoint {
     );
   }
 
+  /// The caller's campus with its static map layers (plot outlines,
+  /// parking, courts, streets). Fetched once per session; [twin] carries the
+  /// live state without them.
+  Future<Campus> profile(Session session) async {
+    final actor = await Access.any(session);
+    final campus = await Campus.db.findById(session, actor.campusId);
+    if (campus == null) throw notFound('Campus');
+    return campus;
+  }
+
   /// Shortest passable route between two zones right now.
   Future<RoutePlan> route(Session session, String from, String to) async {
-    await Access.require(session, {
+    final actor = await Access.require(session, {
       UserRole.command,
       UserRole.admin,
       UserRole.responder,
     });
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, actor.campusId);
     final result = CampusGraph(twin).route(from, to);
     return RoutePlan(
       found: result.found,

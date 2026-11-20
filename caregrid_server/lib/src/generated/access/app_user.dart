@@ -18,6 +18,7 @@ abstract class AppUser
     implements _is.TableRow<int?>, _is.ProtocolSerialization {
   AppUser._({
     this.id,
+    this.campusId,
     required this.handle,
     required this.displayName,
     required this.role,
@@ -31,6 +32,7 @@ abstract class AppUser
 
   factory AppUser({
     int? id,
+    int? campusId,
     required String handle,
     required String displayName,
     required _ifev4lwy.UserRole role,
@@ -45,6 +47,7 @@ abstract class AppUser
   factory AppUser.fromJson(Map<String, dynamic> jsonSerialization) {
     return AppUser(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int?,
       handle: jsonSerialization['handle'] as String,
       displayName: jsonSerialization['displayName'] as String,
       role: _ifev4lwy.UserRole.fromJson((jsonSerialization['role'] as String)),
@@ -69,6 +72,10 @@ abstract class AppUser
 
   @override
   int? id;
+
+  /// The one campus this membership belongs to. Null only for the network
+  /// role, which sees de-identified aggregates across campuses and no case detail.
+  int? campusId;
 
   String handle;
 
@@ -102,6 +109,7 @@ abstract class AppUser
   @_is.useResult
   AppUser copyWith({
     int? id,
+    int? campusId,
     String? handle,
     String? displayName,
     _ifev4lwy.UserRole? role,
@@ -117,6 +125,7 @@ abstract class AppUser
     return {
       '__className__': 'AppUser',
       if (id != null) 'id': id,
+      if (campusId != null) 'campusId': campusId,
       'handle': handle,
       'displayName': displayName,
       'role': role.toJson(),
@@ -135,6 +144,7 @@ abstract class AppUser
     return {
       '__className__': 'AppUser',
       if (id != null) 'id': id,
+      if (campusId != null) 'campusId': campusId,
       'handle': handle,
       'displayName': displayName,
       'role': role.toJson(),
@@ -177,6 +187,7 @@ class _Undefined {}
 class _AppUserImpl extends AppUser {
   _AppUserImpl({
     int? id,
+    int? campusId,
     required String handle,
     required String displayName,
     required _ifev4lwy.UserRole role,
@@ -188,6 +199,7 @@ class _AppUserImpl extends AppUser {
     DateTime? tokensValidAfter,
   }) : super._(
          id: id,
+         campusId: campusId,
          handle: handle,
          displayName: displayName,
          role: role,
@@ -205,6 +217,7 @@ class _AppUserImpl extends AppUser {
   @override
   AppUser copyWith({
     Object? id = _Undefined,
+    Object? campusId = _Undefined,
     String? handle,
     String? displayName,
     _ifev4lwy.UserRole? role,
@@ -217,6 +230,7 @@ class _AppUserImpl extends AppUser {
   }) {
     return AppUser(
       id: id is int? ? id : this.id,
+      campusId: campusId is int? ? campusId : this.campusId,
       handle: handle ?? this.handle,
       displayName: displayName ?? this.displayName,
       role: role ?? this.role,
@@ -236,6 +250,11 @@ class _AppUserImpl extends AppUser {
 
 class AppUserUpdateTable extends _is.UpdateTable<AppUserTable> {
   AppUserUpdateTable(super.table);
+
+  _is.ColumnValue<int, int> campusId(int? value) => _is.ColumnValue(
+    table.campusId,
+    value,
+  );
 
   _is.ColumnValue<String, String> handle(String value) => _is.ColumnValue(
     table.handle,
@@ -290,6 +309,10 @@ class AppUserUpdateTable extends _is.UpdateTable<AppUserTable> {
 class AppUserTable extends _is.Table<int?> {
   AppUserTable({super.tableRelation}) : super(tableName: 'app_user') {
     updateTable = AppUserUpdateTable(this);
+    campusId = _is.ColumnInt(
+      'campusId',
+      this,
+    );
     handle = _is.ColumnString(
       'handle',
       this,
@@ -332,6 +355,10 @@ class AppUserTable extends _is.Table<int?> {
 
   late final AppUserUpdateTable updateTable;
 
+  /// The one campus this membership belongs to. Null only for the network
+  /// role, which sees de-identified aggregates across campuses and no case detail.
+  late final _is.ColumnInt campusId;
+
   late final _is.ColumnString handle;
 
   late final _is.ColumnString displayName;
@@ -359,6 +386,7 @@ class AppUserTable extends _is.Table<int?> {
   @override
   List<_is.Column> get columns => [
     id,
+    campusId,
     handle,
     displayName,
     role,

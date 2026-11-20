@@ -18,6 +18,7 @@ abstract class AppUser
     implements _isc.SerializableModel, _isc.ProtocolSerialization {
   AppUser._({
     this.id,
+    this.campusId,
     required this.handle,
     required this.displayName,
     required this.role,
@@ -28,6 +29,7 @@ abstract class AppUser
 
   factory AppUser({
     int? id,
+    int? campusId,
     required String handle,
     required String displayName,
     required _ifev4lwy.UserRole role,
@@ -39,6 +41,7 @@ abstract class AppUser
   factory AppUser.fromJson(Map<String, dynamic> jsonSerialization) {
     return AppUser(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int?,
       handle: jsonSerialization['handle'] as String,
       displayName: jsonSerialization['displayName'] as String,
       role: _ifev4lwy.UserRole.fromJson((jsonSerialization['role'] as String)),
@@ -54,6 +57,10 @@ abstract class AppUser
   /// database or if it has been fetched from the database. Otherwise,
   /// the id will be null.
   int? id;
+
+  /// The one campus this membership belongs to. Null only for the network
+  /// role, which sees de-identified aggregates across campuses and no case detail.
+  int? campusId;
 
   String handle;
 
@@ -75,6 +82,7 @@ abstract class AppUser
   @_isc.useResult
   AppUser copyWith({
     int? id,
+    int? campusId,
     String? handle,
     String? displayName,
     _ifev4lwy.UserRole? role,
@@ -87,6 +95,7 @@ abstract class AppUser
     return {
       '__className__': 'AppUser',
       if (id != null) 'id': id,
+      if (campusId != null) 'campusId': campusId,
       'handle': handle,
       'displayName': displayName,
       'role': role.toJson(),
@@ -101,6 +110,7 @@ abstract class AppUser
     return {
       '__className__': 'AppUser',
       if (id != null) 'id': id,
+      if (campusId != null) 'campusId': campusId,
       'handle': handle,
       'displayName': displayName,
       'role': role.toJson(),
@@ -121,6 +131,7 @@ class _Undefined {}
 class _AppUserImpl extends AppUser {
   _AppUserImpl({
     int? id,
+    int? campusId,
     required String handle,
     required String displayName,
     required _ifev4lwy.UserRole role,
@@ -129,6 +140,7 @@ class _AppUserImpl extends AppUser {
     bool? disabled,
   }) : super._(
          id: id,
+         campusId: campusId,
          handle: handle,
          displayName: displayName,
          role: role,
@@ -143,6 +155,7 @@ class _AppUserImpl extends AppUser {
   @override
   AppUser copyWith({
     Object? id = _Undefined,
+    Object? campusId = _Undefined,
     String? handle,
     String? displayName,
     _ifev4lwy.UserRole? role,
@@ -152,6 +165,7 @@ class _AppUserImpl extends AppUser {
   }) {
     return AppUser(
       id: id is int? ? id : this.id,
+      campusId: campusId is int? ? campusId : this.campusId,
       handle: handle ?? this.handle,
       displayName: displayName ?? this.displayName,
       role: role ?? this.role,

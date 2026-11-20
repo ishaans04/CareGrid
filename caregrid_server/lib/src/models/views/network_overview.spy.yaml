@@ -1,0 +1,5 @@
+### Cross-campus operating picture for the network role.
+class: NetworkOverview
+fields:
+  generatedAt: DateTime
+  campuses: List<CampusPulse>

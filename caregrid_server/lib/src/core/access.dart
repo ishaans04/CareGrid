@@ -12,6 +12,20 @@ class Actor {
   String get name => user.displayName;
   UserRole get role => user.role;
 
+  /// The campus every query by this actor is scoped to. Campus roles always
+  /// have one ([Access.require] refuses a campus role without it); the
+  /// network role never does and cannot call campus-scoped operations.
+  int get campusId {
+    final campus = user.campusId;
+    if (campus == null) {
+      throw CareGridException(
+        message: 'This account is not a member of a campus.',
+        code: 'forbidden',
+      );
+    }
+    return campus;
+  }
+
   /// Label used in timelines and the audit log, e.g. 'Riya Menon (command)'.
   String get label => '${user.displayName} (${user.role.name})';
 }
@@ -38,6 +52,12 @@ class Access {
     if (user == null || user.disabled) {
       throw CareGridException(message: 'Unknown user.', code: 'forbidden');
     }
+    if (user.role != UserRole.network && user.campusId == null) {
+      throw CareGridException(
+        message: 'This membership has no campus. Contact your administrator.',
+        code: 'forbidden',
+      );
+    }
     if (roles.isNotEmpty && !roles.contains(user.role)) {
       throw CareGridException(
         message:
@@ -49,18 +69,31 @@ class Access {
     return Actor(user);
   }
 
-  /// Any signed-in role.
-  static Future<Actor> any(Session session) =>
-      require(session, UserRole.values.toSet());
+  /// Any signed-in campus role (the network role has no campus records).
+  static Future<Actor> any(Session session) => require(
+    session,
+    UserRole.values.where((r) => r != UserRole.network).toSet(),
+  );
 
-  /// Knowing an incident id does not grant a care team access to the case.
+  /// Knowing an incident id grants nothing. Another campus's incident is
+  /// reported as not found, so its existence is not revealed; a care team
+  /// sees only cases shared with it.
   static void requireIncident(Actor actor, Incident incident) {
+    if (incident.campusId != actor.campusId) {
+      throw notFound('Incident ${incident.id}');
+    }
     if (actor.role == UserRole.medical && !incident.hospitalNotified) {
       throw CareGridException(
         message: 'This incident has not been shared with the care team.',
         code: 'forbidden',
       );
     }
+  }
+
+  /// Twin records (zones, units, cameras, roads, policies) of another campus
+  /// are likewise reported as not found.
+  static void requireCampus(Actor actor, int campusId, String what) {
+    if (campusId != actor.campusId) throw notFound(what);
   }
 }
 

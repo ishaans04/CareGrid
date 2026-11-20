@@ -21,6 +21,7 @@ abstract class StressTestRun
     implements _isc.SerializableModel, _isc.ProtocolSerialization {
   StressTestRun._({
     this.id,
+    required this.campusId,
     required this.scenarioCode,
     required this.scenarioName,
     required this.ranAt,
@@ -40,6 +41,7 @@ abstract class StressTestRun
 
   factory StressTestRun({
     int? id,
+    required int campusId,
     required String scenarioCode,
     required String scenarioName,
     required DateTime ranAt,
@@ -60,6 +62,7 @@ abstract class StressTestRun
   factory StressTestRun.fromJson(Map<String, dynamic> jsonSerialization) {
     return StressTestRun(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       scenarioCode: jsonSerialization['scenarioCode'] as String,
       scenarioName: jsonSerialization['scenarioName'] as String,
       ranAt: _isc.DateTimeJsonExtension.fromJson(jsonSerialization['ranAt']),
@@ -100,6 +103,8 @@ abstract class StressTestRun
   /// the id will be null.
   int? id;
 
+  int campusId;
+
   String scenarioCode;
 
   String scenarioName;
@@ -137,6 +142,7 @@ abstract class StressTestRun
   @_isc.useResult
   StressTestRun copyWith({
     int? id,
+    int? campusId,
     String? scenarioCode,
     String? scenarioName,
     DateTime? ranAt,
@@ -158,6 +164,7 @@ abstract class StressTestRun
     return {
       '__className__': 'StressTestRun',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'scenarioCode': scenarioCode,
       'scenarioName': scenarioName,
       'ranAt': ranAt.toJson(),
@@ -182,6 +189,7 @@ abstract class StressTestRun
     return {
       '__className__': 'StressTestRun',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'scenarioCode': scenarioCode,
       'scenarioName': scenarioName,
       'ranAt': ranAt.toJson(),
@@ -212,6 +220,7 @@ class _Undefined {}
 class _StressTestRunImpl extends StressTestRun {
   _StressTestRunImpl({
     int? id,
+    required int campusId,
     required String scenarioCode,
     required String scenarioName,
     required DateTime ranAt,
@@ -229,6 +238,7 @@ class _StressTestRunImpl extends StressTestRun {
     required List<String> planAfterFix,
   }) : super._(
          id: id,
+         campusId: campusId,
          scenarioCode: scenarioCode,
          scenarioName: scenarioName,
          ranAt: ranAt,
@@ -252,6 +262,7 @@ class _StressTestRunImpl extends StressTestRun {
   @override
   StressTestRun copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? scenarioCode,
     String? scenarioName,
     DateTime? ranAt,
@@ -270,6 +281,7 @@ class _StressTestRunImpl extends StressTestRun {
   }) {
     return StressTestRun(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       scenarioCode: scenarioCode ?? this.scenarioCode,
       scenarioName: scenarioName ?? this.scenarioName,
       ranAt: ranAt ?? this.ranAt,

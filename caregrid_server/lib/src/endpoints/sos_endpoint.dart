@@ -21,6 +21,7 @@ class SosEndpoint extends Endpoint {
     final actor = await Access.require(session, {UserRole.member});
     final event = await IncidentAgent.ingest(
       session,
+      actor.campusId,
       SignalInput(
         source: SignalSource.sos,
         eventType: EventType.sosRequest,
@@ -36,15 +37,20 @@ class SosEndpoint extends Endpoint {
     );
     await Audit.log(session, actor, 'sos-raised', target: zoneCode);
     final incident = await Orchestrator.load(session, event.incidentId!);
-    return _status(session, incident, await TwinSnapshot.load(session));
+    return _status(
+      session,
+      incident,
+      await TwinSnapshot.load(session, actor.campusId),
+    );
   }
 
   Future<List<SosStatus>> mine(Session session) async {
     final actor = await Access.require(session, {UserRole.member});
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, actor.campusId);
     final events = await SensorEvent.db.find(
       session,
-      where: (t) => t.reporterUserId.equals(actor.id),
+      where: (t) =>
+          t.campusId.equals(actor.campusId) & t.reporterUserId.equals(actor.id),
       orderBy: (t) => t.observedAt.desc(),
       limit: 10,
     );
@@ -52,7 +58,9 @@ class SosEndpoint extends Endpoint {
     final result = <SosStatus>[];
     for (final id in ids) {
       final incident = await Incident.db.findById(session, id);
-      if (incident != null) result.add(await _status(session, incident, twin));
+      if (incident != null && incident.campusId == actor.campusId) {
+        result.add(await _status(session, incident, twin));
+      }
     }
     return result;
   }
@@ -78,6 +86,7 @@ class SosEndpoint extends Endpoint {
     final incident = await Orchestrator.load(session, incidentId);
     await IncidentAgent.ingest(
       session,
+      actor.campusId,
       SignalInput(
         source: SignalSource.sos,
         eventType: EventType.reporterCancelled,
@@ -94,7 +103,7 @@ class SosEndpoint extends Endpoint {
     return _status(
       session,
       await Orchestrator.load(session, incidentId),
-      await TwinSnapshot.load(session),
+      await TwinSnapshot.load(session, actor.campusId),
     );
   }
 

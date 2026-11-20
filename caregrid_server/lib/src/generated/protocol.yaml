@@ -19,6 +19,7 @@ briefing:
   - generate:
 campus:
   - twin:
+  - profile:
   - route:
 care:
   - cases:
@@ -40,6 +41,8 @@ incident:
   - resolve:
 live:
   - watch:
+network:
+  - overview:
 readiness:
   - scenarios:
   - run:

@@ -71,10 +71,12 @@ import 'simulation/scenario_info.dart' as _iyf1dz2p;
 import 'simulation/scenario_run.dart' as _i555kad7;
 import 'simulation/simulation_status.dart' as _i216yyh2;
 import 'twin/camera.dart' as _iznodk4a;
+import 'twin/campus.dart' as _i5cmf529;
 import 'twin/responder.dart' as _iombuvto;
 import 'twin/road_segment.dart' as _iqmbpj37;
 import 'twin/zone.dart' as _i5d9qpt0;
 import 'twin/zone_policy.dart' as _i0bge9o7;
+import 'views/campus_pulse.dart' as _ivgzxilb;
 import 'views/campus_twin.dart' as _iqt6besl;
 import 'views/care_case.dart' as _i2egsg9j;
 import 'views/evidence_content.dart' as _i8js0qii;
@@ -83,6 +85,7 @@ import 'views/evidence_page.dart' as _ig1wbv10;
 import 'views/incident_brief.dart' as _izalsqqh;
 import 'views/incident_detail.dart' as _iv8abos3;
 import 'views/incident_summary.dart' as _i028ji74;
+import 'views/network_overview.dart' as _ierx0y7q;
 import 'views/ops_board.dart' as _ifqwjb8e;
 import 'views/ops_event.dart' as _iz030ym9;
 import 'views/ops_metrics.dart' as _izhon84m;
@@ -129,10 +132,12 @@ export 'simulation/scenario_info.dart';
 export 'simulation/scenario_run.dart';
 export 'simulation/simulation_status.dart';
 export 'twin/camera.dart';
+export 'twin/campus.dart';
 export 'twin/responder.dart';
 export 'twin/road_segment.dart';
 export 'twin/zone.dart';
 export 'twin/zone_policy.dart';
+export 'views/campus_pulse.dart';
 export 'views/campus_twin.dart';
 export 'views/care_case.dart';
 export 'views/evidence_content.dart';
@@ -141,6 +146,7 @@ export 'views/evidence_page.dart';
 export 'views/incident_brief.dart';
 export 'views/incident_detail.dart';
 export 'views/incident_summary.dart';
+export 'views/network_overview.dart';
 export 'views/ops_board.dart';
 export 'views/ops_event.dart';
 export 'views/ops_metrics.dart';
@@ -168,6 +174,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
         ),
         _isp.ColumnDefinition(
           name: 'handle',
@@ -225,7 +237,18 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'DateTime?',
         ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'app_user_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _isp.IndexDefinition(
           indexName: 'app_user__handle__unique_idx',
@@ -270,6 +293,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           columnDefault: 'serial',
         ),
         _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
+        _isp.ColumnDefinition(
           name: 'at',
           columnType: _isp.ColumnType.timestampWithoutTimeZone,
           isNullable: false,
@@ -312,12 +341,40 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'String?',
         ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'audit_record_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _isp.IndexDefinition(
           indexName: 'audit_at_idx',
           tableSpace: null,
           elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'at',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _isp.IndexDefinition(
+          indexName: 'audit_campus_at_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
             _isp.IndexElementDefinition(
               type: _isp.IndexElementDefinitionType.column,
               definition: 'at',
@@ -400,6 +457,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           columnDefault: 'serial',
         ),
         _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
           name: 'code',
           columnType: _isp.ColumnType.text,
           isNullable: false,
@@ -437,11 +500,172 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'bool',
           columnDefault: 'true',
         ),
+        _isp.ColumnDefinition(
+          name: 'x',
+          columnType: _isp.ColumnType.doublePrecision,
+          isNullable: true,
+          dartType: 'double?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'y',
+          columnType: _isp.ColumnType.doublePrecision,
+          isNullable: true,
+          dartType: 'double?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'rangeMeters',
+          columnType: _isp.ColumnType.doublePrecision,
+          isNullable: true,
+          dartType: 'double?',
+        ),
+      ],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'camera_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'camera_campus_code_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'code',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _isp.TableDefinition(
+      name: 'campus',
+      dartName: 'Campus',
+      schema: 'public',
+      module: 'caregrid',
+      columns: [
+        _isp.ColumnDefinition(
+          name: 'id',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'code',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'name',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'shortName',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'city',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'description',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'utcOffsetMinutes',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
+          name: 'incidentPrefix',
+          columnType: _isp.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _isp.ColumnDefinition(
+          name: 'fictional',
+          columnType: _isp.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+        ),
+        _isp.ColumnDefinition(
+          name: 'attribution',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'affiliationNote',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'originLat',
+          columnType: _isp.ColumnType.doublePrecision,
+          isNullable: true,
+          dartType: 'double?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'originLon',
+          columnType: _isp.ColumnType.doublePrecision,
+          isNullable: true,
+          dartType: 'double?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'metersPerUnit',
+          columnType: _isp.ColumnType.doublePrecision,
+          isNullable: false,
+          dartType: 'double',
+        ),
+        _isp.ColumnDefinition(
+          name: 'mapWidth',
+          columnType: _isp.ColumnType.doublePrecision,
+          isNullable: false,
+          dartType: 'double',
+        ),
+        _isp.ColumnDefinition(
+          name: 'mapHeight',
+          columnType: _isp.ColumnType.doublePrecision,
+          isNullable: false,
+          dartType: 'double',
+        ),
+        _isp.ColumnDefinition(
+          name: 'mapLayers',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
       ],
       foreignKeys: [],
       indexes: [
         _isp.IndexDefinition(
-          indexName: 'camera__code__unique_idx',
+          indexName: 'campus_code_idx',
           tableSpace: null,
           elements: [
             _isp.IndexElementDefinition(
@@ -468,6 +692,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
         ),
         _isp.ColumnDefinition(
           name: 'incidentId',
@@ -598,7 +828,18 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'String?',
         ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'dispatch_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _isp.IndexDefinition(
           indexName: 'dispatch_incident_idx',
@@ -607,6 +848,23 @@ class Protocol extends _is.DatabaseSerializationManager {
             _isp.IndexElementDefinition(
               type: _isp.IndexElementDefinitionType.column,
               definition: 'incidentId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _isp.IndexDefinition(
+          indexName: 'dispatch_campus_responder_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'responderCode',
             ),
           ],
           type: 'btree',
@@ -628,6 +886,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
         ),
         _isp.ColumnDefinition(
           name: 'code',
@@ -895,7 +1159,18 @@ class Protocol extends _is.DatabaseSerializationManager {
           columnDefault: '0',
         ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'incident_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _isp.IndexDefinition(
           indexName: 'incident__code__unique_idx',
@@ -936,6 +1211,23 @@ class Protocol extends _is.DatabaseSerializationManager {
           isUnique: false,
           isPrimary: false,
         ),
+        _isp.IndexDefinition(
+          indexName: 'incident_campus_state_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'state',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
       ],
       managed: true,
     ),
@@ -951,6 +1243,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
         ),
         _isp.ColumnDefinition(
           name: 'code',
@@ -1026,12 +1324,27 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'String?',
         ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'responder_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _isp.IndexDefinition(
-          indexName: 'responder__code__unique_idx',
+          indexName: 'responder_campus_code_idx',
           tableSpace: null,
           elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
             _isp.IndexElementDefinition(
               type: _isp.IndexElementDefinitionType.column,
               definition: 'code',
@@ -1056,6 +1369,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
         ),
         _isp.ColumnDefinition(
           name: 'code',
@@ -1101,13 +1420,34 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'bool',
           columnDefault: 'false',
         ),
+        _isp.ColumnDefinition(
+          name: 'path',
+          columnType: _isp.ColumnType.json,
+          isNullable: true,
+          dartType: 'List<double>?',
+        ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'road_segment_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _isp.IndexDefinition(
-          indexName: 'road_segment__code__unique_idx',
+          indexName: 'road_campus_code_idx',
           tableSpace: null,
           elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
             _isp.IndexElementDefinition(
               type: _isp.IndexElementDefinitionType.column,
               definition: 'code',
@@ -1132,6 +1472,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
         ),
         _isp.ColumnDefinition(
           name: 'scenarioCode',
@@ -1188,8 +1534,37 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'List<String>',
         ),
       ],
-      foreignKeys: [],
-      indexes: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'scenario_run_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'scenario_run_campus_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'startedAt',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
       managed: true,
     ),
     _isp.TableDefinition(
@@ -1204,6 +1579,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
         ),
         _isp.ColumnDefinition(
           name: 'source',
@@ -1295,8 +1676,25 @@ class Protocol extends _is.DatabaseSerializationManager {
           isNullable: true,
           dartType: 'int?',
         ),
+        _isp.ColumnDefinition(
+          name: 'sourceEventId',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'sensor_event_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _isp.IndexDefinition(
           indexName: 'sensor_event_incident_idx',
@@ -1305,6 +1703,44 @@ class Protocol extends _is.DatabaseSerializationManager {
             _isp.IndexElementDefinition(
               type: _isp.IndexElementDefinitionType.column,
               definition: 'incidentId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _isp.IndexDefinition(
+          indexName: 'sensor_event_source_event_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'source',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'sourceEventId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+        _isp.IndexDefinition(
+          indexName: 'sensor_event_campus_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'receivedAt',
             ),
           ],
           type: 'btree',
@@ -1326,6 +1762,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
         ),
         _isp.ColumnDefinition(
           name: 'code',
@@ -1377,12 +1819,27 @@ class Protocol extends _is.DatabaseSerializationManager {
           columnDefault: 'false',
         ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'stress_scenario_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _isp.IndexDefinition(
-          indexName: 'stress_scenario__code__unique_idx',
+          indexName: 'stress_scenario_campus_code_idx',
           tableSpace: null,
           elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
             _isp.IndexElementDefinition(
               type: _isp.IndexElementDefinitionType.column,
               definition: 'code',
@@ -1407,6 +1864,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
         ),
         _isp.ColumnDefinition(
           name: 'scenarioCode',
@@ -1499,8 +1962,37 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'List<String>',
         ),
       ],
-      foreignKeys: [],
-      indexes: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'stress_test_run_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
+      indexes: [
+        _isp.IndexDefinition(
+          indexName: 'stress_run_campus_idx',
+          tableSpace: null,
+          elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'ranAt',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
       managed: true,
     ),
     _isp.TableDefinition(
@@ -1586,6 +2078,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           columnDefault: 'serial',
         ),
         _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _isp.ColumnDefinition(
           name: 'code',
           columnType: _isp.ColumnType.text,
           isNullable: false,
@@ -1649,13 +2147,53 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'bool',
           columnDefault: 'false',
         ),
+        _isp.ColumnDefinition(
+          name: 'footprint',
+          columnType: _isp.ColumnType.json,
+          isNullable: true,
+          dartType: 'List<double>?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'levels',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
+        _isp.ColumnDefinition(
+          name: 'approximate',
+          columnType: _isp.ColumnType.boolean,
+          isNullable: false,
+          dartType: 'bool',
+          columnDefault: 'false',
+        ),
+        _isp.ColumnDefinition(
+          name: 'source',
+          columnType: _isp.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'zone_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _isp.IndexDefinition(
-          indexName: 'zone__code__unique_idx',
+          indexName: 'zone_campus_code_idx',
           tableSpace: null,
           elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
             _isp.IndexElementDefinition(
               type: _isp.IndexElementDefinitionType.column,
               definition: 'code',
@@ -1680,6 +2218,12 @@ class Protocol extends _is.DatabaseSerializationManager {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'serial',
+        ),
+        _isp.ColumnDefinition(
+          name: 'campusId',
+          columnType: _isp.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
         ),
         _isp.ColumnDefinition(
           name: 'code',
@@ -1790,12 +2334,27 @@ class Protocol extends _is.DatabaseSerializationManager {
           dartType: 'List<String>',
         ),
       ],
-      foreignKeys: [],
+      foreignKeys: [
+        _isp.ForeignKeyDefinition(
+          constraintName: 'zone_policy_fk_0',
+          columns: ['campusId'],
+          referenceTable: 'campus',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _isp.ForeignKeyAction.noAction,
+          onDelete: _isp.ForeignKeyAction.restrict,
+          matchType: null,
+        ),
+      ],
       indexes: [
         _isp.IndexDefinition(
-          indexName: 'zone_policy__code__unique_idx',
+          indexName: 'policy_campus_code_idx',
           tableSpace: null,
           elements: [
+            _isp.IndexElementDefinition(
+              type: _isp.IndexElementDefinitionType.column,
+              definition: 'campusId',
+            ),
             _isp.IndexElementDefinition(
               type: _isp.IndexElementDefinitionType.column,
               definition: 'code',
@@ -1958,6 +2517,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _iznodk4a.Camera) {
       return _iznodk4a.Camera.fromJson(data) as T;
     }
+    if (t == _i5cmf529.Campus) {
+      return _i5cmf529.Campus.fromJson(data) as T;
+    }
     if (t == _iombuvto.Responder) {
       return _iombuvto.Responder.fromJson(data) as T;
     }
@@ -1969,6 +2531,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _i0bge9o7.ZonePolicy) {
       return _i0bge9o7.ZonePolicy.fromJson(data) as T;
+    }
+    if (t == _ivgzxilb.CampusPulse) {
+      return _ivgzxilb.CampusPulse.fromJson(data) as T;
     }
     if (t == _iqt6besl.CampusTwin) {
       return _iqt6besl.CampusTwin.fromJson(data) as T;
@@ -1993,6 +2558,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _i028ji74.IncidentSummary) {
       return _i028ji74.IncidentSummary.fromJson(data) as T;
+    }
+    if (t == _ierx0y7q.NetworkOverview) {
+      return _ierx0y7q.NetworkOverview.fromJson(data) as T;
     }
     if (t == _ifqwjb8e.OpsBoard) {
       return _ifqwjb8e.OpsBoard.fromJson(data) as T;
@@ -2146,6 +2714,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _is.getType<_iznodk4a.Camera?>()) {
       return (data != null ? _iznodk4a.Camera.fromJson(data) : null) as T;
     }
+    if (t == _is.getType<_i5cmf529.Campus?>()) {
+      return (data != null ? _i5cmf529.Campus.fromJson(data) : null) as T;
+    }
     if (t == _is.getType<_iombuvto.Responder?>()) {
       return (data != null ? _iombuvto.Responder.fromJson(data) : null) as T;
     }
@@ -2157,6 +2728,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _is.getType<_i0bge9o7.ZonePolicy?>()) {
       return (data != null ? _i0bge9o7.ZonePolicy.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_ivgzxilb.CampusPulse?>()) {
+      return (data != null ? _ivgzxilb.CampusPulse.fromJson(data) : null) as T;
     }
     if (t == _is.getType<_iqt6besl.CampusTwin?>()) {
       return (data != null ? _iqt6besl.CampusTwin.fromJson(data) : null) as T;
@@ -2184,6 +2758,10 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _is.getType<_i028ji74.IncidentSummary?>()) {
       return (data != null ? _i028ji74.IncidentSummary.fromJson(data) : null)
+          as T;
+    }
+    if (t == _is.getType<_ierx0y7q.NetworkOverview?>()) {
+      return (data != null ? _ierx0y7q.NetworkOverview.fromJson(data) : null)
           as T;
     }
     if (t == _is.getType<_ifqwjb8e.OpsBoard?>()) {
@@ -2251,6 +2829,15 @@ class Protocol extends _is.DatabaseSerializationManager {
               .toList()
           as T;
     }
+    if (t == List<double>) {
+      return (data as List).map((e) => deserialize<double>(e)).toList() as T;
+    }
+    if (t == _is.getType<List<double>?>()) {
+      return (data != null
+              ? (data as List).map((e) => deserialize<double>(e)).toList()
+              : null)
+          as T;
+    }
     if (t == List<_ibv84qfn.ResponderType>) {
       return (data as List)
               .map((e) => deserialize<_ibv84qfn.ResponderType>(e))
@@ -2312,6 +2899,12 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == List<_iyiaaekw.SensorEvent>) {
       return (data as List)
               .map((e) => deserialize<_iyiaaekw.SensorEvent>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_ivgzxilb.CampusPulse>) {
+      return (data as List)
+              .map((e) => deserialize<_ivgzxilb.CampusPulse>(e))
               .toList()
           as T;
     }
@@ -2432,10 +3025,12 @@ class Protocol extends _is.DatabaseSerializationManager {
       _i555kad7.ScenarioRun => 'ScenarioRun',
       _i216yyh2.SimulationStatus => 'SimulationStatus',
       _iznodk4a.Camera => 'Camera',
+      _i5cmf529.Campus => 'Campus',
       _iombuvto.Responder => 'Responder',
       _iqmbpj37.RoadSegment => 'RoadSegment',
       _i5d9qpt0.Zone => 'Zone',
       _i0bge9o7.ZonePolicy => 'ZonePolicy',
+      _ivgzxilb.CampusPulse => 'CampusPulse',
       _iqt6besl.CampusTwin => 'CampusTwin',
       _i2egsg9j.CareCase => 'CareCase',
       _i8js0qii.EvidenceContent => 'EvidenceContent',
@@ -2444,6 +3039,7 @@ class Protocol extends _is.DatabaseSerializationManager {
       _izalsqqh.IncidentBrief => 'IncidentBrief',
       _iv8abos3.IncidentDetail => 'IncidentDetail',
       _i028ji74.IncidentSummary => 'IncidentSummary',
+      _ierx0y7q.NetworkOverview => 'NetworkOverview',
       _ifqwjb8e.OpsBoard => 'OpsBoard',
       _iz030ym9.OpsEvent => 'OpsEvent',
       _izhon84m.OpsMetrics => 'OpsMetrics',
@@ -2544,6 +3140,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'SimulationStatus';
       case _iznodk4a.Camera():
         return 'Camera';
+      case _i5cmf529.Campus():
+        return 'Campus';
       case _iombuvto.Responder():
         return 'Responder';
       case _iqmbpj37.RoadSegment():
@@ -2552,6 +3150,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'Zone';
       case _i0bge9o7.ZonePolicy():
         return 'ZonePolicy';
+      case _ivgzxilb.CampusPulse():
+        return 'CampusPulse';
       case _iqt6besl.CampusTwin():
         return 'CampusTwin';
       case _i2egsg9j.CareCase():
@@ -2568,6 +3168,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'IncidentDetail';
       case _i028ji74.IncidentSummary():
         return 'IncidentSummary';
+      case _ierx0y7q.NetworkOverview():
+        return 'NetworkOverview';
       case _ifqwjb8e.OpsBoard():
         return 'OpsBoard';
       case _iz030ym9.OpsEvent():
@@ -2714,6 +3316,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (dataClassName == 'Camera') {
       return deserialize<_iznodk4a.Camera>(data['data']);
     }
+    if (dataClassName == 'Campus') {
+      return deserialize<_i5cmf529.Campus>(data['data']);
+    }
     if (dataClassName == 'Responder') {
       return deserialize<_iombuvto.Responder>(data['data']);
     }
@@ -2725,6 +3330,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'ZonePolicy') {
       return deserialize<_i0bge9o7.ZonePolicy>(data['data']);
+    }
+    if (dataClassName == 'CampusPulse') {
+      return deserialize<_ivgzxilb.CampusPulse>(data['data']);
     }
     if (dataClassName == 'CampusTwin') {
       return deserialize<_iqt6besl.CampusTwin>(data['data']);
@@ -2749,6 +3357,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'IncidentSummary') {
       return deserialize<_i028ji74.IncidentSummary>(data['data']);
+    }
+    if (dataClassName == 'NetworkOverview') {
+      return deserialize<_ierx0y7q.NetworkOverview>(data['data']);
     }
     if (dataClassName == 'OpsBoard') {
       return deserialize<_ifqwjb8e.OpsBoard>(data['data']);
@@ -2806,6 +3417,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return _i555kad7.ScenarioRun.t;
       case _iznodk4a.Camera:
         return _iznodk4a.Camera.t;
+      case _i5cmf529.Campus:
+        return _i5cmf529.Campus.t;
       case _iombuvto.Responder:
         return _iombuvto.Responder.t;
       case _iqmbpj37.RoadSegment:

@@ -18,8 +18,12 @@ class CampusClock {
 
   static DateTime now() => DateTime.now().toUtc();
 
-  /// Local hour (0-23) on campus for [utc].
+  /// Local hour (0-23) on campus for [utc], using the deployment default.
   static int localHour(DateTime utc) => utc.toUtc().add(utcOffset).hour;
+
+  /// Local hour (0-23) for [utc] on a campus [offsetMinutes] east of UTC.
+  static int localHourAt(DateTime utc, int offsetMinutes) =>
+      utc.toUtc().add(Duration(minutes: offsetMinutes)).hour;
 
   /// True when [hour] falls in the window [start, end), wrapping midnight.
   static bool hourInWindow(int hour, int? start, int? end) {

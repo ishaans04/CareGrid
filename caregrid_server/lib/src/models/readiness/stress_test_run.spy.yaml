@@ -2,6 +2,7 @@
 class: StressTestRun
 table: stress_test_run
 fields:
+  campusId: int, relation(parent=campus, onDelete=Restrict)
   scenarioCode: String
   scenarioName: String
   ranAt: DateTime
@@ -19,3 +20,6 @@ fields:
   verdictAfterFix: Verdict?
   predictedAfterFixSeconds: int?
   planAfterFix: List<String>
+indexes:
+  stress_run_campus_idx:
+    fields: campusId, ranAt

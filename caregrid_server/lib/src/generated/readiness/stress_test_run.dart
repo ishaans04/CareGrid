@@ -21,6 +21,7 @@ abstract class StressTestRun
     implements _is.TableRow<int?>, _is.ProtocolSerialization {
   StressTestRun._({
     this.id,
+    required this.campusId,
     required this.scenarioCode,
     required this.scenarioName,
     required this.ranAt,
@@ -40,6 +41,7 @@ abstract class StressTestRun
 
   factory StressTestRun({
     int? id,
+    required int campusId,
     required String scenarioCode,
     required String scenarioName,
     required DateTime ranAt,
@@ -60,6 +62,7 @@ abstract class StressTestRun
   factory StressTestRun.fromJson(Map<String, dynamic> jsonSerialization) {
     return StressTestRun(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       scenarioCode: jsonSerialization['scenarioCode'] as String,
       scenarioName: jsonSerialization['scenarioName'] as String,
       ranAt: _is.DateTimeJsonExtension.fromJson(jsonSerialization['ranAt']),
@@ -102,6 +105,8 @@ abstract class StressTestRun
   @override
   int? id;
 
+  int campusId;
+
   String scenarioCode;
 
   String scenarioName;
@@ -142,6 +147,7 @@ abstract class StressTestRun
   @_is.useResult
   StressTestRun copyWith({
     int? id,
+    int? campusId,
     String? scenarioCode,
     String? scenarioName,
     DateTime? ranAt,
@@ -163,6 +169,7 @@ abstract class StressTestRun
     return {
       '__className__': 'StressTestRun',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'scenarioCode': scenarioCode,
       'scenarioName': scenarioName,
       'ranAt': ranAt.toJson(),
@@ -187,6 +194,7 @@ abstract class StressTestRun
     return {
       '__className__': 'StressTestRun',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'scenarioCode': scenarioCode,
       'scenarioName': scenarioName,
       'ranAt': ranAt.toJson(),
@@ -239,6 +247,7 @@ class _Undefined {}
 class _StressTestRunImpl extends StressTestRun {
   _StressTestRunImpl({
     int? id,
+    required int campusId,
     required String scenarioCode,
     required String scenarioName,
     required DateTime ranAt,
@@ -256,6 +265,7 @@ class _StressTestRunImpl extends StressTestRun {
     required List<String> planAfterFix,
   }) : super._(
          id: id,
+         campusId: campusId,
          scenarioCode: scenarioCode,
          scenarioName: scenarioName,
          ranAt: ranAt,
@@ -279,6 +289,7 @@ class _StressTestRunImpl extends StressTestRun {
   @override
   StressTestRun copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? scenarioCode,
     String? scenarioName,
     DateTime? ranAt,
@@ -297,6 +308,7 @@ class _StressTestRunImpl extends StressTestRun {
   }) {
     return StressTestRun(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       scenarioCode: scenarioCode ?? this.scenarioCode,
       scenarioName: scenarioName ?? this.scenarioName,
       ranAt: ranAt ?? this.ranAt,
@@ -323,6 +335,11 @@ class _StressTestRunImpl extends StressTestRun {
 
 class StressTestRunUpdateTable extends _is.UpdateTable<StressTestRunTable> {
   StressTestRunUpdateTable(super.table);
+
+  _is.ColumnValue<int, int> campusId(int value) => _is.ColumnValue(
+    table.campusId,
+    value,
+  );
 
   _is.ColumnValue<String, String> scenarioCode(String value) => _is.ColumnValue(
     table.scenarioCode,
@@ -417,6 +434,10 @@ class StressTestRunTable extends _is.Table<int?> {
   StressTestRunTable({super.tableRelation})
     : super(tableName: 'stress_test_run') {
     updateTable = StressTestRunUpdateTable(this);
+    campusId = _is.ColumnInt(
+      'campusId',
+      this,
+    );
     scenarioCode = _is.ColumnString(
       'scenarioCode',
       this,
@@ -483,6 +504,8 @@ class StressTestRunTable extends _is.Table<int?> {
 
   late final StressTestRunUpdateTable updateTable;
 
+  late final _is.ColumnInt campusId;
+
   late final _is.ColumnString scenarioCode;
 
   late final _is.ColumnString scenarioName;
@@ -518,6 +541,7 @@ class StressTestRunTable extends _is.Table<int?> {
   @override
   List<_is.Column> get columns => [
     id,
+    campusId,
     scenarioCode,
     scenarioName,
     ranAt,

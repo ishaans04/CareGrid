@@ -306,7 +306,7 @@ class ProofOfResponse {
     Dispatch d,
   ) async {
     final now = CampusClock.now();
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, incident.campusId);
     final responder = twin.responders[d.responderCode];
     if (responder == null) return;
     final travel = (d.etaSeconds - responder.mobilizationSeconds).clamp(
@@ -395,7 +395,12 @@ class ProofOfResponse {
             : null,
       );
       if (moved != null) {
-        await OpsBus.publish(session, 'dispatch', incidentId: incident.id);
+        await OpsBus.publish(
+          session,
+          'dispatch',
+          campusId: incident.campusId,
+          incidentId: incident.id,
+        );
       }
     }
   }

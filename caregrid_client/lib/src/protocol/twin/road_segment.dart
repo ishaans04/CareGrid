@@ -10,6 +10,7 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:caregrid_client/src/protocol/protocol.dart' as _i3n4vhm4;
 import 'package:serverpod_client/serverpod_client.dart' as _isc;
 import '../enums/road_status.dart' as _iralfy71;
 
@@ -18,6 +19,7 @@ abstract class RoadSegment
     implements _isc.SerializableModel, _isc.ProtocolSerialization {
   RoadSegment._({
     this.id,
+    required this.campusId,
     required this.code,
     required this.name,
     required this.fromZone,
@@ -25,11 +27,13 @@ abstract class RoadSegment
     required this.lengthMeters,
     _iralfy71.RoadStatus? status,
     bool? isOutsideCampus,
+    this.path,
   }) : status = status ?? _iralfy71.RoadStatus.open,
        isOutsideCampus = isOutsideCampus ?? false;
 
   factory RoadSegment({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required String fromZone,
@@ -37,11 +41,13 @@ abstract class RoadSegment
     required int lengthMeters,
     _iralfy71.RoadStatus? status,
     bool? isOutsideCampus,
+    List<double>? path,
   }) = _RoadSegmentImpl;
 
   factory RoadSegment.fromJson(Map<String, dynamic> jsonSerialization) {
     return RoadSegment(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       code: jsonSerialization['code'] as String,
       name: jsonSerialization['name'] as String,
       fromZone: jsonSerialization['fromZone'] as String,
@@ -57,6 +63,11 @@ abstract class RoadSegment
           : _isc.BoolJsonExtension.fromJson(
               jsonSerialization['isOutsideCampus'],
             ),
+      path: jsonSerialization['path'] == null
+          ? null
+          : _i3n4vhm4.Protocol().deserialize<List<double>>(
+              jsonSerialization['path'],
+            ),
     );
   }
 
@@ -65,6 +76,9 @@ abstract class RoadSegment
   /// the id will be null.
   int? id;
 
+  int campusId;
+
+  /// Unique within its campus.
   String code;
 
   String name;
@@ -79,11 +93,15 @@ abstract class RoadSegment
 
   bool isOutsideCampus;
 
+  /// Drawn shape as flattened x,y canvas pairs from fromZone to toZone; null draws a straight line.
+  List<double>? path;
+
   /// Returns a shallow copy of this [RoadSegment]
   /// with some or all fields replaced by the given arguments.
   @_isc.useResult
   RoadSegment copyWith({
     int? id,
+    int? campusId,
     String? code,
     String? name,
     String? fromZone,
@@ -91,12 +109,14 @@ abstract class RoadSegment
     int? lengthMeters,
     _iralfy71.RoadStatus? status,
     bool? isOutsideCampus,
+    List<double>? path,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'RoadSegment',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'fromZone': fromZone,
@@ -104,6 +124,7 @@ abstract class RoadSegment
       'lengthMeters': lengthMeters,
       'status': status.toJson(),
       'isOutsideCampus': isOutsideCampus,
+      if (path != null) 'path': path?.toJson(),
     };
   }
 
@@ -112,6 +133,7 @@ abstract class RoadSegment
     return {
       '__className__': 'RoadSegment',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'fromZone': fromZone,
@@ -119,6 +141,7 @@ abstract class RoadSegment
       'lengthMeters': lengthMeters,
       'status': status.toJson(),
       'isOutsideCampus': isOutsideCampus,
+      if (path != null) 'path': path?.toJson(),
     };
   }
 
@@ -133,6 +156,7 @@ class _Undefined {}
 class _RoadSegmentImpl extends RoadSegment {
   _RoadSegmentImpl({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required String fromZone,
@@ -140,8 +164,10 @@ class _RoadSegmentImpl extends RoadSegment {
     required int lengthMeters,
     _iralfy71.RoadStatus? status,
     bool? isOutsideCampus,
+    List<double>? path,
   }) : super._(
          id: id,
+         campusId: campusId,
          code: code,
          name: name,
          fromZone: fromZone,
@@ -149,6 +175,7 @@ class _RoadSegmentImpl extends RoadSegment {
          lengthMeters: lengthMeters,
          status: status,
          isOutsideCampus: isOutsideCampus,
+         path: path,
        );
 
   /// Returns a shallow copy of this [RoadSegment]
@@ -157,6 +184,7 @@ class _RoadSegmentImpl extends RoadSegment {
   @override
   RoadSegment copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? code,
     String? name,
     String? fromZone,
@@ -164,9 +192,11 @@ class _RoadSegmentImpl extends RoadSegment {
     int? lengthMeters,
     _iralfy71.RoadStatus? status,
     bool? isOutsideCampus,
+    Object? path = _Undefined,
   }) {
     return RoadSegment(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       code: code ?? this.code,
       name: name ?? this.name,
       fromZone: fromZone ?? this.fromZone,
@@ -174,6 +204,7 @@ class _RoadSegmentImpl extends RoadSegment {
       lengthMeters: lengthMeters ?? this.lengthMeters,
       status: status ?? this.status,
       isOutsideCampus: isOutsideCampus ?? this.isOutsideCampus,
+      path: path is List<double>? ? path : this.path?.map((e0) => e0).toList(),
     );
   }
 }

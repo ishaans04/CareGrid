@@ -52,6 +52,7 @@ class SeedData {
       'Main entry for the North Response Post.',
     ),
     Zone(
+      campusId: 0,
       code: 'G4',
       name: 'North-West Service Gate',
       type: ZoneType.gate,
@@ -91,6 +92,7 @@ class SeedData {
     ),
     _z('ACD', 'Academic Complex', ZoneType.academic, 500, 420, null),
     Zone(
+      campusId: 0,
       code: 'LAB',
       name: 'Chemistry Labs',
       type: ZoneType.lab,
@@ -117,6 +119,7 @@ class SeedData {
       'Football field, courts, gym.',
     ),
     Zone(
+      campusId: 0,
       code: 'HA',
       name: 'Aster Hostel',
       type: ZoneType.hostel,
@@ -126,6 +129,7 @@ class SeedData {
       privacySensitive: true,
     ),
     Zone(
+      campusId: 0,
       code: 'HB',
       name: 'Birch Hostel',
       type: ZoneType.hostel,
@@ -135,6 +139,7 @@ class SeedData {
       privacySensitive: true,
     ),
     Zone(
+      campusId: 0,
       code: 'HC',
       name: 'Cedar Hostel',
       type: ZoneType.hostel,
@@ -144,6 +149,7 @@ class SeedData {
       privacySensitive: true,
     ),
     Zone(
+      campusId: 0,
       code: 'HD',
       name: 'Deodar Hostel',
       type: ZoneType.hostel,
@@ -162,6 +168,7 @@ class SeedData {
     double y,
     String? description,
   ) => Zone(
+    campusId: 0,
     code: code,
     name: name,
     type: type,
@@ -215,6 +222,7 @@ class SeedData {
     return [
       for (final (code, name, from, to, outside) in _roads)
         RoadSegment(
+          campusId: 0,
           code: code,
           name: name,
           fromZone: from,
@@ -268,6 +276,7 @@ class SeedData {
     List<String> adjacent, {
     AssetHealth health = AssetHealth.online,
   }) => Camera(
+    campusId: 0,
     code: code,
     zoneCode: zone,
     label: label,
@@ -373,6 +382,7 @@ class SeedData {
     List<String> capabilities,
     String contact,
   ) => Responder(
+    campusId: 0,
     code: code,
     name: name,
     type: type,
@@ -388,6 +398,7 @@ class SeedData {
 
   static List<ZonePolicy> policies() => [
     ZonePolicy(
+      campusId: 0,
       code: 'SOP-HST-MED-NIGHT',
       name: 'Hostel medical event (night)',
       zoneType: ZoneType.hostel,
@@ -413,6 +424,7 @@ class SeedData {
       ],
     ),
     ZonePolicy(
+      campusId: 0,
       code: 'SOP-HST-MED-DAY',
       name: 'Hostel medical event (day)',
       zoneType: ZoneType.hostel,
@@ -437,6 +449,7 @@ class SeedData {
       ],
     ),
     ZonePolicy(
+      campusId: 0,
       code: 'SOP-SPT-MED',
       name: 'Sports field injury',
       zoneType: ZoneType.sports,
@@ -459,6 +472,7 @@ class SeedData {
       ],
     ),
     ZonePolicy(
+      campusId: 0,
       code: 'SOP-LAB-HAZ',
       name: 'Laboratory fire / hazard',
       zoneType: ZoneType.lab,
@@ -481,6 +495,7 @@ class SeedData {
       ],
     ),
     ZonePolicy(
+      campusId: 0,
       code: 'SOP-FIRE-ANY',
       name: 'Fire / smoke (any zone)',
       family: EventFamily.fireHazard,
@@ -498,6 +513,7 @@ class SeedData {
       instructions: ['Evacuate the area.', 'Fire & safety unit leads.'],
     ),
     ZonePolicy(
+      campusId: 0,
       code: 'SOP-ROAD-COLL',
       name: 'Road collision',
       family: EventFamily.mobility,
@@ -519,6 +535,7 @@ class SeedData {
       ],
     ),
     ZonePolicy(
+      campusId: 0,
       code: 'SOP-MED-ANY',
       name: 'Medical event (any zone)',
       family: EventFamily.medical,
@@ -539,6 +556,7 @@ class SeedData {
       ],
     ),
     ZonePolicy(
+      campusId: 0,
       code: 'SOP-CROWD',
       name: 'Dangerous crowding',
       family: EventFamily.crowd,
@@ -560,6 +578,7 @@ class SeedData {
       ],
     ),
     ZonePolicy(
+      campusId: 0,
       code: 'SOP-LAB-ACCESS',
       name: 'Restricted lab entry',
       zoneType: ZoneType.lab,
@@ -578,6 +597,7 @@ class SeedData {
       instructions: ['Verify induction status; escort out if not inducted.'],
     ),
     ZonePolicy(
+      campusId: 0,
       code: 'SOP-ENV-ANY',
       name: 'Environmental hazard',
       family: EventFamily.environment,
@@ -595,6 +615,7 @@ class SeedData {
       instructions: ['Isolate water / power; barricade the area.'],
     ),
     ZonePolicy(
+      campusId: 0,
       code: 'SOP-OBJ-ANY',
       name: 'Unattended object',
       family: EventFamily.object,
@@ -714,6 +735,7 @@ class SeedData {
 
   static List<StressScenario> stressScenarios() => [
     StressScenario(
+      campusId: 0,
       code: 'ST-HOSTEL-0217',
       name: 'Person down at Birch Hostel, 02:17, compound failure',
       description:
@@ -734,6 +756,7 @@ class SeedData {
       builtIn: true,
     ),
     StressScenario(
+      campusId: 0,
       code: 'ST-LAB-FIRE-OUT',
       name: 'Lab smoke while the fire unit is out',
       description:
@@ -748,6 +771,7 @@ class SeedData {
       builtIn: true,
     ),
     StressScenario(
+      campusId: 0,
       code: 'ST-CEDAR-BLIND',
       name: 'Night emergency in a camera blind spot',
       description:
@@ -765,6 +789,7 @@ class SeedData {
       builtIn: true,
     ),
     StressScenario(
+      campusId: 0,
       code: 'ST-EASTGATE-ROAD',
       name: 'East Gate collision with South Avenue blocked',
       description:

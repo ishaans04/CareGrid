@@ -41,6 +41,7 @@ import 'package:caregrid_client/src/protocol/simulation/scenario_run.dart'
 import 'package:caregrid_client/src/protocol/simulation/simulation_status.dart'
     as _iw7811tl;
 import 'package:caregrid_client/src/protocol/twin/camera.dart' as _i2jonons;
+import 'package:caregrid_client/src/protocol/twin/campus.dart' as _iuambs3x;
 import 'package:caregrid_client/src/protocol/twin/responder.dart' as _i9znye72;
 import 'package:caregrid_client/src/protocol/twin/road_segment.dart'
     as _ikjtweu4;
@@ -62,6 +63,8 @@ import 'package:caregrid_client/src/protocol/views/incident_detail.dart'
     as _i0czyis8;
 import 'package:caregrid_client/src/protocol/views/incident_summary.dart'
     as _iok9p1hs;
+import 'package:caregrid_client/src/protocol/views/network_overview.dart'
+    as _iwlfx8z8;
 import 'package:caregrid_client/src/protocol/views/ops_board.dart' as _ictwk91n;
 import 'package:caregrid_client/src/protocol/views/ops_event.dart' as _ij549iae;
 import 'package:caregrid_client/src/protocol/views/ops_metrics.dart'
@@ -83,7 +86,7 @@ class EndpointAccount extends _isc.EndpointRef {
   @override
   String get name => 'account';
 
-  /// Accounts listed on the sign-in screen.
+  /// Accounts listed on the sign-in screen, grouped by campus.
   _ida.Future<List<_izv3hd7x.DemoAccount>> demoAccounts() =>
       caller.callServerEndpoint<List<_izv3hd7x.DemoAccount>>(
         'account',
@@ -118,7 +121,7 @@ class EndpointAccount extends _isc.EndpointRef {
 }
 
 /// Admin Control Plane: policies (SOPs), digital-twin asset state, users,
-/// audit log, and demo reset.
+/// audit log, and demo reset. Everything is scoped to the caller's campus.
 /// {@category Endpoint}
 class EndpointAdmin extends _isc.EndpointRef {
   EndpointAdmin(_isc.EndpointCaller caller) : super(caller);
@@ -209,7 +212,8 @@ class EndpointAdmin extends _isc.EndpointRef {
         {},
       );
 
-  /// Restores the seeded twin and history. Users and the audit log are kept.
+  /// Restores this campus's seeded twin and history. Users and the audit log
+  /// are kept; other campuses are untouched.
   _ida.Future<void> resetDemo() => caller.callServerEndpoint<void>(
     'admin',
     'resetDemo',
@@ -264,6 +268,16 @@ class EndpointCampus extends _isc.EndpointRef {
       caller.callServerEndpoint<_igwqpf3x.CampusTwin>(
         'campus',
         'twin',
+        {},
+      );
+
+  /// The caller's campus with its static map layers (plot outlines,
+  /// parking, courts, streets). Fetched once per session; [twin] carries the
+  /// live state without them.
+  _ida.Future<_iuambs3x.Campus> profile() =>
+      caller.callServerEndpoint<_iuambs3x.Campus>(
+        'campus',
+        'profile',
         {},
       );
 
@@ -491,7 +505,9 @@ class EndpointLive extends _isc.EndpointRef {
   @override
   String get name => 'live';
 
-  /// Emits an [OpsEvent] whenever anything operational changes.
+  /// Emits an [OpsEvent] whenever anything operational changes on the
+  /// caller's campus. The network role receives a content-free "something
+  /// changed on campus X" signal and refetches its aggregates.
   _ida.Stream<_ij549iae.OpsEvent> watch() =>
       caller.callStreamingServerEndpoint<
         _ida.Stream<_ij549iae.OpsEvent>,
@@ -504,8 +520,27 @@ class EndpointLive extends _isc.EndpointRef {
       );
 }
 
+/// Network operations: one de-identified picture across every campus (for a
+/// university group, district or city hub). Counts and timings only; no
+/// incident codes, locations, people or evidence leave a campus this way.
+/// {@category Endpoint}
+class EndpointNetwork extends _isc.EndpointRef {
+  EndpointNetwork(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'network';
+
+  _ida.Future<_iwlfx8z8.NetworkOverview> overview() =>
+      caller.callServerEndpoint<_iwlfx8z8.NetworkOverview>(
+        'network',
+        'overview',
+        {},
+      );
+}
+
 /// Readiness Lab: rehearse compound failures before the emergency happens,
-/// and apply the fixes the Stress-Test Engine finds to the live twin.
+/// and apply the fixes the Stress-Test Engine finds to the live twin. Every
+/// scenario, run and fix belongs to the caller's campus.
 /// {@category Endpoint}
 class EndpointReadiness extends _isc.EndpointRef {
   EndpointReadiness(_isc.EndpointCaller caller) : super(caller);
@@ -638,7 +673,8 @@ class EndpointResponder extends _isc.EndpointRef {
 }
 
 /// Edge event bus ingress. Edge gateways (or an operator) post normalized
-/// signals; the Incident Agent turns them into incidents.
+/// signals; the Incident Agent turns them into incidents on the caller's
+/// campus. Supplying [SignalInput.eventId] makes retries safe.
 /// {@category Endpoint}
 class EndpointSignal extends _isc.EndpointRef {
   EndpointSignal(_isc.EndpointCaller caller) : super(caller);
@@ -662,7 +698,8 @@ class EndpointSignal extends _isc.EndpointRef {
       );
 }
 
-/// Simulation Lab: plays seeded emergencies through the live pipeline.
+/// Simulation Lab: plays the caller's campus's seeded emergencies through the
+/// live pipeline.
 /// {@category Endpoint}
 class EndpointSimulation extends _isc.EndpointRef {
   EndpointSimulation(_isc.EndpointCaller caller) : super(caller);
@@ -696,7 +733,8 @@ class EndpointSimulation extends _isc.EndpointRef {
         {'runId': runId},
       );
 
-  /// Stands down every open scenario incident so demos can be repeated.
+  /// Stands down every open scenario incident on this campus so demos can be
+  /// repeated. Member SOS requests and other campuses are untouched.
   _ida.Future<int> clear() => caller.callServerEndpoint<int>(
     'simulation',
     'clear',
@@ -789,6 +827,7 @@ class Client extends _isc.ServerpodClientShared {
     evidence = EndpointEvidence(this);
     incident = EndpointIncident(this);
     live = EndpointLive(this);
+    network = EndpointNetwork(this);
     readiness = EndpointReadiness(this);
     responder = EndpointResponder(this);
     signal = EndpointSignal(this);
@@ -814,6 +853,8 @@ class Client extends _isc.ServerpodClientShared {
 
   late final EndpointLive live;
 
+  late final EndpointNetwork network;
+
   late final EndpointReadiness readiness;
 
   late final EndpointResponder responder;
@@ -835,6 +876,7 @@ class Client extends _isc.ServerpodClientShared {
     'evidence': evidence,
     'incident': incident,
     'live': live,
+    'network': network,
     'readiness': readiness,
     'responder': responder,
     'signal': signal,

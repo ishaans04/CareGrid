@@ -18,6 +18,7 @@ abstract class ScenarioRun
     implements _is.TableRow<int?>, _is.ProtocolSerialization {
   ScenarioRun._({
     this.id,
+    required this.campusId,
     required this.scenarioCode,
     required this.title,
     required this.startedAt,
@@ -31,6 +32,7 @@ abstract class ScenarioRun
 
   factory ScenarioRun({
     int? id,
+    required int campusId,
     required String scenarioCode,
     required String title,
     required DateTime startedAt,
@@ -45,6 +47,7 @@ abstract class ScenarioRun
   factory ScenarioRun.fromJson(Map<String, dynamic> jsonSerialization) {
     return ScenarioRun(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       scenarioCode: jsonSerialization['scenarioCode'] as String,
       title: jsonSerialization['title'] as String,
       startedAt: _is.DateTimeJsonExtension.fromJson(
@@ -67,6 +70,8 @@ abstract class ScenarioRun
 
   @override
   int? id;
+
+  int campusId;
 
   String scenarioCode;
 
@@ -97,6 +102,7 @@ abstract class ScenarioRun
   @_is.useResult
   ScenarioRun copyWith({
     int? id,
+    int? campusId,
     String? scenarioCode,
     String? title,
     DateTime? startedAt,
@@ -112,6 +118,7 @@ abstract class ScenarioRun
     return {
       '__className__': 'ScenarioRun',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'scenarioCode': scenarioCode,
       'title': title,
       'startedAt': startedAt.toJson(),
@@ -129,6 +136,7 @@ abstract class ScenarioRun
     return {
       '__className__': 'ScenarioRun',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'scenarioCode': scenarioCode,
       'title': title,
       'startedAt': startedAt.toJson(),
@@ -174,6 +182,7 @@ class _Undefined {}
 class _ScenarioRunImpl extends ScenarioRun {
   _ScenarioRunImpl({
     int? id,
+    required int campusId,
     required String scenarioCode,
     required String title,
     required DateTime startedAt,
@@ -185,6 +194,7 @@ class _ScenarioRunImpl extends ScenarioRun {
     required List<String> faults,
   }) : super._(
          id: id,
+         campusId: campusId,
          scenarioCode: scenarioCode,
          title: title,
          startedAt: startedAt,
@@ -202,6 +212,7 @@ class _ScenarioRunImpl extends ScenarioRun {
   @override
   ScenarioRun copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? scenarioCode,
     String? title,
     DateTime? startedAt,
@@ -214,6 +225,7 @@ class _ScenarioRunImpl extends ScenarioRun {
   }) {
     return ScenarioRun(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       scenarioCode: scenarioCode ?? this.scenarioCode,
       title: title ?? this.title,
       startedAt: startedAt ?? this.startedAt,
@@ -229,6 +241,11 @@ class _ScenarioRunImpl extends ScenarioRun {
 
 class ScenarioRunUpdateTable extends _is.UpdateTable<ScenarioRunTable> {
   ScenarioRunUpdateTable(super.table);
+
+  _is.ColumnValue<int, int> campusId(int value) => _is.ColumnValue(
+    table.campusId,
+    value,
+  );
 
   _is.ColumnValue<String, String> scenarioCode(String value) => _is.ColumnValue(
     table.scenarioCode,
@@ -281,6 +298,10 @@ class ScenarioRunUpdateTable extends _is.UpdateTable<ScenarioRunTable> {
 class ScenarioRunTable extends _is.Table<int?> {
   ScenarioRunTable({super.tableRelation}) : super(tableName: 'scenario_run') {
     updateTable = ScenarioRunUpdateTable(this);
+    campusId = _is.ColumnInt(
+      'campusId',
+      this,
+    );
     scenarioCode = _is.ColumnString(
       'scenarioCode',
       this,
@@ -321,6 +342,8 @@ class ScenarioRunTable extends _is.Table<int?> {
 
   late final ScenarioRunUpdateTable updateTable;
 
+  late final _is.ColumnInt campusId;
+
   late final _is.ColumnString scenarioCode;
 
   late final _is.ColumnString title;
@@ -345,6 +368,7 @@ class ScenarioRunTable extends _is.Table<int?> {
   @override
   List<_is.Column> get columns => [
     id,
+    campusId,
     scenarioCode,
     title,
     startedAt,

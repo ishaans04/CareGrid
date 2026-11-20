@@ -20,6 +20,7 @@ abstract class Responder
     implements _isc.SerializableModel, _isc.ProtocolSerialization {
   Responder._({
     this.id,
+    required this.campusId,
     required this.code,
     required this.name,
     required this.type,
@@ -36,6 +37,7 @@ abstract class Responder
 
   factory Responder({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required _iua0ui51.ResponderType type,
@@ -53,6 +55,7 @@ abstract class Responder
   factory Responder.fromJson(Map<String, dynamic> jsonSerialization) {
     return Responder(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       code: jsonSerialization['code'] as String,
       name: jsonSerialization['name'] as String,
       type: _iua0ui51.ResponderType.fromJson(
@@ -80,6 +83,8 @@ abstract class Responder
   /// database or if it has been fetched from the database. Otherwise,
   /// the id will be null.
   int? id;
+
+  int campusId;
 
   String code;
 
@@ -114,6 +119,7 @@ abstract class Responder
   @_isc.useResult
   Responder copyWith({
     int? id,
+    int? campusId,
     String? code,
     String? name,
     _iua0ui51.ResponderType? type,
@@ -132,6 +138,7 @@ abstract class Responder
     return {
       '__className__': 'Responder',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'type': type.toJson(),
@@ -152,6 +159,7 @@ abstract class Responder
     return {
       '__className__': 'Responder',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'type': type.toJson(),
@@ -178,6 +186,7 @@ class _Undefined {}
 class _ResponderImpl extends Responder {
   _ResponderImpl({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required _iua0ui51.ResponderType type,
@@ -192,6 +201,7 @@ class _ResponderImpl extends Responder {
     String? statusNote,
   }) : super._(
          id: id,
+         campusId: campusId,
          code: code,
          name: name,
          type: type,
@@ -212,6 +222,7 @@ class _ResponderImpl extends Responder {
   @override
   Responder copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? code,
     String? name,
     _iua0ui51.ResponderType? type,
@@ -227,6 +238,7 @@ class _ResponderImpl extends Responder {
   }) {
     return Responder(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       code: code ?? this.code,
       name: name ?? this.name,
       type: type ?? this.type,

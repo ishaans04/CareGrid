@@ -318,9 +318,14 @@ void main() {
     test('explicit scenario runs retain labelled simulated arrival', () async {
       final cmd = await signedIn('cmd.night');
       final hero = await heroVerified(cmd);
+      final heroCampus = (await Incident.db.findById(
+        session,
+        hero.id,
+      ))!.campusId;
       final run = await ScenarioRun.db.insertRow(
         session,
         ScenarioRun(
+          campusId: heroCampus,
           scenarioCode: 'TEST-EXPLICIT-SIMULATION',
           title: 'Arrival fixture',
           startedAt: DateTime.now().toUtc(),

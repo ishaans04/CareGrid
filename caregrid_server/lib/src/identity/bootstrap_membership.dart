@@ -67,7 +67,13 @@ class BootstrapMembership {
           user.tokensValidAfter = CampusClock.now();
       }
       await AppUser.db.updateRow(session, user, transaction: transaction);
-      await _audit(session, 'membership-$command', user.handle, transaction);
+      await _audit(
+        session,
+        'membership-$command',
+        user.handle,
+        transaction,
+        campusId: user.campusId,
+      );
     });
   }
 
@@ -75,11 +81,13 @@ class BootstrapMembership {
     Session session,
     String action,
     String? handle,
-    Transaction? transaction,
-  ) async {
+    Transaction? transaction, {
+    int? campusId,
+  }) async {
     await AuditRecord.db.insertRow(
       session,
       AuditRecord(
+        campusId: campusId,
         at: CampusClock.now(),
         userName: 'Privileged deployment job',
         role: 'deployment-operator',

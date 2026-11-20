@@ -142,6 +142,22 @@ class IncidentViews {
           ),
           const ['Agent reasoning, camera evidence and other units\' detail'],
         );
+      case UserRole.network:
+        // The network role reads aggregates only; it never receives a case.
+        // Defence in depth: should one ever be built, strip everything that
+        // identifies a person, place or piece of evidence.
+        return (
+          i.copyWith(
+            primaryCameraCode: null,
+            trackId: null,
+            locationDetail: null,
+            reasoning: [],
+            negativeEvidence: [],
+            ownerName: null,
+            closureNote: null,
+          ),
+          const ['Case detail (network view is aggregate-only)'],
+        );
     }
   }
 }

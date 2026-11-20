@@ -7,7 +7,6 @@ import '../generated/protocol.dart';
 import '../response/incident_views.dart';
 import '../response/orchestrator.dart';
 import '../response/response_planner.dart';
-import '../seed/seed_data.dart';
 import '../twin/twin_snapshot.dart';
 
 /// Incident Console API: one prioritized queue of owned incidents, the
@@ -19,11 +18,12 @@ class IncidentEndpoint extends Endpoint {
   /// alerted to.
   Future<OpsBoard> board(Session session) async {
     final actor = await Access.require(session, _viewers);
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, actor.campusId);
     final since = CampusClock.now().subtract(const Duration(hours: 24));
     final all = await Incident.db.find(
       session,
       where: (t) =>
+          t.campusId.equals(actor.campusId) &
           t.parentIncidentId.equals(null) &
           ((t.resolvedAt.equals(null) & t.dismissedAt.equals(null)) |
               (t.updatedAt > since)),
@@ -44,7 +44,7 @@ class IncidentEndpoint extends Endpoint {
     final responders = twin.responders.values;
     return OpsBoard(
       generatedAt: CampusClock.now(),
-      campusName: SeedData.campusName,
+      campusName: twin.campus.name,
       active: active,
       recent: recent,
       respondersAvailable: responders
@@ -87,7 +87,7 @@ class IncidentEndpoint extends Endpoint {
         break;
     }
 
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, incident.campusId);
     final zone = twin.zone(incident.zoneCode);
     final (redacted, redactions) = IncidentViews.redact(incident, actor.role);
     final isCommand = actor.role == UserRole.command;
@@ -361,7 +361,7 @@ class IncidentEndpoint extends Endpoint {
   }
 
   Future<IncidentSummary> _summary(Session session, Incident incident) async {
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, incident.campusId);
     return (await IncidentViews.summaries(session, [incident], twin)).first;
   }
 }

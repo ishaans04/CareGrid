@@ -67,10 +67,12 @@ import 'simulation/scenario_info.dart' as _iyf1dz2p;
 import 'simulation/scenario_run.dart' as _i555kad7;
 import 'simulation/simulation_status.dart' as _i216yyh2;
 import 'twin/camera.dart' as _iznodk4a;
+import 'twin/campus.dart' as _i5cmf529;
 import 'twin/responder.dart' as _iombuvto;
 import 'twin/road_segment.dart' as _iqmbpj37;
 import 'twin/zone.dart' as _i5d9qpt0;
 import 'twin/zone_policy.dart' as _i0bge9o7;
+import 'views/campus_pulse.dart' as _ivgzxilb;
 import 'views/campus_twin.dart' as _iqt6besl;
 import 'views/care_case.dart' as _i2egsg9j;
 import 'views/evidence_content.dart' as _i8js0qii;
@@ -79,6 +81,7 @@ import 'views/evidence_page.dart' as _ig1wbv10;
 import 'views/incident_brief.dart' as _izalsqqh;
 import 'views/incident_detail.dart' as _iv8abos3;
 import 'views/incident_summary.dart' as _i028ji74;
+import 'views/network_overview.dart' as _ierx0y7q;
 import 'views/ops_board.dart' as _ifqwjb8e;
 import 'views/ops_event.dart' as _iz030ym9;
 import 'views/ops_metrics.dart' as _izhon84m;
@@ -124,10 +127,12 @@ export 'simulation/scenario_info.dart';
 export 'simulation/scenario_run.dart';
 export 'simulation/simulation_status.dart';
 export 'twin/camera.dart';
+export 'twin/campus.dart';
 export 'twin/responder.dart';
 export 'twin/road_segment.dart';
 export 'twin/zone.dart';
 export 'twin/zone_policy.dart';
+export 'views/campus_pulse.dart';
 export 'views/campus_twin.dart';
 export 'views/care_case.dart';
 export 'views/evidence_content.dart';
@@ -136,6 +141,7 @@ export 'views/evidence_page.dart';
 export 'views/incident_brief.dart';
 export 'views/incident_detail.dart';
 export 'views/incident_summary.dart';
+export 'views/network_overview.dart';
 export 'views/ops_board.dart';
 export 'views/ops_event.dart';
 export 'views/ops_metrics.dart';
@@ -295,6 +301,9 @@ class Protocol extends _isc.SerializationManager {
     if (t == _iznodk4a.Camera) {
       return _iznodk4a.Camera.fromJson(data) as T;
     }
+    if (t == _i5cmf529.Campus) {
+      return _i5cmf529.Campus.fromJson(data) as T;
+    }
     if (t == _iombuvto.Responder) {
       return _iombuvto.Responder.fromJson(data) as T;
     }
@@ -306,6 +315,9 @@ class Protocol extends _isc.SerializationManager {
     }
     if (t == _i0bge9o7.ZonePolicy) {
       return _i0bge9o7.ZonePolicy.fromJson(data) as T;
+    }
+    if (t == _ivgzxilb.CampusPulse) {
+      return _ivgzxilb.CampusPulse.fromJson(data) as T;
     }
     if (t == _iqt6besl.CampusTwin) {
       return _iqt6besl.CampusTwin.fromJson(data) as T;
@@ -330,6 +342,9 @@ class Protocol extends _isc.SerializationManager {
     }
     if (t == _i028ji74.IncidentSummary) {
       return _i028ji74.IncidentSummary.fromJson(data) as T;
+    }
+    if (t == _ierx0y7q.NetworkOverview) {
+      return _ierx0y7q.NetworkOverview.fromJson(data) as T;
     }
     if (t == _ifqwjb8e.OpsBoard) {
       return _ifqwjb8e.OpsBoard.fromJson(data) as T;
@@ -480,6 +495,9 @@ class Protocol extends _isc.SerializationManager {
     if (t == _isc.getType<_iznodk4a.Camera?>()) {
       return (data != null ? _iznodk4a.Camera.fromJson(data) : null) as T;
     }
+    if (t == _isc.getType<_i5cmf529.Campus?>()) {
+      return (data != null ? _i5cmf529.Campus.fromJson(data) : null) as T;
+    }
     if (t == _isc.getType<_iombuvto.Responder?>()) {
       return (data != null ? _iombuvto.Responder.fromJson(data) : null) as T;
     }
@@ -491,6 +509,9 @@ class Protocol extends _isc.SerializationManager {
     }
     if (t == _isc.getType<_i0bge9o7.ZonePolicy?>()) {
       return (data != null ? _i0bge9o7.ZonePolicy.fromJson(data) : null) as T;
+    }
+    if (t == _isc.getType<_ivgzxilb.CampusPulse?>()) {
+      return (data != null ? _ivgzxilb.CampusPulse.fromJson(data) : null) as T;
     }
     if (t == _isc.getType<_iqt6besl.CampusTwin?>()) {
       return (data != null ? _iqt6besl.CampusTwin.fromJson(data) : null) as T;
@@ -518,6 +539,10 @@ class Protocol extends _isc.SerializationManager {
     }
     if (t == _isc.getType<_i028ji74.IncidentSummary?>()) {
       return (data != null ? _i028ji74.IncidentSummary.fromJson(data) : null)
+          as T;
+    }
+    if (t == _isc.getType<_ierx0y7q.NetworkOverview?>()) {
+      return (data != null ? _ierx0y7q.NetworkOverview.fromJson(data) : null)
           as T;
     }
     if (t == _isc.getType<_ifqwjb8e.OpsBoard?>()) {
@@ -585,6 +610,15 @@ class Protocol extends _isc.SerializationManager {
               .toList()
           as T;
     }
+    if (t == List<double>) {
+      return (data as List).map((e) => deserialize<double>(e)).toList() as T;
+    }
+    if (t == _isc.getType<List<double>?>()) {
+      return (data != null
+              ? (data as List).map((e) => deserialize<double>(e)).toList()
+              : null)
+          as T;
+    }
     if (t == List<_ibv84qfn.ResponderType>) {
       return (data as List)
               .map((e) => deserialize<_ibv84qfn.ResponderType>(e))
@@ -646,6 +680,12 @@ class Protocol extends _isc.SerializationManager {
     if (t == List<_iyiaaekw.SensorEvent>) {
       return (data as List)
               .map((e) => deserialize<_iyiaaekw.SensorEvent>(e))
+              .toList()
+          as T;
+    }
+    if (t == List<_ivgzxilb.CampusPulse>) {
+      return (data as List)
+              .map((e) => deserialize<_ivgzxilb.CampusPulse>(e))
               .toList()
           as T;
     }
@@ -762,10 +802,12 @@ class Protocol extends _isc.SerializationManager {
       _i555kad7.ScenarioRun => 'ScenarioRun',
       _i216yyh2.SimulationStatus => 'SimulationStatus',
       _iznodk4a.Camera => 'Camera',
+      _i5cmf529.Campus => 'Campus',
       _iombuvto.Responder => 'Responder',
       _iqmbpj37.RoadSegment => 'RoadSegment',
       _i5d9qpt0.Zone => 'Zone',
       _i0bge9o7.ZonePolicy => 'ZonePolicy',
+      _ivgzxilb.CampusPulse => 'CampusPulse',
       _iqt6besl.CampusTwin => 'CampusTwin',
       _i2egsg9j.CareCase => 'CareCase',
       _i8js0qii.EvidenceContent => 'EvidenceContent',
@@ -774,6 +816,7 @@ class Protocol extends _isc.SerializationManager {
       _izalsqqh.IncidentBrief => 'IncidentBrief',
       _iv8abos3.IncidentDetail => 'IncidentDetail',
       _i028ji74.IncidentSummary => 'IncidentSummary',
+      _ierx0y7q.NetworkOverview => 'NetworkOverview',
       _ifqwjb8e.OpsBoard => 'OpsBoard',
       _iz030ym9.OpsEvent => 'OpsEvent',
       _izhon84m.OpsMetrics => 'OpsMetrics',
@@ -872,6 +915,8 @@ class Protocol extends _isc.SerializationManager {
         return 'SimulationStatus';
       case _iznodk4a.Camera():
         return 'Camera';
+      case _i5cmf529.Campus():
+        return 'Campus';
       case _iombuvto.Responder():
         return 'Responder';
       case _iqmbpj37.RoadSegment():
@@ -880,6 +925,8 @@ class Protocol extends _isc.SerializationManager {
         return 'Zone';
       case _i0bge9o7.ZonePolicy():
         return 'ZonePolicy';
+      case _ivgzxilb.CampusPulse():
+        return 'CampusPulse';
       case _iqt6besl.CampusTwin():
         return 'CampusTwin';
       case _i2egsg9j.CareCase():
@@ -896,6 +943,8 @@ class Protocol extends _isc.SerializationManager {
         return 'IncidentDetail';
       case _i028ji74.IncidentSummary():
         return 'IncidentSummary';
+      case _ierx0y7q.NetworkOverview():
+        return 'NetworkOverview';
       case _ifqwjb8e.OpsBoard():
         return 'OpsBoard';
       case _iz030ym9.OpsEvent():
@@ -1035,6 +1084,9 @@ class Protocol extends _isc.SerializationManager {
     if (dataClassName == 'Camera') {
       return deserialize<_iznodk4a.Camera>(data['data']);
     }
+    if (dataClassName == 'Campus') {
+      return deserialize<_i5cmf529.Campus>(data['data']);
+    }
     if (dataClassName == 'Responder') {
       return deserialize<_iombuvto.Responder>(data['data']);
     }
@@ -1046,6 +1098,9 @@ class Protocol extends _isc.SerializationManager {
     }
     if (dataClassName == 'ZonePolicy') {
       return deserialize<_i0bge9o7.ZonePolicy>(data['data']);
+    }
+    if (dataClassName == 'CampusPulse') {
+      return deserialize<_ivgzxilb.CampusPulse>(data['data']);
     }
     if (dataClassName == 'CampusTwin') {
       return deserialize<_iqt6besl.CampusTwin>(data['data']);
@@ -1070,6 +1125,9 @@ class Protocol extends _isc.SerializationManager {
     }
     if (dataClassName == 'IncidentSummary') {
       return deserialize<_i028ji74.IncidentSummary>(data['data']);
+    }
+    if (dataClassName == 'NetworkOverview') {
+      return deserialize<_ierx0y7q.NetworkOverview>(data['data']);
     }
     if (dataClassName == 'OpsBoard') {
       return deserialize<_ifqwjb8e.OpsBoard>(data['data']);

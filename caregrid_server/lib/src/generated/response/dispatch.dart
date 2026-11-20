@@ -20,6 +20,7 @@ abstract class Dispatch
     implements _is.TableRow<int?>, _is.ProtocolSerialization {
   Dispatch._({
     this.id,
+    required this.campusId,
     required this.incidentId,
     required this.responderCode,
     required this.responderName,
@@ -46,6 +47,7 @@ abstract class Dispatch
 
   factory Dispatch({
     int? id,
+    required int campusId,
     required int incidentId,
     required String responderCode,
     required String responderName,
@@ -72,6 +74,7 @@ abstract class Dispatch
   factory Dispatch.fromJson(Map<String, dynamic> jsonSerialization) {
     return Dispatch(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       incidentId: jsonSerialization['incidentId'] as int,
       responderCode: jsonSerialization['responderCode'] as String,
       responderName: jsonSerialization['responderName'] as String,
@@ -133,6 +136,8 @@ abstract class Dispatch
   @override
   int? id;
 
+  int campusId;
+
   int incidentId;
 
   String responderCode;
@@ -187,6 +192,7 @@ abstract class Dispatch
   @_is.useResult
   Dispatch copyWith({
     int? id,
+    int? campusId,
     int? incidentId,
     String? responderCode,
     String? responderName,
@@ -214,6 +220,7 @@ abstract class Dispatch
     return {
       '__className__': 'Dispatch',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'incidentId': incidentId,
       'responderCode': responderCode,
       'responderName': responderName,
@@ -243,6 +250,7 @@ abstract class Dispatch
     return {
       '__className__': 'Dispatch',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'incidentId': incidentId,
       'responderCode': responderCode,
       'responderName': responderName,
@@ -300,6 +308,7 @@ class _Undefined {}
 class _DispatchImpl extends Dispatch {
   _DispatchImpl({
     int? id,
+    required int campusId,
     required int incidentId,
     required String responderCode,
     required String responderName,
@@ -323,6 +332,7 @@ class _DispatchImpl extends Dispatch {
     String? note,
   }) : super._(
          id: id,
+         campusId: campusId,
          incidentId: incidentId,
          responderCode: responderCode,
          responderName: responderName,
@@ -352,6 +362,7 @@ class _DispatchImpl extends Dispatch {
   @override
   Dispatch copyWith({
     Object? id = _Undefined,
+    int? campusId,
     int? incidentId,
     String? responderCode,
     String? responderName,
@@ -376,6 +387,7 @@ class _DispatchImpl extends Dispatch {
   }) {
     return Dispatch(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       incidentId: incidentId ?? this.incidentId,
       responderCode: responderCode ?? this.responderCode,
       responderName: responderName ?? this.responderName,
@@ -409,6 +421,11 @@ class _DispatchImpl extends Dispatch {
 
 class DispatchUpdateTable extends _is.UpdateTable<DispatchTable> {
   DispatchUpdateTable(super.table);
+
+  _is.ColumnValue<int, int> campusId(int value) => _is.ColumnValue(
+    table.campusId,
+    value,
+  );
 
   _is.ColumnValue<int, int> incidentId(int value) => _is.ColumnValue(
     table.incidentId,
@@ -534,6 +551,10 @@ class DispatchUpdateTable extends _is.UpdateTable<DispatchTable> {
 class DispatchTable extends _is.Table<int?> {
   DispatchTable({super.tableRelation}) : super(tableName: 'dispatch') {
     updateTable = DispatchUpdateTable(this);
+    campusId = _is.ColumnInt(
+      'campusId',
+      this,
+    );
     incidentId = _is.ColumnInt(
       'incidentId',
       this,
@@ -626,6 +647,8 @@ class DispatchTable extends _is.Table<int?> {
 
   late final DispatchUpdateTable updateTable;
 
+  late final _is.ColumnInt campusId;
+
   late final _is.ColumnInt incidentId;
 
   late final _is.ColumnString responderCode;
@@ -675,6 +698,7 @@ class DispatchTable extends _is.Table<int?> {
   @override
   List<_is.Column> get columns => [
     id,
+    campusId,
     incidentId,
     responderCode,
     responderName,

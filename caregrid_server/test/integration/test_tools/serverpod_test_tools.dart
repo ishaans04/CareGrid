@@ -44,6 +44,7 @@ import 'package:caregrid_server/src/generated/simulation/scenario_run.dart'
 import 'package:caregrid_server/src/generated/simulation/simulation_status.dart'
     as _i232q5zl;
 import 'package:caregrid_server/src/generated/twin/camera.dart' as _irl2ns5g;
+import 'package:caregrid_server/src/generated/twin/campus.dart' as _imdcs171;
 import 'package:caregrid_server/src/generated/twin/responder.dart' as _iqeiybr7;
 import 'package:caregrid_server/src/generated/twin/road_segment.dart'
     as _iqttdw44;
@@ -66,6 +67,8 @@ import 'package:caregrid_server/src/generated/views/incident_detail.dart'
     as _irrnkslk;
 import 'package:caregrid_server/src/generated/views/incident_summary.dart'
     as _ihbu8vwq;
+import 'package:caregrid_server/src/generated/views/network_overview.dart'
+    as _ixzlmuac;
 import 'package:caregrid_server/src/generated/views/ops_board.dart'
     as _il3zwk59;
 import 'package:caregrid_server/src/generated/views/ops_event.dart'
@@ -229,6 +232,8 @@ class TestEndpoints {
 
   late final _LiveEndpoint live;
 
+  late final _NetworkEndpoint network;
+
   late final _ReadinessEndpoint readiness;
 
   late final _ResponderEndpoint responder;
@@ -280,6 +285,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     live = _LiveEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    network = _NetworkEndpoint(
       endpoints,
       serializationManager,
     );
@@ -861,6 +870,36 @@ class _CampusEndpoint {
                   _localCallContext.arguments,
                 )
                 as _ida.Future<_ii4ij66i.CampusTwin>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<_imdcs171.Campus> profile(
+    _ist.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'campus',
+            method: 'profile',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'campus',
+          methodName: 'profile',
+          parameters: _ist.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_imdcs171.Campus>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -1487,6 +1526,47 @@ class _LiveEndpoint {
       _localTestStreamManager.outputStreamController,
     );
     return _localTestStreamManager.outputStreamController.stream;
+  }
+}
+
+class _NetworkEndpoint {
+  _NetworkEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_ixzlmuac.NetworkOverview> overview(
+    _ist.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'network',
+            method: 'overview',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'network',
+          methodName: 'overview',
+          parameters: _ist.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_ixzlmuac.NetworkOverview>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
   }
 }
 

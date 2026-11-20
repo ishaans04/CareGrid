@@ -2,6 +2,7 @@
 class: Dispatch
 table: dispatch
 fields:
+  campusId: int, relation(parent=campus, onDelete=Restrict)
   incidentId: int
   responderCode: String
   responderName: String
@@ -30,3 +31,5 @@ fields:
 indexes:
   dispatch_incident_idx:
     fields: incidentId
+  dispatch_campus_responder_idx:
+    fields: campusId, responderCode

@@ -24,6 +24,7 @@ abstract class Incident
     implements _isc.SerializableModel, _isc.ProtocolSerialization {
   Incident._({
     this.id,
+    required this.campusId,
     required this.code,
     required this.title,
     required this.eventType,
@@ -76,6 +77,7 @@ abstract class Incident
 
   factory Incident({
     int? id,
+    required int campusId,
     required String code,
     required String title,
     required _ikhu1dq5.EventType eventType,
@@ -123,6 +125,7 @@ abstract class Incident
   factory Incident.fromJson(Map<String, dynamic> jsonSerialization) {
     return Incident(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       code: jsonSerialization['code'] as String,
       title: jsonSerialization['title'] as String,
       eventType: _ikhu1dq5.EventType.fromJson(
@@ -239,6 +242,8 @@ abstract class Incident
   /// the id will be null.
   int? id;
 
+  int campusId;
+
   /// Human readable id, e.g. INC-1042.
   String code;
 
@@ -341,6 +346,7 @@ abstract class Incident
   @_isc.useResult
   Incident copyWith({
     int? id,
+    int? campusId,
     String? code,
     String? title,
     _ikhu1dq5.EventType? eventType,
@@ -389,6 +395,7 @@ abstract class Incident
     return {
       '__className__': 'Incident',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'title': title,
       'eventType': eventType.toJson(),
@@ -439,6 +446,7 @@ abstract class Incident
     return {
       '__className__': 'Incident',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'title': title,
       'eventType': eventType.toJson(),
@@ -495,6 +503,7 @@ class _Undefined {}
 class _IncidentImpl extends Incident {
   _IncidentImpl({
     int? id,
+    required int campusId,
     required String code,
     required String title,
     required _ikhu1dq5.EventType eventType,
@@ -539,6 +548,7 @@ class _IncidentImpl extends Incident {
     int? revision,
   }) : super._(
          id: id,
+         campusId: campusId,
          code: code,
          title: title,
          eventType: eventType,
@@ -589,6 +599,7 @@ class _IncidentImpl extends Incident {
   @override
   Incident copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? code,
     String? title,
     _ikhu1dq5.EventType? eventType,
@@ -634,6 +645,7 @@ class _IncidentImpl extends Incident {
   }) {
     return Incident(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       code: code ?? this.code,
       title: title ?? this.title,
       eventType: eventType ?? this.eventType,

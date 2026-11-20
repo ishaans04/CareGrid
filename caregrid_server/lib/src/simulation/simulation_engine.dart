@@ -5,10 +5,11 @@ import '../core/access.dart';
 import '../core/clock.dart';
 import '../core/ops_bus.dart';
 import '../generated/protocol.dart';
+import '../seed/campus_seed.dart';
 import 'scenario_library.dart';
 
-/// Plays seeded scenarios through the live pipeline by emitting their signals
-/// on schedule, exactly as an edge gateway would.
+/// Plays a campus's seeded scenarios through the live pipeline by emitting
+/// their signals on schedule, exactly as an edge gateway would.
 ///
 /// Pending steps live in memory: this prototype runs a single server
 /// instance. A multi-instance deployment would schedule steps as future calls.
@@ -17,20 +18,35 @@ class SimulationEngine {
 
   static final Map<int, List<_Pending>> _pending = {};
 
+  /// The scenario catalogue of [campusId].
+  static Future<List<ScenarioDefinition>> catalogue(
+    Session session,
+    int campusId,
+  ) async {
+    final campus = await Campus.db.findById(session, campusId);
+    if (campus == null) throw notFound('Campus $campusId');
+    return CampusSeeds.byCode(campus.code)?.scenarios ?? const [];
+  }
+
   static Future<ScenarioRun> start(
     Session session,
+    int campusId,
     String code, {
     required bool autopilot,
     required Actor actor,
   }) async {
-    final def = ScenarioLibrary.byCode(code);
+    final def = ScenarioLibrary.find(
+      await catalogue(session, campusId),
+      code,
+    );
     if (def == null) throw notFound('Scenario $code');
-    await _prepareTwin(session);
+    await _prepareTwin(session, campusId);
 
     final now = CampusClock.now();
     final run = await ScenarioRun.db.insertRow(
       session,
       ScenarioRun(
+        campusId: campusId,
         scenarioCode: def.code,
         title: def.title,
         startedAt: now,
@@ -46,7 +62,12 @@ class SimulationEngine {
       for (final step in def.steps)
         _Pending(now.add(Duration(seconds: step.atSecond)), step.input),
     ];
-    await OpsBus.publish(session, 'scenario', message: 'Started ${def.title}');
+    await OpsBus.publish(
+      session,
+      'scenario',
+      campusId: campusId,
+      message: 'Started ${def.title}',
+    );
     await tick(session);
     return (await ScenarioRun.db.findById(session, run.id!))!;
   }
@@ -66,7 +87,12 @@ class SimulationEngine {
         continue;
       }
       for (final step in due) {
-        await IncidentAgent.ingest(session, step.input, scenarioRunId: runId);
+        await IncidentAgent.ingest(
+          session,
+          run.campusId,
+          step.input,
+          scenarioRunId: runId,
+        );
         run.stepsEmitted += 1;
       }
       if (steps.isEmpty) {
@@ -74,19 +100,17 @@ class SimulationEngine {
         _pending.remove(runId);
       }
       await ScenarioRun.db.updateRow(session, run);
-      await OpsBus.publish(session, 'scenario');
+      await OpsBus.publish(session, 'scenario', campusId: run.campusId);
     }
   }
 
-  static Future<ScenarioRun> stop(Session session, int runId) async {
-    _pending.remove(runId);
-    final run = await ScenarioRun.db.findById(session, runId);
-    if (run == null) throw notFound('Scenario run $runId');
+  static Future<ScenarioRun> stop(Session session, ScenarioRun run) async {
+    _pending.remove(run.id);
     if (run.status == 'running') {
       run.status = 'stopped';
-      await ScenarioRun.db.updateRow(session, run);
+      run = await ScenarioRun.db.updateRow(session, run);
     }
-    await OpsBus.publish(session, 'scenario');
+    await OpsBus.publish(session, 'scenario', campusId: run.campusId);
     return run;
   }
 
@@ -101,10 +125,12 @@ class SimulationEngine {
 
   /// Frees units left unreachable by an earlier fault scenario so demos can
   /// be repeated.
-  static Future<void> _prepareTwin(Session session) async {
+  static Future<void> _prepareTwin(Session session, int campusId) async {
     final stuck = await Responder.db.find(
       session,
-      where: (t) => t.status.equals(ResponderStatus.offline),
+      where: (t) =>
+          t.campusId.equals(campusId) &
+          t.status.equals(ResponderStatus.offline),
     );
     for (final r in stuck.where(
       (r) => (r.statusNote ?? '').startsWith('Missed acknowledgement'),

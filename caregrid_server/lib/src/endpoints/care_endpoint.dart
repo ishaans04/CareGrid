@@ -11,12 +11,16 @@ import '../twin/twin_snapshot.dart';
 /// and handoff state. No camera evidence: clinicians get what care needs.
 class CareEndpoint extends Endpoint {
   Future<List<CareCase>> cases(Session session) async {
-    await Access.require(session, {UserRole.medical, UserRole.command});
-    final twin = await TwinSnapshot.load(session);
+    final actor = await Access.require(session, {
+      UserRole.medical,
+      UserRole.command,
+    });
+    final twin = await TwinSnapshot.load(session, actor.campusId);
     final since = CampusClock.now().subtract(const Duration(hours: 12));
     final incidents = await Incident.db.find(
       session,
       where: (t) =>
+          t.campusId.equals(actor.campusId) &
           t.hospitalNotified.equals(true) &
           t.parentIncidentId.equals(null) &
           ((t.resolvedAt.equals(null) & t.dismissedAt.equals(null)) |

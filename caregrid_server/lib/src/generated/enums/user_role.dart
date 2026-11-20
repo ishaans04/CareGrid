@@ -18,7 +18,8 @@ enum UserRole implements _is.SerializableModel {
   medical('Medical team'),
   responder('Responder'),
   admin('IT / Administration'),
-  member('Campus member');
+  member('Campus member'),
+  network('Network operations');
 
   const UserRole(this.label);
 
@@ -36,6 +37,8 @@ enum UserRole implements _is.SerializableModel {
         return UserRole.admin;
       case 'member':
         return UserRole.member;
+      case 'network':
+        return UserRole.network;
       default:
         throw ArgumentError('Value "$name" cannot be converted to "UserRole"');
     }

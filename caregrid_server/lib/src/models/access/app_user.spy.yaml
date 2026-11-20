@@ -2,6 +2,9 @@
 class: AppUser
 table: app_user
 fields:
+  ### The one campus this membership belongs to. Null only for the network
+  ### role, which sees de-identified aggregates across campuses and no case detail.
+  campusId: int?, relation(parent=campus, onDelete=Restrict)
   handle: String, unique
   displayName: String
   role: UserRole

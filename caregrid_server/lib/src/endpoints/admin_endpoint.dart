@@ -8,11 +8,18 @@ import '../generated/protocol.dart';
 import '../seed/seeder.dart';
 
 /// Admin Control Plane: policies (SOPs), digital-twin asset state, users,
-/// audit log, and demo reset.
+/// audit log, and demo reset. Everything is scoped to the caller's campus.
 class AdminEndpoint extends Endpoint {
   Future<List<ZonePolicy>> policies(Session session) async {
-    await Access.require(session, {UserRole.admin, UserRole.command});
-    return ZonePolicy.db.find(session, orderBy: (t) => t.id);
+    final actor = await Access.require(session, {
+      UserRole.admin,
+      UserRole.command,
+    });
+    return ZonePolicy.db.find(
+      session,
+      where: (t) => t.campusId.equals(actor.campusId),
+      orderBy: (t) => t.id,
+    );
   }
 
   /// Edit thresholds, SLAs, responders and instructions of an existing SOP.
@@ -21,19 +28,36 @@ class AdminEndpoint extends Endpoint {
     final existing = policy.id == null
         ? null
         : await ZonePolicy.db.findById(session, policy.id!);
-    if (existing == null) throw notFound('Policy ${policy.code}');
+    if (existing == null || existing.campusId != actor.campusId) {
+      throw notFound('Policy ${policy.code}');
+    }
     if (policy.minConfidence < 0 || policy.minConfidence > 1) {
       throw badRequest('Confidence must be between 0 and 1.');
     }
     if (policy.responderTypes.isEmpty) {
       throw badRequest('A policy needs at least one responder type.');
     }
+    for (final sla in [
+      policy.verifySlaSeconds,
+      policy.ackSlaSeconds,
+      policy.arrivalSlaSeconds,
+      policy.careSlaSeconds,
+    ]) {
+      if (sla < 5 || sla > 24 * 3600) {
+        throw badRequest('SLAs must be between 5 seconds and 24 hours.');
+      }
+    }
+    for (final hour in [policy.startHour, policy.endHour]) {
+      if (hour != null && (hour < 0 || hour > 23)) {
+        throw badRequest('Hours must be 0-23.');
+      }
+    }
     final saved = await ZonePolicy.db.updateRow(
       session,
-      policy.copyWith(code: existing.code),
+      policy.copyWith(code: existing.code, campusId: existing.campusId),
     );
     await Audit.log(session, actor, 'policy-update', target: saved.code);
-    await OpsBus.publish(session, 'twin');
+    await OpsBus.publish(session, 'twin', campusId: actor.campusId);
     return saved;
   }
 
@@ -45,7 +69,7 @@ class AdminEndpoint extends Endpoint {
     final actor = await Access.require(session, {UserRole.admin});
     final camera = await Camera.db.findFirstRow(
       session,
-      where: (t) => t.code.equals(code),
+      where: (t) => t.campusId.equals(actor.campusId) & t.code.equals(code),
     );
     if (camera == null) throw notFound('Camera $code');
     camera.health = health;
@@ -57,7 +81,7 @@ class AdminEndpoint extends Endpoint {
       target: code,
       detail: health.name,
     );
-    await OpsBus.publish(session, 'twin');
+    await OpsBus.publish(session, 'twin', campusId: actor.campusId);
     return saved;
   }
 
@@ -73,7 +97,7 @@ class AdminEndpoint extends Endpoint {
     });
     final gate = await Zone.db.findFirstRow(
       session,
-      where: (t) => t.code.equals(zoneCode),
+      where: (t) => t.campusId.equals(actor.campusId) & t.code.equals(zoneCode),
     );
     if (gate == null || gate.type != ZoneType.gate) {
       throw notFound('Gate $zoneCode');
@@ -89,7 +113,7 @@ class AdminEndpoint extends Endpoint {
       target: zoneCode,
       detail: 'open=$isOpen override=$emergencyOverride',
     );
-    await OpsBus.publish(session, 'twin');
+    await OpsBus.publish(session, 'twin', campusId: actor.campusId);
     return saved;
   }
 
@@ -106,7 +130,7 @@ class AdminEndpoint extends Endpoint {
     });
     final road = await RoadSegment.db.findFirstRow(
       session,
-      where: (t) => t.code.equals(code),
+      where: (t) => t.campusId.equals(actor.campusId) & t.code.equals(code),
     );
     if (road == null) throw notFound('Road $code');
     road.status = status;
@@ -118,7 +142,7 @@ class AdminEndpoint extends Endpoint {
       target: code,
       detail: status.name,
     );
-    await OpsBus.publish(session, 'twin');
+    await OpsBus.publish(session, 'twin', campusId: actor.campusId);
     return saved;
   }
 
@@ -134,7 +158,7 @@ class AdminEndpoint extends Endpoint {
     });
     final r = await Responder.db.findFirstRow(
       session,
-      where: (t) => t.code.equals(code),
+      where: (t) => t.campusId.equals(actor.campusId) & t.code.equals(code),
     );
     if (r == null) throw notFound('Responder $code');
     if (r.status == ResponderStatus.assigned &&
@@ -158,30 +182,41 @@ class AdminEndpoint extends Endpoint {
       target: code,
       detail: '${status.name} ${note ?? ''}'.trim(),
     );
-    await OpsBus.publish(session, 'twin');
+    await OpsBus.publish(session, 'twin', campusId: actor.campusId);
     return saved;
   }
 
   Future<List<AuditRecord>> auditLog(Session session, int limit) async {
-    await Access.require(session, {UserRole.admin});
+    final actor = await Access.require(session, {UserRole.admin});
     return AuditRecord.db.find(
       session,
+      where: (t) => t.campusId.equals(actor.campusId),
       orderBy: (t) => t.at.desc(),
       limit: limit.clamp(1, 500),
     );
   }
 
   Future<List<AppUser>> users(Session session) async {
-    await Access.require(session, {UserRole.admin});
-    return AppUser.db.find(session, orderBy: (t) => t.id);
+    final actor = await Access.require(session, {UserRole.admin});
+    return AppUser.db.find(
+      session,
+      where: (t) => t.campusId.equals(actor.campusId),
+      orderBy: (t) => t.id,
+    );
   }
 
-  /// Restores the seeded twin and history. Users and the audit log are kept.
+  /// Restores this campus's seeded twin and history. Users and the audit log
+  /// are kept; other campuses are untouched.
   Future<void> resetDemo(Session session) async {
     RuntimePolicy.requireDemo(session);
     final actor = await Access.require(session, {UserRole.admin});
-    await Seeder.reset(session);
+    await Seeder.reset(session, actor.campusId);
     await Audit.log(session, actor, 'demo-reset');
-    await OpsBus.publish(session, 'twin', message: 'Demo data reset');
+    await OpsBus.publish(
+      session,
+      'twin',
+      campusId: actor.campusId,
+      message: 'Demo data reset',
+    );
   }
 }

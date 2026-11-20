@@ -8,12 +8,27 @@ import '../generated/protocol.dart';
 class MetricsService {
   MetricsService._();
 
-  static Future<OpsMetrics> compute(Session session) async {
+  /// Metrics for one campus. With [since], only incidents whose onset is at
+  /// or after it count (the network view uses a 30-day window).
+  static Future<OpsMetrics> compute(
+    Session session,
+    int campusId, {
+    DateTime? since,
+  }) async {
     final incidents = await Incident.db.find(
       session,
-      where: (t) => t.parentIncidentId.equals(null),
+      where: (t) =>
+          t.campusId.equals(campusId) &
+          t.parentIncidentId.equals(null) &
+          (since == null ? Constant.bool(true) : t.onsetAt >= since),
     );
-    final zones = {for (final z in await Zone.db.find(session)) z.code: z.name};
+    final zones = {
+      for (final z in await Zone.db.find(
+        session,
+        where: (t) => t.campusId.equals(campusId),
+      ))
+        z.code: z.name,
+    };
 
     double? mean(Iterable<double> values) {
       final list = values.toList();
@@ -64,6 +79,12 @@ class MetricsService {
     ];
 
     final mttc = stage((i) => i.onsetAt, (i) => i.careAt);
+    final careTimes =
+        incidents
+            .where((i) => i.careAt != null)
+            .map((i) => i.careAt!.difference(i.onsetAt).inMilliseconds / 1000)
+            .toList()
+          ..sort();
 
     // Response Completion Integrity: dispatched and closed incidents whose
     // whole chain (ack, arrival, care) was verified.
@@ -109,6 +130,11 @@ class MetricsService {
     return OpsMetrics(
       generatedAt: CampusClock.now(),
       mttcSeconds: mttc,
+      mttcMedianSeconds: percentile(careTimes, 0.5),
+      mttcP90Seconds: percentile(careTimes, 0.9),
+      mttcSamples: careTimes.length,
+      rciClosed: dispatchedClosed.length,
+      rciVerified: complete.length,
       stages: [
         for (final (label, value, note) in stages)
           if (value != null)
@@ -135,5 +161,13 @@ class MetricsService {
       bySeverity: countBy((i) => i.severity.label),
       byZone: countBy((i) => zones[i.zoneCode] ?? i.zoneCode),
     );
+  }
+
+  /// Nearest-rank percentile of an ascending list; null when empty. Nearest
+  /// rank never invents a value that was not measured.
+  static double? percentile(List<double> sorted, double p) {
+    if (sorted.isEmpty) return null;
+    final rank = (p * sorted.length).ceil().clamp(1, sorted.length);
+    return sorted[rank - 1];
   }
 }

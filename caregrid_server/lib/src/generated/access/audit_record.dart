@@ -17,6 +17,7 @@ abstract class AuditRecord
     implements _is.TableRow<int?>, _is.ProtocolSerialization {
   AuditRecord._({
     this.id,
+    this.campusId,
     required this.at,
     this.userId,
     required this.userName,
@@ -28,6 +29,7 @@ abstract class AuditRecord
 
   factory AuditRecord({
     int? id,
+    int? campusId,
     required DateTime at,
     int? userId,
     required String userName,
@@ -40,6 +42,7 @@ abstract class AuditRecord
   factory AuditRecord.fromJson(Map<String, dynamic> jsonSerialization) {
     return AuditRecord(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int?,
       at: _is.DateTimeJsonExtension.fromJson(jsonSerialization['at']),
       userId: jsonSerialization['userId'] as int?,
       userName: jsonSerialization['userName'] as String,
@@ -56,6 +59,9 @@ abstract class AuditRecord
 
   @override
   int? id;
+
+  /// Null only for deployment-operator records that precede any campus membership.
+  int? campusId;
 
   DateTime at;
 
@@ -79,6 +85,7 @@ abstract class AuditRecord
   @_is.useResult
   AuditRecord copyWith({
     int? id,
+    int? campusId,
     DateTime? at,
     int? userId,
     String? userName,
@@ -92,6 +99,7 @@ abstract class AuditRecord
     return {
       '__className__': 'AuditRecord',
       if (id != null) 'id': id,
+      if (campusId != null) 'campusId': campusId,
       'at': at.toJson(),
       if (userId != null) 'userId': userId,
       'userName': userName,
@@ -107,6 +115,7 @@ abstract class AuditRecord
     return {
       '__className__': 'AuditRecord',
       if (id != null) 'id': id,
+      if (campusId != null) 'campusId': campusId,
       'at': at.toJson(),
       if (userId != null) 'userId': userId,
       'userName': userName,
@@ -150,6 +159,7 @@ class _Undefined {}
 class _AuditRecordImpl extends AuditRecord {
   _AuditRecordImpl({
     int? id,
+    int? campusId,
     required DateTime at,
     int? userId,
     required String userName,
@@ -159,6 +169,7 @@ class _AuditRecordImpl extends AuditRecord {
     String? detail,
   }) : super._(
          id: id,
+         campusId: campusId,
          at: at,
          userId: userId,
          userName: userName,
@@ -174,6 +185,7 @@ class _AuditRecordImpl extends AuditRecord {
   @override
   AuditRecord copyWith({
     Object? id = _Undefined,
+    Object? campusId = _Undefined,
     DateTime? at,
     Object? userId = _Undefined,
     String? userName,
@@ -184,6 +196,7 @@ class _AuditRecordImpl extends AuditRecord {
   }) {
     return AuditRecord(
       id: id is int? ? id : this.id,
+      campusId: campusId is int? ? campusId : this.campusId,
       at: at ?? this.at,
       userId: userId is int? ? userId : this.userId,
       userName: userName ?? this.userName,
@@ -197,6 +210,11 @@ class _AuditRecordImpl extends AuditRecord {
 
 class AuditRecordUpdateTable extends _is.UpdateTable<AuditRecordTable> {
   AuditRecordUpdateTable(super.table);
+
+  _is.ColumnValue<int, int> campusId(int? value) => _is.ColumnValue(
+    table.campusId,
+    value,
+  );
 
   _is.ColumnValue<DateTime, DateTime> at(DateTime value) => _is.ColumnValue(
     table.at,
@@ -237,6 +255,10 @@ class AuditRecordUpdateTable extends _is.UpdateTable<AuditRecordTable> {
 class AuditRecordTable extends _is.Table<int?> {
   AuditRecordTable({super.tableRelation}) : super(tableName: 'audit_record') {
     updateTable = AuditRecordUpdateTable(this);
+    campusId = _is.ColumnInt(
+      'campusId',
+      this,
+    );
     at = _is.ColumnDateTime(
       'at',
       this,
@@ -269,6 +291,9 @@ class AuditRecordTable extends _is.Table<int?> {
 
   late final AuditRecordUpdateTable updateTable;
 
+  /// Null only for deployment-operator records that precede any campus membership.
+  late final _is.ColumnInt campusId;
+
   late final _is.ColumnDateTime at;
 
   late final _is.ColumnInt userId;
@@ -286,6 +311,7 @@ class AuditRecordTable extends _is.Table<int?> {
   @override
   List<_is.Column> get columns => [
     id,
+    campusId,
     at,
     userId,
     userName,

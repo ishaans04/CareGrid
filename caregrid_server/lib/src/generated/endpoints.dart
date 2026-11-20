@@ -32,6 +32,7 @@ import '../endpoints/care_endpoint.dart' as _iuxmpckp;
 import '../endpoints/evidence_endpoint.dart' as _i2cvsm7u;
 import '../endpoints/incident_endpoint.dart' as _idvfe0v9;
 import '../endpoints/live_endpoint.dart' as _ixgr9pqx;
+import '../endpoints/network_endpoint.dart' as _iba6579f;
 import '../endpoints/readiness_endpoint.dart' as _i0a0ux16;
 import '../endpoints/responder_endpoint.dart' as _ixab9ci6;
 import '../endpoints/signal_endpoint.dart' as _iirj0uqq;
@@ -94,6 +95,12 @@ class Endpoints extends _is.EndpointDispatch {
         ..initialize(
           server,
           'live',
+          null,
+        ),
+      'network': _iba6579f.NetworkEndpoint()
+        ..initialize(
+          server,
+          'network',
           null,
         ),
       'readiness': _i0a0ux16.ReadinessEndpoint()
@@ -431,6 +438,16 @@ class Endpoints extends _is.EndpointDispatch {
               ) async => (endpoints['campus'] as _i70hkba8.CampusEndpoint).twin(
                 session,
               ),
+        ),
+        'profile': _is.MethodConnector(
+          name: 'profile',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['campus'] as _i70hkba8.CampusEndpoint)
+                  .profile(session),
         ),
         'route': _is.MethodConnector(
           name: 'route',
@@ -843,6 +860,22 @@ class Endpoints extends _is.EndpointDispatch {
                 Map<String, dynamic> params,
                 Map<String, Stream> streamParams,
               ) => (endpoints['live'] as _ixgr9pqx.LiveEndpoint).watch(session),
+        ),
+      },
+    );
+    connectors['network'] = _is.EndpointConnector(
+      name: 'network',
+      endpoint: endpoints['network']!,
+      methodConnectors: {
+        'overview': _is.MethodConnector(
+          name: 'overview',
+          params: {},
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['network'] as _iba6579f.NetworkEndpoint)
+                  .overview(session),
         ),
       },
     );

@@ -22,6 +22,7 @@ abstract class ZonePolicy
     implements _isc.SerializableModel, _isc.ProtocolSerialization {
   ZonePolicy._({
     this.id,
+    required this.campusId,
     required this.code,
     required this.name,
     this.zoneType,
@@ -44,6 +45,7 @@ abstract class ZonePolicy
 
   factory ZonePolicy({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     _i7qzwj5g.ZoneType? zoneType,
@@ -67,6 +69,7 @@ abstract class ZonePolicy
   factory ZonePolicy.fromJson(Map<String, dynamic> jsonSerialization) {
     return ZonePolicy(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       code: jsonSerialization['code'] as String,
       name: jsonSerialization['name'] as String,
       zoneType: jsonSerialization['zoneType'] == null
@@ -114,6 +117,8 @@ abstract class ZonePolicy
   /// database or if it has been fetched from the database. Otherwise,
   /// the id will be null.
   int? id;
+
+  int campusId;
 
   String code;
 
@@ -163,6 +168,7 @@ abstract class ZonePolicy
   @_isc.useResult
   ZonePolicy copyWith({
     int? id,
+    int? campusId,
     String? code,
     String? name,
     _i7qzwj5g.ZoneType? zoneType,
@@ -187,6 +193,7 @@ abstract class ZonePolicy
     return {
       '__className__': 'ZonePolicy',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       if (zoneType != null) 'zoneType': zoneType?.toJson(),
@@ -213,6 +220,7 @@ abstract class ZonePolicy
     return {
       '__className__': 'ZonePolicy',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       if (zoneType != null) 'zoneType': zoneType?.toJson(),
@@ -245,6 +253,7 @@ class _Undefined {}
 class _ZonePolicyImpl extends ZonePolicy {
   _ZonePolicyImpl({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     _i7qzwj5g.ZoneType? zoneType,
@@ -265,6 +274,7 @@ class _ZonePolicyImpl extends ZonePolicy {
     required List<String> instructions,
   }) : super._(
          id: id,
+         campusId: campusId,
          code: code,
          name: name,
          zoneType: zoneType,
@@ -291,6 +301,7 @@ class _ZonePolicyImpl extends ZonePolicy {
   @override
   ZonePolicy copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? code,
     String? name,
     Object? zoneType = _Undefined,
@@ -312,6 +323,7 @@ class _ZonePolicyImpl extends ZonePolicy {
   }) {
     return ZonePolicy(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       code: code ?? this.code,
       name: name ?? this.name,
       zoneType: zoneType is _i7qzwj5g.ZoneType? ? zoneType : this.zoneType,

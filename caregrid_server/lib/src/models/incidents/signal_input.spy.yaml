@@ -10,3 +10,7 @@ fields:
   detail: String?
   locationDetail: String?
   contextHour: int?
+  ### Producer's own id for this event. A repeated id from the same campus and source is recognised and ignored, so a network retry can neither open a second incident nor corroborate itself.
+  eventId: String?
+  ### When the producer observed the event (UTC). Defaults to receipt time; accepted only within the last 24 hours and up to 60 seconds ahead (clock skew).
+  observedAt: DateTime?

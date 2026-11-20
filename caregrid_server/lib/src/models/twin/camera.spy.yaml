@@ -2,7 +2,9 @@
 class: Camera
 table: camera
 fields:
-  code: String, unique
+  campusId: int, relation(parent=campus, onDelete=Restrict)
+  ### Unique within its campus.
+  code: String
   zoneCode: String
   label: String
   health: AssetHealth, default=online
@@ -10,3 +12,12 @@ fields:
   adjacentCameras: List<String>
   ### Faces and identities are never processed; masked cameras only emit anonymous track events.
   privacyMasked: bool, default=true
+  ### Mounting point in canvas units; null places the camera at its zone.
+  x: double?
+  y: double?
+  ### Approximate useful viewing radius in metres, for coverage planning.
+  rangeMeters: double?
+indexes:
+  camera_campus_code_idx:
+    fields: campusId, code
+    unique: true

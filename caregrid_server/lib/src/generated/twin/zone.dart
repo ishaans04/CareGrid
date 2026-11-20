@@ -10,6 +10,7 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:caregrid_server/src/generated/protocol.dart' as _ighx06pg;
 import 'package:serverpod/serverpod.dart' as _is;
 import '../enums/zone_type.dart' as _i7qzwj5g;
 
@@ -17,6 +18,7 @@ import '../enums/zone_type.dart' as _i7qzwj5g;
 abstract class Zone implements _is.TableRow<int?>, _is.ProtocolSerialization {
   Zone._({
     this.id,
+    required this.campusId,
     required this.code,
     required this.name,
     required this.type,
@@ -27,13 +29,19 @@ abstract class Zone implements _is.TableRow<int?>, _is.ProtocolSerialization {
     bool? emergencyOverride,
     bool? isRestricted,
     bool? privacySensitive,
+    this.footprint,
+    this.levels,
+    bool? approximate,
+    this.source,
   }) : isOpen = isOpen ?? true,
        emergencyOverride = emergencyOverride ?? false,
        isRestricted = isRestricted ?? false,
-       privacySensitive = privacySensitive ?? false;
+       privacySensitive = privacySensitive ?? false,
+       approximate = approximate ?? false;
 
   factory Zone({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required _i7qzwj5g.ZoneType type,
@@ -44,11 +52,16 @@ abstract class Zone implements _is.TableRow<int?>, _is.ProtocolSerialization {
     bool? emergencyOverride,
     bool? isRestricted,
     bool? privacySensitive,
+    List<double>? footprint,
+    int? levels,
+    bool? approximate,
+    String? source,
   }) = _ZoneImpl;
 
   factory Zone.fromJson(Map<String, dynamic> jsonSerialization) {
     return Zone(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       code: jsonSerialization['code'] as String,
       name: jsonSerialization['name'] as String,
       type: _i7qzwj5g.ZoneType.fromJson((jsonSerialization['type'] as String)),
@@ -71,6 +84,16 @@ abstract class Zone implements _is.TableRow<int?>, _is.ProtocolSerialization {
           : _is.BoolJsonExtension.fromJson(
               jsonSerialization['privacySensitive'],
             ),
+      footprint: jsonSerialization['footprint'] == null
+          ? null
+          : _ighx06pg.Protocol().deserialize<List<double>>(
+              jsonSerialization['footprint'],
+            ),
+      levels: jsonSerialization['levels'] as int?,
+      approximate: jsonSerialization['approximate'] == null
+          ? null
+          : _is.BoolJsonExtension.fromJson(jsonSerialization['approximate']),
+      source: jsonSerialization['source'] as String?,
     );
   }
 
@@ -81,14 +104,16 @@ abstract class Zone implements _is.TableRow<int?>, _is.ProtocolSerialization {
   @override
   int? id;
 
-  /// Stable short code, e.g. HB for Birch Hostel.
+  int campusId;
+
+  /// Stable short code, unique within its campus, e.g. HB for Birch Hostel.
   String code;
 
   String name;
 
   _i7qzwj5g.ZoneType type;
 
-  /// Schematic map position (0..1000 x 0..700 canvas units).
+  /// Map position in campus canvas units (see Campus.metersPerUnit).
   double x;
 
   double y;
@@ -107,6 +132,18 @@ abstract class Zone implements _is.TableRow<int?>, _is.ProtocolSerialization {
   /// Privacy-sensitive zones only expose minimum context to non-command roles.
   bool privacySensitive;
 
+  /// Building outline as flattened x,y canvas pairs; null for a schematic node.
+  List<double>? footprint;
+
+  /// Above-ground floors, when known.
+  int? levels;
+
+  /// True when the position is a planning assumption rather than mapped data.
+  bool approximate;
+
+  /// Where the geometry came from, e.g. 'OpenStreetMap way 351607593'.
+  String? source;
+
   @override
   _is.Table<int?> get table => t;
 
@@ -115,6 +152,7 @@ abstract class Zone implements _is.TableRow<int?>, _is.ProtocolSerialization {
   @_is.useResult
   Zone copyWith({
     int? id,
+    int? campusId,
     String? code,
     String? name,
     _i7qzwj5g.ZoneType? type,
@@ -125,12 +163,17 @@ abstract class Zone implements _is.TableRow<int?>, _is.ProtocolSerialization {
     bool? emergencyOverride,
     bool? isRestricted,
     bool? privacySensitive,
+    List<double>? footprint,
+    int? levels,
+    bool? approximate,
+    String? source,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'Zone',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'type': type.toJson(),
@@ -141,6 +184,10 @@ abstract class Zone implements _is.TableRow<int?>, _is.ProtocolSerialization {
       'emergencyOverride': emergencyOverride,
       'isRestricted': isRestricted,
       'privacySensitive': privacySensitive,
+      if (footprint != null) 'footprint': footprint?.toJson(),
+      if (levels != null) 'levels': levels,
+      'approximate': approximate,
+      if (source != null) 'source': source,
     };
   }
 
@@ -149,6 +196,7 @@ abstract class Zone implements _is.TableRow<int?>, _is.ProtocolSerialization {
     return {
       '__className__': 'Zone',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'type': type.toJson(),
@@ -159,6 +207,10 @@ abstract class Zone implements _is.TableRow<int?>, _is.ProtocolSerialization {
       'emergencyOverride': emergencyOverride,
       'isRestricted': isRestricted,
       'privacySensitive': privacySensitive,
+      if (footprint != null) 'footprint': footprint?.toJson(),
+      if (levels != null) 'levels': levels,
+      'approximate': approximate,
+      if (source != null) 'source': source,
     };
   }
 
@@ -195,6 +247,7 @@ class _Undefined {}
 class _ZoneImpl extends Zone {
   _ZoneImpl({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required _i7qzwj5g.ZoneType type,
@@ -205,8 +258,13 @@ class _ZoneImpl extends Zone {
     bool? emergencyOverride,
     bool? isRestricted,
     bool? privacySensitive,
+    List<double>? footprint,
+    int? levels,
+    bool? approximate,
+    String? source,
   }) : super._(
          id: id,
+         campusId: campusId,
          code: code,
          name: name,
          type: type,
@@ -217,6 +275,10 @@ class _ZoneImpl extends Zone {
          emergencyOverride: emergencyOverride,
          isRestricted: isRestricted,
          privacySensitive: privacySensitive,
+         footprint: footprint,
+         levels: levels,
+         approximate: approximate,
+         source: source,
        );
 
   /// Returns a shallow copy of this [Zone]
@@ -225,6 +287,7 @@ class _ZoneImpl extends Zone {
   @override
   Zone copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? code,
     String? name,
     _i7qzwj5g.ZoneType? type,
@@ -235,9 +298,14 @@ class _ZoneImpl extends Zone {
     bool? emergencyOverride,
     bool? isRestricted,
     bool? privacySensitive,
+    Object? footprint = _Undefined,
+    Object? levels = _Undefined,
+    bool? approximate,
+    Object? source = _Undefined,
   }) {
     return Zone(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       code: code ?? this.code,
       name: name ?? this.name,
       type: type ?? this.type,
@@ -248,12 +316,23 @@ class _ZoneImpl extends Zone {
       emergencyOverride: emergencyOverride ?? this.emergencyOverride,
       isRestricted: isRestricted ?? this.isRestricted,
       privacySensitive: privacySensitive ?? this.privacySensitive,
+      footprint: footprint is List<double>?
+          ? footprint
+          : this.footprint?.map((e0) => e0).toList(),
+      levels: levels is int? ? levels : this.levels,
+      approximate: approximate ?? this.approximate,
+      source: source is String? ? source : this.source,
     );
   }
 }
 
 class ZoneUpdateTable extends _is.UpdateTable<ZoneTable> {
   ZoneUpdateTable(super.table);
+
+  _is.ColumnValue<int, int> campusId(int value) => _is.ColumnValue(
+    table.campusId,
+    value,
+  );
 
   _is.ColumnValue<String, String> code(String value) => _is.ColumnValue(
     table.code,
@@ -306,11 +385,36 @@ class ZoneUpdateTable extends _is.UpdateTable<ZoneTable> {
     table.privacySensitive,
     value,
   );
+
+  _is.ColumnValue<List<double>, List<double>> footprint(List<double>? value) =>
+      _is.ColumnValue(
+        table.footprint,
+        value,
+      );
+
+  _is.ColumnValue<int, int> levels(int? value) => _is.ColumnValue(
+    table.levels,
+    value,
+  );
+
+  _is.ColumnValue<bool, bool> approximate(bool value) => _is.ColumnValue(
+    table.approximate,
+    value,
+  );
+
+  _is.ColumnValue<String, String> source(String? value) => _is.ColumnValue(
+    table.source,
+    value,
+  );
 }
 
 class ZoneTable extends _is.Table<int?> {
   ZoneTable({super.tableRelation}) : super(tableName: 'zone') {
     updateTable = ZoneUpdateTable(this);
+    campusId = _is.ColumnInt(
+      'campusId',
+      this,
+    );
     code = _is.ColumnString(
       'code',
       this,
@@ -356,18 +460,37 @@ class ZoneTable extends _is.Table<int?> {
       this,
       hasDefault: true,
     );
+    footprint = _is.ColumnSerializable<List<double>>(
+      'footprint',
+      this,
+    );
+    levels = _is.ColumnInt(
+      'levels',
+      this,
+    );
+    approximate = _is.ColumnBool(
+      'approximate',
+      this,
+      hasDefault: true,
+    );
+    source = _is.ColumnString(
+      'source',
+      this,
+    );
   }
 
   late final ZoneUpdateTable updateTable;
 
-  /// Stable short code, e.g. HB for Birch Hostel.
+  late final _is.ColumnInt campusId;
+
+  /// Stable short code, unique within its campus, e.g. HB for Birch Hostel.
   late final _is.ColumnString code;
 
   late final _is.ColumnString name;
 
   late final _is.ColumnEnum<_i7qzwj5g.ZoneType> type;
 
-  /// Schematic map position (0..1000 x 0..700 canvas units).
+  /// Map position in campus canvas units (see Campus.metersPerUnit).
   late final _is.ColumnDouble x;
 
   late final _is.ColumnDouble y;
@@ -386,9 +509,22 @@ class ZoneTable extends _is.Table<int?> {
   /// Privacy-sensitive zones only expose minimum context to non-command roles.
   late final _is.ColumnBool privacySensitive;
 
+  /// Building outline as flattened x,y canvas pairs; null for a schematic node.
+  late final _is.ColumnSerializable<List<double>> footprint;
+
+  /// Above-ground floors, when known.
+  late final _is.ColumnInt levels;
+
+  /// True when the position is a planning assumption rather than mapped data.
+  late final _is.ColumnBool approximate;
+
+  /// Where the geometry came from, e.g. 'OpenStreetMap way 351607593'.
+  late final _is.ColumnString source;
+
   @override
   List<_is.Column> get columns => [
     id,
+    campusId,
     code,
     name,
     type,
@@ -399,6 +535,10 @@ class ZoneTable extends _is.Table<int?> {
     emergencyOverride,
     isRestricted,
     privacySensitive,
+    footprint,
+    levels,
+    approximate,
+    source,
   ];
 }
 

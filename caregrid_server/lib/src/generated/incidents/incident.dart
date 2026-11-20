@@ -24,6 +24,7 @@ abstract class Incident
     implements _is.TableRow<int?>, _is.ProtocolSerialization {
   Incident._({
     this.id,
+    required this.campusId,
     required this.code,
     required this.title,
     required this.eventType,
@@ -77,6 +78,7 @@ abstract class Incident
 
   factory Incident({
     int? id,
+    required int campusId,
     required String code,
     required String title,
     required _ikhu1dq5.EventType eventType,
@@ -125,6 +127,7 @@ abstract class Incident
   factory Incident.fromJson(Map<String, dynamic> jsonSerialization) {
     return Incident(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       code: jsonSerialization['code'] as String,
       title: jsonSerialization['title'] as String,
       eventType: _ikhu1dq5.EventType.fromJson(
@@ -238,6 +241,8 @@ abstract class Incident
   @override
   int? id;
 
+  int campusId;
+
   /// Human readable id, e.g. INC-1042.
   String code;
 
@@ -346,6 +351,7 @@ abstract class Incident
   @_is.useResult
   Incident copyWith({
     int? id,
+    int? campusId,
     String? code,
     String? title,
     _ikhu1dq5.EventType? eventType,
@@ -395,6 +401,7 @@ abstract class Incident
     return {
       '__className__': 'Incident',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'title': title,
       'eventType': eventType.toJson(),
@@ -446,6 +453,7 @@ abstract class Incident
     return {
       '__className__': 'Incident',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'title': title,
       'eventType': eventType.toJson(),
@@ -524,6 +532,7 @@ class _Undefined {}
 class _IncidentImpl extends Incident {
   _IncidentImpl({
     int? id,
+    required int campusId,
     required String code,
     required String title,
     required _ikhu1dq5.EventType eventType,
@@ -569,6 +578,7 @@ class _IncidentImpl extends Incident {
     int? revision,
   }) : super._(
          id: id,
+         campusId: campusId,
          code: code,
          title: title,
          eventType: eventType,
@@ -620,6 +630,7 @@ class _IncidentImpl extends Incident {
   @override
   Incident copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? code,
     String? title,
     _ikhu1dq5.EventType? eventType,
@@ -666,6 +677,7 @@ class _IncidentImpl extends Incident {
   }) {
     return Incident(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       code: code ?? this.code,
       title: title ?? this.title,
       eventType: eventType ?? this.eventType,
@@ -732,6 +744,11 @@ class _IncidentImpl extends Incident {
 
 class IncidentUpdateTable extends _is.UpdateTable<IncidentTable> {
   IncidentUpdateTable(super.table);
+
+  _is.ColumnValue<int, int> campusId(int value) => _is.ColumnValue(
+    table.campusId,
+    value,
+  );
 
   _is.ColumnValue<String, String> code(String value) => _is.ColumnValue(
     table.code,
@@ -981,6 +998,10 @@ class IncidentUpdateTable extends _is.UpdateTable<IncidentTable> {
 class IncidentTable extends _is.Table<int?> {
   IncidentTable({super.tableRelation}) : super(tableName: 'incident') {
     updateTable = IncidentUpdateTable(this);
+    campusId = _is.ColumnInt(
+      'campusId',
+      this,
+    );
     code = _is.ColumnString(
       'code',
       this,
@@ -1170,6 +1191,8 @@ class IncidentTable extends _is.Table<int?> {
 
   late final IncidentUpdateTable updateTable;
 
+  late final _is.ColumnInt campusId;
+
   /// Human readable id, e.g. INC-1042.
   late final _is.ColumnString code;
 
@@ -1273,6 +1296,7 @@ class IncidentTable extends _is.Table<int?> {
   @override
   List<_is.Column> get columns => [
     id,
+    campusId,
     code,
     title,
     eventType,

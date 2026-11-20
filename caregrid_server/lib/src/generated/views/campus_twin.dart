@@ -13,6 +13,7 @@
 import 'package:caregrid_server/src/generated/protocol.dart' as _ighx06pg;
 import 'package:serverpod/serverpod.dart' as _is;
 import '../twin/camera.dart' as _i08lb16k;
+import '../twin/campus.dart' as _izii60si;
 import '../twin/responder.dart' as _inukslo5;
 import '../twin/road_segment.dart' as _isekq9yw;
 import '../twin/zone.dart' as _ix6vm764;
@@ -23,6 +24,7 @@ abstract class CampusTwin
     implements _is.SerializableModel, _is.ProtocolSerialization {
   CampusTwin._({
     required this.campusName,
+    required this.campus,
     required this.zones,
     required this.roads,
     required this.cameras,
@@ -33,6 +35,7 @@ abstract class CampusTwin
 
   factory CampusTwin({
     required String campusName,
+    required _izii60si.Campus campus,
     required List<_ix6vm764.Zone> zones,
     required List<_isekq9yw.RoadSegment> roads,
     required List<_i08lb16k.Camera> cameras,
@@ -44,6 +47,9 @@ abstract class CampusTwin
   factory CampusTwin.fromJson(Map<String, dynamic> jsonSerialization) {
     return CampusTwin(
       campusName: jsonSerialization['campusName'] as String,
+      campus: _ighx06pg.Protocol().deserialize<_izii60si.Campus>(
+        jsonSerialization['campus'],
+      ),
       zones: _ighx06pg.Protocol().deserialize<List<_ix6vm764.Zone>>(
         jsonSerialization['zones'],
       ),
@@ -68,6 +74,9 @@ abstract class CampusTwin
 
   String campusName;
 
+  /// Map frame, attribution and affiliation note of the caller's campus.
+  _izii60si.Campus campus;
+
   List<_ix6vm764.Zone> zones;
 
   List<_isekq9yw.RoadSegment> roads;
@@ -86,6 +95,7 @@ abstract class CampusTwin
   @_is.useResult
   CampusTwin copyWith({
     String? campusName,
+    _izii60si.Campus? campus,
     List<_ix6vm764.Zone>? zones,
     List<_isekq9yw.RoadSegment>? roads,
     List<_i08lb16k.Camera>? cameras,
@@ -98,6 +108,7 @@ abstract class CampusTwin
     return {
       '__className__': 'CampusTwin',
       'campusName': campusName,
+      'campus': campus.toJson(),
       'zones': zones.toJson(valueToJson: (v) => v.toJson()),
       'roads': roads.toJson(valueToJson: (v) => v.toJson()),
       'cameras': cameras.toJson(valueToJson: (v) => v.toJson()),
@@ -112,6 +123,7 @@ abstract class CampusTwin
     return {
       '__className__': 'CampusTwin',
       'campusName': campusName,
+      'campus': campus.toJsonForProtocol(),
       'zones': zones.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'roads': roads.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       'cameras': cameras.toJson(valueToJson: (v) => v.toJsonForProtocol()),
@@ -134,6 +146,7 @@ abstract class CampusTwin
 class _CampusTwinImpl extends CampusTwin {
   _CampusTwinImpl({
     required String campusName,
+    required _izii60si.Campus campus,
     required List<_ix6vm764.Zone> zones,
     required List<_isekq9yw.RoadSegment> roads,
     required List<_i08lb16k.Camera> cameras,
@@ -142,6 +155,7 @@ class _CampusTwinImpl extends CampusTwin {
     required Map<String, String> responderPositions,
   }) : super._(
          campusName: campusName,
+         campus: campus,
          zones: zones,
          roads: roads,
          cameras: cameras,
@@ -156,6 +170,7 @@ class _CampusTwinImpl extends CampusTwin {
   @override
   CampusTwin copyWith({
     String? campusName,
+    _izii60si.Campus? campus,
     List<_ix6vm764.Zone>? zones,
     List<_isekq9yw.RoadSegment>? roads,
     List<_i08lb16k.Camera>? cameras,
@@ -165,6 +180,7 @@ class _CampusTwinImpl extends CampusTwin {
   }) {
     return CampusTwin(
       campusName: campusName ?? this.campusName,
+      campus: campus ?? this.campus.copyWith(),
       zones: zones ?? this.zones.map((e0) => e0.copyWith()).toList(),
       roads: roads ?? this.roads.map((e0) => e0.copyWith()).toList(),
       cameras: cameras ?? this.cameras.map((e0) => e0.copyWith()).toList(),

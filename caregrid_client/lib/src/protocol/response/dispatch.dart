@@ -20,6 +20,7 @@ abstract class Dispatch
     implements _isc.SerializableModel, _isc.ProtocolSerialization {
   Dispatch._({
     this.id,
+    required this.campusId,
     required this.incidentId,
     required this.responderCode,
     required this.responderName,
@@ -46,6 +47,7 @@ abstract class Dispatch
 
   factory Dispatch({
     int? id,
+    required int campusId,
     required int incidentId,
     required String responderCode,
     required String responderName,
@@ -72,6 +74,7 @@ abstract class Dispatch
   factory Dispatch.fromJson(Map<String, dynamic> jsonSerialization) {
     return Dispatch(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       incidentId: jsonSerialization['incidentId'] as int,
       responderCode: jsonSerialization['responderCode'] as String,
       responderName: jsonSerialization['responderName'] as String,
@@ -131,6 +134,8 @@ abstract class Dispatch
   /// the id will be null.
   int? id;
 
+  int campusId;
+
   int incidentId;
 
   String responderCode;
@@ -182,6 +187,7 @@ abstract class Dispatch
   @_isc.useResult
   Dispatch copyWith({
     int? id,
+    int? campusId,
     int? incidentId,
     String? responderCode,
     String? responderName,
@@ -209,6 +215,7 @@ abstract class Dispatch
     return {
       '__className__': 'Dispatch',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'incidentId': incidentId,
       'responderCode': responderCode,
       'responderName': responderName,
@@ -238,6 +245,7 @@ abstract class Dispatch
     return {
       '__className__': 'Dispatch',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'incidentId': incidentId,
       'responderCode': responderCode,
       'responderName': responderName,
@@ -273,6 +281,7 @@ class _Undefined {}
 class _DispatchImpl extends Dispatch {
   _DispatchImpl({
     int? id,
+    required int campusId,
     required int incidentId,
     required String responderCode,
     required String responderName,
@@ -296,6 +305,7 @@ class _DispatchImpl extends Dispatch {
     String? note,
   }) : super._(
          id: id,
+         campusId: campusId,
          incidentId: incidentId,
          responderCode: responderCode,
          responderName: responderName,
@@ -325,6 +335,7 @@ class _DispatchImpl extends Dispatch {
   @override
   Dispatch copyWith({
     Object? id = _Undefined,
+    int? campusId,
     int? incidentId,
     String? responderCode,
     String? responderName,
@@ -349,6 +360,7 @@ class _DispatchImpl extends Dispatch {
   }) {
     return Dispatch(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       incidentId: incidentId ?? this.incidentId,
       responderCode: responderCode ?? this.responderCode,
       responderName: responderName ?? this.responderName,

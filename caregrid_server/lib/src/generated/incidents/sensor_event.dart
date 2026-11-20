@@ -19,6 +19,7 @@ abstract class SensorEvent
     implements _is.TableRow<int?>, _is.ProtocolSerialization {
   SensorEvent._({
     this.id,
+    required this.campusId,
     required this.source,
     required this.eventType,
     required this.zoneCode,
@@ -34,10 +35,12 @@ abstract class SensorEvent
     this.contextHour,
     this.scenarioRunId,
     this.reporterUserId,
+    this.sourceEventId,
   });
 
   factory SensorEvent({
     int? id,
+    required int campusId,
     required _ixv6cj1v.SignalSource source,
     required _ikhu1dq5.EventType eventType,
     required String zoneCode,
@@ -53,11 +56,13 @@ abstract class SensorEvent
     int? contextHour,
     int? scenarioRunId,
     int? reporterUserId,
+    String? sourceEventId,
   }) = _SensorEventImpl;
 
   factory SensorEvent.fromJson(Map<String, dynamic> jsonSerialization) {
     return SensorEvent(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       source: _ixv6cj1v.SignalSource.fromJson(
         (jsonSerialization['source'] as String),
       ),
@@ -81,6 +86,7 @@ abstract class SensorEvent
       contextHour: jsonSerialization['contextHour'] as int?,
       scenarioRunId: jsonSerialization['scenarioRunId'] as int?,
       reporterUserId: jsonSerialization['reporterUserId'] as int?,
+      sourceEventId: jsonSerialization['sourceEventId'] as String?,
     );
   }
 
@@ -90,6 +96,8 @@ abstract class SensorEvent
 
   @override
   int? id;
+
+  int campusId;
 
   _ixv6cj1v.SignalSource source;
 
@@ -123,6 +131,9 @@ abstract class SensorEvent
 
   int? reporterUserId;
 
+  /// Producer's event id, when supplied. Unique per campus and source.
+  String? sourceEventId;
+
   @override
   _is.Table<int?> get table => t;
 
@@ -131,6 +142,7 @@ abstract class SensorEvent
   @_is.useResult
   SensorEvent copyWith({
     int? id,
+    int? campusId,
     _ixv6cj1v.SignalSource? source,
     _ikhu1dq5.EventType? eventType,
     String? zoneCode,
@@ -146,12 +158,14 @@ abstract class SensorEvent
     int? contextHour,
     int? scenarioRunId,
     int? reporterUserId,
+    String? sourceEventId,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'SensorEvent',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'source': source.toJson(),
       'eventType': eventType.toJson(),
       'zoneCode': zoneCode,
@@ -167,6 +181,7 @@ abstract class SensorEvent
       if (contextHour != null) 'contextHour': contextHour,
       if (scenarioRunId != null) 'scenarioRunId': scenarioRunId,
       if (reporterUserId != null) 'reporterUserId': reporterUserId,
+      if (sourceEventId != null) 'sourceEventId': sourceEventId,
     };
   }
 
@@ -175,6 +190,7 @@ abstract class SensorEvent
     return {
       '__className__': 'SensorEvent',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'source': source.toJson(),
       'eventType': eventType.toJson(),
       'zoneCode': zoneCode,
@@ -189,6 +205,7 @@ abstract class SensorEvent
       if (outcome != null) 'outcome': outcome,
       if (contextHour != null) 'contextHour': contextHour,
       if (scenarioRunId != null) 'scenarioRunId': scenarioRunId,
+      if (sourceEventId != null) 'sourceEventId': sourceEventId,
     };
   }
 
@@ -225,6 +242,7 @@ class _Undefined {}
 class _SensorEventImpl extends SensorEvent {
   _SensorEventImpl({
     int? id,
+    required int campusId,
     required _ixv6cj1v.SignalSource source,
     required _ikhu1dq5.EventType eventType,
     required String zoneCode,
@@ -240,8 +258,10 @@ class _SensorEventImpl extends SensorEvent {
     int? contextHour,
     int? scenarioRunId,
     int? reporterUserId,
+    String? sourceEventId,
   }) : super._(
          id: id,
+         campusId: campusId,
          source: source,
          eventType: eventType,
          zoneCode: zoneCode,
@@ -257,6 +277,7 @@ class _SensorEventImpl extends SensorEvent {
          contextHour: contextHour,
          scenarioRunId: scenarioRunId,
          reporterUserId: reporterUserId,
+         sourceEventId: sourceEventId,
        );
 
   /// Returns a shallow copy of this [SensorEvent]
@@ -265,6 +286,7 @@ class _SensorEventImpl extends SensorEvent {
   @override
   SensorEvent copyWith({
     Object? id = _Undefined,
+    int? campusId,
     _ixv6cj1v.SignalSource? source,
     _ikhu1dq5.EventType? eventType,
     String? zoneCode,
@@ -280,9 +302,11 @@ class _SensorEventImpl extends SensorEvent {
     Object? contextHour = _Undefined,
     Object? scenarioRunId = _Undefined,
     Object? reporterUserId = _Undefined,
+    Object? sourceEventId = _Undefined,
   }) {
     return SensorEvent(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       source: source ?? this.source,
       eventType: eventType ?? this.eventType,
       zoneCode: zoneCode ?? this.zoneCode,
@@ -302,12 +326,20 @@ class _SensorEventImpl extends SensorEvent {
       reporterUserId: reporterUserId is int?
           ? reporterUserId
           : this.reporterUserId,
+      sourceEventId: sourceEventId is String?
+          ? sourceEventId
+          : this.sourceEventId,
     );
   }
 }
 
 class SensorEventUpdateTable extends _is.UpdateTable<SensorEventTable> {
   SensorEventUpdateTable(super.table);
+
+  _is.ColumnValue<int, int> campusId(int value) => _is.ColumnValue(
+    table.campusId,
+    value,
+  );
 
   _is.ColumnValue<_ixv6cj1v.SignalSource, _ixv6cj1v.SignalSource> source(
     _ixv6cj1v.SignalSource value,
@@ -390,11 +422,21 @@ class SensorEventUpdateTable extends _is.UpdateTable<SensorEventTable> {
     table.reporterUserId,
     value,
   );
+
+  _is.ColumnValue<String, String> sourceEventId(String? value) =>
+      _is.ColumnValue(
+        table.sourceEventId,
+        value,
+      );
 }
 
 class SensorEventTable extends _is.Table<int?> {
   SensorEventTable({super.tableRelation}) : super(tableName: 'sensor_event') {
     updateTable = SensorEventUpdateTable(this);
+    campusId = _is.ColumnInt(
+      'campusId',
+      this,
+    );
     source = _is.ColumnEnum(
       'source',
       this,
@@ -457,9 +499,15 @@ class SensorEventTable extends _is.Table<int?> {
       'reporterUserId',
       this,
     );
+    sourceEventId = _is.ColumnString(
+      'sourceEventId',
+      this,
+    );
   }
 
   late final SensorEventUpdateTable updateTable;
+
+  late final _is.ColumnInt campusId;
 
   late final _is.ColumnEnum<_ixv6cj1v.SignalSource> source;
 
@@ -493,9 +541,13 @@ class SensorEventTable extends _is.Table<int?> {
 
   late final _is.ColumnInt reporterUserId;
 
+  /// Producer's event id, when supplied. Unique per campus and source.
+  late final _is.ColumnString sourceEventId;
+
   @override
   List<_is.Column> get columns => [
     id,
+    campusId,
     source,
     eventType,
     zoneCode,
@@ -511,6 +563,7 @@ class SensorEventTable extends _is.Table<int?> {
     contextHour,
     scenarioRunId,
     reporterUserId,
+    sourceEventId,
   ];
 }
 

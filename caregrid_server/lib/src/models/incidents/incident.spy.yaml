@@ -2,6 +2,7 @@
 class: Incident
 table: incident
 fields:
+  campusId: int, relation(parent=campus, onDelete=Restrict)
   ### Human readable id, e.g. INC-1042.
   code: String, unique
   title: String
@@ -64,3 +65,5 @@ indexes:
     fields: state
   incident_zone_idx:
     fields: zoneCode
+  incident_campus_state_idx:
+    fields: campusId, state

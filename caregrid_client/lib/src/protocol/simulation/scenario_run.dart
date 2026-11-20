@@ -18,6 +18,7 @@ abstract class ScenarioRun
     implements _isc.SerializableModel, _isc.ProtocolSerialization {
   ScenarioRun._({
     this.id,
+    required this.campusId,
     required this.scenarioCode,
     required this.title,
     required this.startedAt,
@@ -31,6 +32,7 @@ abstract class ScenarioRun
 
   factory ScenarioRun({
     int? id,
+    required int campusId,
     required String scenarioCode,
     required String title,
     required DateTime startedAt,
@@ -45,6 +47,7 @@ abstract class ScenarioRun
   factory ScenarioRun.fromJson(Map<String, dynamic> jsonSerialization) {
     return ScenarioRun(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       scenarioCode: jsonSerialization['scenarioCode'] as String,
       title: jsonSerialization['title'] as String,
       startedAt: _isc.DateTimeJsonExtension.fromJson(
@@ -67,6 +70,8 @@ abstract class ScenarioRun
   /// database or if it has been fetched from the database. Otherwise,
   /// the id will be null.
   int? id;
+
+  int campusId;
 
   String scenarioCode;
 
@@ -94,6 +99,7 @@ abstract class ScenarioRun
   @_isc.useResult
   ScenarioRun copyWith({
     int? id,
+    int? campusId,
     String? scenarioCode,
     String? title,
     DateTime? startedAt,
@@ -109,6 +115,7 @@ abstract class ScenarioRun
     return {
       '__className__': 'ScenarioRun',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'scenarioCode': scenarioCode,
       'title': title,
       'startedAt': startedAt.toJson(),
@@ -126,6 +133,7 @@ abstract class ScenarioRun
     return {
       '__className__': 'ScenarioRun',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'scenarioCode': scenarioCode,
       'title': title,
       'startedAt': startedAt.toJson(),
@@ -149,6 +157,7 @@ class _Undefined {}
 class _ScenarioRunImpl extends ScenarioRun {
   _ScenarioRunImpl({
     int? id,
+    required int campusId,
     required String scenarioCode,
     required String title,
     required DateTime startedAt,
@@ -160,6 +169,7 @@ class _ScenarioRunImpl extends ScenarioRun {
     required List<String> faults,
   }) : super._(
          id: id,
+         campusId: campusId,
          scenarioCode: scenarioCode,
          title: title,
          startedAt: startedAt,
@@ -177,6 +187,7 @@ class _ScenarioRunImpl extends ScenarioRun {
   @override
   ScenarioRun copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? scenarioCode,
     String? title,
     DateTime? startedAt,
@@ -189,6 +200,7 @@ class _ScenarioRunImpl extends ScenarioRun {
   }) {
     return ScenarioRun(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       scenarioCode: scenarioCode ?? this.scenarioCode,
       title: title ?? this.title,
       startedAt: startedAt ?? this.startedAt,

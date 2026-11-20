@@ -27,6 +27,8 @@ abstract class SignalInput
     this.detail,
     this.locationDetail,
     this.contextHour,
+    this.eventId,
+    this.observedAt,
   });
 
   factory SignalInput({
@@ -39,6 +41,8 @@ abstract class SignalInput
     String? detail,
     String? locationDetail,
     int? contextHour,
+    String? eventId,
+    DateTime? observedAt,
   }) = _SignalInputImpl;
 
   factory SignalInput.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -56,6 +60,10 @@ abstract class SignalInput
       detail: jsonSerialization['detail'] as String?,
       locationDetail: jsonSerialization['locationDetail'] as String?,
       contextHour: jsonSerialization['contextHour'] as int?,
+      eventId: jsonSerialization['eventId'] as String?,
+      observedAt: jsonSerialization['observedAt'] == null
+          ? null
+          : _is.DateTimeJsonExtension.fromJson(jsonSerialization['observedAt']),
     );
   }
 
@@ -77,6 +85,12 @@ abstract class SignalInput
 
   int? contextHour;
 
+  /// Producer's own id for this event. A repeated id from the same campus and source is recognised and ignored, so a network retry can neither open a second incident nor corroborate itself.
+  String? eventId;
+
+  /// When the producer observed the event (UTC). Defaults to receipt time; accepted only within the last 24 hours and up to 60 seconds ahead (clock skew).
+  DateTime? observedAt;
+
   /// Returns a shallow copy of this [SignalInput]
   /// with some or all fields replaced by the given arguments.
   @_is.useResult
@@ -90,6 +104,8 @@ abstract class SignalInput
     String? detail,
     String? locationDetail,
     int? contextHour,
+    String? eventId,
+    DateTime? observedAt,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -104,6 +120,8 @@ abstract class SignalInput
       if (detail != null) 'detail': detail,
       if (locationDetail != null) 'locationDetail': locationDetail,
       if (contextHour != null) 'contextHour': contextHour,
+      if (eventId != null) 'eventId': eventId,
+      if (observedAt != null) 'observedAt': observedAt?.toJson(),
     };
   }
 
@@ -120,6 +138,8 @@ abstract class SignalInput
       if (detail != null) 'detail': detail,
       if (locationDetail != null) 'locationDetail': locationDetail,
       if (contextHour != null) 'contextHour': contextHour,
+      if (eventId != null) 'eventId': eventId,
+      if (observedAt != null) 'observedAt': observedAt?.toJson(),
     };
   }
 
@@ -142,6 +162,8 @@ class _SignalInputImpl extends SignalInput {
     String? detail,
     String? locationDetail,
     int? contextHour,
+    String? eventId,
+    DateTime? observedAt,
   }) : super._(
          source: source,
          eventType: eventType,
@@ -152,6 +174,8 @@ class _SignalInputImpl extends SignalInput {
          detail: detail,
          locationDetail: locationDetail,
          contextHour: contextHour,
+         eventId: eventId,
+         observedAt: observedAt,
        );
 
   /// Returns a shallow copy of this [SignalInput]
@@ -168,6 +192,8 @@ class _SignalInputImpl extends SignalInput {
     Object? detail = _Undefined,
     Object? locationDetail = _Undefined,
     Object? contextHour = _Undefined,
+    Object? eventId = _Undefined,
+    Object? observedAt = _Undefined,
   }) {
     return SignalInput(
       source: source ?? this.source,
@@ -181,6 +207,8 @@ class _SignalInputImpl extends SignalInput {
           ? locationDetail
           : this.locationDetail,
       contextHour: contextHour is int? ? contextHour : this.contextHour,
+      eventId: eventId is String? ? eventId : this.eventId,
+      observedAt: observedAt is DateTime? ? observedAt : this.observedAt,
     );
   }
 }

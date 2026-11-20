@@ -2,7 +2,8 @@
 class: Responder
 table: responder
 fields:
-  code: String, unique
+  campusId: int, relation(parent=campus, onDelete=Restrict)
+  code: String
   name: String
   type: ResponderType
   status: ResponderStatus, default=available
@@ -18,3 +19,7 @@ fields:
   activeDispatchId: int?
   ### Note shown when the unit is busy or offline, e.g. 'Inter-hospital transfer'.
   statusNote: String?
+indexes:
+  responder_campus_code_idx:
+    fields: campusId, code
+    unique: true

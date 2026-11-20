@@ -47,6 +47,7 @@ const methods = new Set([
   "evidence/read",
   "evidence/remove",
   "campus/twin",
+  "campus/profile",
   "campus/route",
   "care/cases",
   "care/markReady",
@@ -68,14 +69,25 @@ const methods = new Set([
   "readiness/scenarios",
   "readiness/run",
   "readiness/runAll",
+  "readiness/runCustom",
   "readiness/history",
   "readiness/applyFix",
   "analytics/metrics",
+  "signal/ingest",
+  "signal/recent",
   "admin/auditLog",
+  "admin/policies",
+  "admin/updatePolicy",
+  "admin/setCameraHealth",
+  "admin/setGate",
+  "admin/setRoadStatus",
+  "admin/setResponderStatus",
+  "admin/users",
+  "network/overview",
 ]);
 const safeUser = (user) =>
   Object.fromEntries(
-    ["id", "handle", "displayName", "role", "title", "responderCode"]
+    ["id", "campusId", "handle", "displayName", "role", "title", "responderCode"]
       .filter((key) => key in user)
       .map((key) => [key, user[key]]),
   );

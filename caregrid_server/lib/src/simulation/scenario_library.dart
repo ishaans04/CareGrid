@@ -44,18 +44,23 @@ class ScenarioDefinition {
   );
 }
 
-/// Catalog of live scenarios for the Simulation Lab.
+/// Live scenarios for the Simulation Lab. Each campus has its own catalogue
+/// (see `CampusSeed.scenarios`); this file holds the Meridian set and the
+/// shared signal helper.
 class ScenarioLibrary {
   ScenarioLibrary._();
 
-  static ScenarioDefinition? byCode(String code) {
-    for (final s in all) {
+  static ScenarioDefinition? find(
+    List<ScenarioDefinition> catalogue,
+    String code,
+  ) {
+    for (final s in catalogue) {
       if (s.code == code) return s;
     }
     return null;
   }
 
-  static SignalInput _cam(
+  static SignalInput cam(
     EventType type,
     String zone,
     String camera,
@@ -76,7 +81,7 @@ class ScenarioLibrary {
     contextHour: hour,
   );
 
-  static final all = <ScenarioDefinition>[
+  static final meridian = <ScenarioDefinition>[
     ScenarioDefinition(
       code: 'SC-HOSTEL-0217',
       title: '02:17, person down in Birch Hostel',
@@ -99,7 +104,7 @@ class ScenarioLibrary {
       steps: [
         ScenarioStep(
           0,
-          _cam(
+          cam(
             EventType.personDown,
             'HB',
             'CAM-HB-B07',
@@ -114,7 +119,7 @@ class ScenarioLibrary {
         ),
         ScenarioStep(
           2,
-          _cam(
+          cam(
             EventType.personDown,
             'HB',
             'CAM-HB-B08',
@@ -140,7 +145,7 @@ class ScenarioLibrary {
       steps: [
         ScenarioStep(
           0,
-          _cam(
+          cam(
             EventType.fall,
             'SPT',
             'CAM-SPT-01',
@@ -153,7 +158,7 @@ class ScenarioLibrary {
         ),
         ScenarioStep(
           5,
-          _cam(
+          cam(
             EventType.personRecovered,
             'SPT',
             'CAM-SPT-01',
@@ -178,7 +183,7 @@ class ScenarioLibrary {
       steps: [
         ScenarioStep(
           0,
-          _cam(
+          cam(
             EventType.smoke,
             'LAB',
             'CAM-LAB-02',
@@ -244,7 +249,7 @@ class ScenarioLibrary {
       steps: [
         ScenarioStep(
           0,
-          _cam(
+          cam(
             EventType.vehicleCollision,
             'G2',
             'CAM-G2-01',
@@ -256,7 +261,7 @@ class ScenarioLibrary {
         ),
         ScenarioStep(
           2,
-          _cam(
+          cam(
             EventType.personDown,
             'G2',
             'CAM-G2-01',
@@ -288,7 +293,7 @@ class ScenarioLibrary {
       steps: [
         ScenarioStep(
           0,
-          _cam(
+          cam(
             EventType.crowdSurge,
             'COM',
             'CAM-COM-01',
@@ -300,7 +305,7 @@ class ScenarioLibrary {
         ),
         ScenarioStep(
           2,
-          _cam(
+          cam(
             EventType.crowdSurge,
             'COM',
             'CAM-COM-02',
@@ -312,7 +317,7 @@ class ScenarioLibrary {
         ),
         ScenarioStep(
           4,
-          _cam(
+          cam(
             EventType.personDown,
             'COM',
             'CAM-COM-01',
@@ -325,7 +330,7 @@ class ScenarioLibrary {
         ),
         ScenarioStep(
           6,
-          _cam(
+          cam(
             EventType.personDown,
             'COM',
             'CAM-COM-02',
@@ -355,7 +360,7 @@ class ScenarioLibrary {
       steps: [
         ScenarioStep(
           0,
-          _cam(
+          cam(
             EventType.personDown,
             'HB',
             'CAM-HB-B07',
@@ -368,7 +373,7 @@ class ScenarioLibrary {
         ),
         ScenarioStep(
           2,
-          _cam(
+          cam(
             EventType.personDown,
             'HB',
             'CAM-HB-B08',

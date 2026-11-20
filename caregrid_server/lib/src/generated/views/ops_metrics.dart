@@ -20,6 +20,11 @@ abstract class OpsMetrics
   OpsMetrics._({
     required this.generatedAt,
     this.mttcSeconds,
+    this.mttcMedianSeconds,
+    this.mttcP90Seconds,
+    required this.mttcSamples,
+    required this.rciClosed,
+    required this.rciVerified,
     required this.stages,
     this.rciPercent,
     this.falseEscalationPercent,
@@ -38,6 +43,11 @@ abstract class OpsMetrics
   factory OpsMetrics({
     required DateTime generatedAt,
     double? mttcSeconds,
+    double? mttcMedianSeconds,
+    double? mttcP90Seconds,
+    required int mttcSamples,
+    required int rciClosed,
+    required int rciVerified,
     required List<_ijdzm3ea.StageEstimate> stages,
     double? rciPercent,
     double? falseEscalationPercent,
@@ -59,6 +69,12 @@ abstract class OpsMetrics
         jsonSerialization['generatedAt'],
       ),
       mttcSeconds: (jsonSerialization['mttcSeconds'] as num?)?.toDouble(),
+      mttcMedianSeconds: (jsonSerialization['mttcMedianSeconds'] as num?)
+          ?.toDouble(),
+      mttcP90Seconds: (jsonSerialization['mttcP90Seconds'] as num?)?.toDouble(),
+      mttcSamples: jsonSerialization['mttcSamples'] as int,
+      rciClosed: jsonSerialization['rciClosed'] as int,
+      rciVerified: jsonSerialization['rciVerified'] as int,
       stages: _ighx06pg.Protocol().deserialize<List<_ijdzm3ea.StageEstimate>>(
         jsonSerialization['stages'],
       ),
@@ -91,6 +107,19 @@ abstract class OpsMetrics
 
   /// Mean Time To Care: onset to care initiated, in seconds.
   double? mttcSeconds;
+
+  /// Distribution of the same measurement: means hide the slow tail that matters in an emergency.
+  double? mttcMedianSeconds;
+
+  double? mttcP90Seconds;
+
+  /// Number of incidents with both onset and care recorded (the MTTC denominator).
+  int mttcSamples;
+
+  /// Closed dispatched incidents (the RCI denominator) and how many of them were fully verified.
+  int rciClosed;
+
+  int rciVerified;
 
   /// Mean latency of each stage (detection, verification, dispatch, acknowledgement, arrival, care start).
   List<_ijdzm3ea.StageEstimate> stages;
@@ -129,6 +158,11 @@ abstract class OpsMetrics
   OpsMetrics copyWith({
     DateTime? generatedAt,
     double? mttcSeconds,
+    double? mttcMedianSeconds,
+    double? mttcP90Seconds,
+    int? mttcSamples,
+    int? rciClosed,
+    int? rciVerified,
     List<_ijdzm3ea.StageEstimate>? stages,
     double? rciPercent,
     double? falseEscalationPercent,
@@ -149,6 +183,11 @@ abstract class OpsMetrics
       '__className__': 'OpsMetrics',
       'generatedAt': generatedAt.toJson(),
       if (mttcSeconds != null) 'mttcSeconds': mttcSeconds,
+      if (mttcMedianSeconds != null) 'mttcMedianSeconds': mttcMedianSeconds,
+      if (mttcP90Seconds != null) 'mttcP90Seconds': mttcP90Seconds,
+      'mttcSamples': mttcSamples,
+      'rciClosed': rciClosed,
+      'rciVerified': rciVerified,
       'stages': stages.toJson(valueToJson: (v) => v.toJson()),
       if (rciPercent != null) 'rciPercent': rciPercent,
       if (falseEscalationPercent != null)
@@ -172,6 +211,11 @@ abstract class OpsMetrics
       '__className__': 'OpsMetrics',
       'generatedAt': generatedAt.toJson(),
       if (mttcSeconds != null) 'mttcSeconds': mttcSeconds,
+      if (mttcMedianSeconds != null) 'mttcMedianSeconds': mttcMedianSeconds,
+      if (mttcP90Seconds != null) 'mttcP90Seconds': mttcP90Seconds,
+      'mttcSamples': mttcSamples,
+      'rciClosed': rciClosed,
+      'rciVerified': rciVerified,
       'stages': stages.toJson(valueToJson: (v) => v.toJsonForProtocol()),
       if (rciPercent != null) 'rciPercent': rciPercent,
       if (falseEscalationPercent != null)
@@ -201,6 +245,11 @@ class _OpsMetricsImpl extends OpsMetrics {
   _OpsMetricsImpl({
     required DateTime generatedAt,
     double? mttcSeconds,
+    double? mttcMedianSeconds,
+    double? mttcP90Seconds,
+    required int mttcSamples,
+    required int rciClosed,
+    required int rciVerified,
     required List<_ijdzm3ea.StageEstimate> stages,
     double? rciPercent,
     double? falseEscalationPercent,
@@ -217,6 +266,11 @@ class _OpsMetricsImpl extends OpsMetrics {
   }) : super._(
          generatedAt: generatedAt,
          mttcSeconds: mttcSeconds,
+         mttcMedianSeconds: mttcMedianSeconds,
+         mttcP90Seconds: mttcP90Seconds,
+         mttcSamples: mttcSamples,
+         rciClosed: rciClosed,
+         rciVerified: rciVerified,
          stages: stages,
          rciPercent: rciPercent,
          falseEscalationPercent: falseEscalationPercent,
@@ -239,6 +293,11 @@ class _OpsMetricsImpl extends OpsMetrics {
   OpsMetrics copyWith({
     DateTime? generatedAt,
     Object? mttcSeconds = _Undefined,
+    Object? mttcMedianSeconds = _Undefined,
+    Object? mttcP90Seconds = _Undefined,
+    int? mttcSamples,
+    int? rciClosed,
+    int? rciVerified,
     List<_ijdzm3ea.StageEstimate>? stages,
     Object? rciPercent = _Undefined,
     Object? falseEscalationPercent = _Undefined,
@@ -256,6 +315,15 @@ class _OpsMetricsImpl extends OpsMetrics {
     return OpsMetrics(
       generatedAt: generatedAt ?? this.generatedAt,
       mttcSeconds: mttcSeconds is double? ? mttcSeconds : this.mttcSeconds,
+      mttcMedianSeconds: mttcMedianSeconds is double?
+          ? mttcMedianSeconds
+          : this.mttcMedianSeconds,
+      mttcP90Seconds: mttcP90Seconds is double?
+          ? mttcP90Seconds
+          : this.mttcP90Seconds,
+      mttcSamples: mttcSamples ?? this.mttcSamples,
+      rciClosed: rciClosed ?? this.rciClosed,
+      rciVerified: rciVerified ?? this.rciVerified,
       stages: stages ?? this.stages.map((e0) => e0.copyWith()).toList(),
       rciPercent: rciPercent is double? ? rciPercent : this.rciPercent,
       falseEscalationPercent: falseEscalationPercent is double?

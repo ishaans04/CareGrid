@@ -14,3 +14,5 @@ values:
       label: 'IT / Administration'
   - member:
       label: 'Campus member'
+  - network:
+      label: 'Network operations'

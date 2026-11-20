@@ -2,10 +2,18 @@
 class: RoadSegment
 table: road_segment
 fields:
-  code: String, unique
+  campusId: int, relation(parent=campus, onDelete=Restrict)
+  ### Unique within its campus.
+  code: String
   name: String
   fromZone: String
   toZone: String
   lengthMeters: int
   status: RoadStatus, default=open
   isOutsideCampus: bool, default=false
+  ### Drawn shape as flattened x,y canvas pairs from fromZone to toZone; null draws a straight line.
+  path: List<double>?
+indexes:
+  road_campus_code_idx:
+    fields: campusId, code
+    unique: true

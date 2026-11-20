@@ -17,7 +17,8 @@ class ResponderEndpoint extends Endpoint {
         ? null
         : await Responder.db.findFirstRow(
             session,
-            where: (t) => t.code.equals(code),
+            where: (t) =>
+                t.campusId.equals(actor.campusId) & t.code.equals(code),
           );
     if (responder == null) throw notFound('Responder unit for ${actor.name}');
     return (actor, responder);
@@ -25,10 +26,12 @@ class ResponderEndpoint extends Endpoint {
 
   Future<ResponderHome> home(Session session) async {
     final (_, responder) = await _me(session);
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, responder.campusId);
     final mine = await Dispatch.db.find(
       session,
-      where: (t) => t.responderCode.equals(responder.code),
+      where: (t) =>
+          t.campusId.equals(responder.campusId) &
+          t.responderCode.equals(responder.code),
       orderBy: (t) => t.offeredAt.desc(),
       limit: 10,
     );
@@ -65,7 +68,7 @@ class ResponderEndpoint extends Endpoint {
 
   Future<Dispatch> _owned(Session session, Responder me, int dispatchId) async {
     final d = await Dispatch.db.findById(session, dispatchId);
-    if (d == null || d.responderCode != me.code) {
+    if (d == null || d.campusId != me.campusId || d.responderCode != me.code) {
       throw CareGridException(
         message: 'This task is not assigned to your unit.',
         code: 'forbidden',
@@ -153,7 +156,7 @@ class ResponderEndpoint extends Endpoint {
       available ? 'on-duty' : 'off-duty',
       target: me.code,
     );
-    await OpsBus.publish(session, 'twin');
+    await OpsBus.publish(session, 'twin', campusId: me.campusId);
     return home(session);
   }
 }

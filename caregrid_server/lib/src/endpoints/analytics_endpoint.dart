@@ -8,7 +8,10 @@ import '../generated/protocol.dart';
 /// blind spots, for leadership and operations.
 class AnalyticsEndpoint extends Endpoint {
   Future<OpsMetrics> metrics(Session session) async {
-    await Access.require(session, {UserRole.command, UserRole.admin});
-    return MetricsService.compute(session);
+    final actor = await Access.require(session, {
+      UserRole.command,
+      UserRole.admin,
+    });
+    return MetricsService.compute(session, actor.campusId);
   }
 }

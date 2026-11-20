@@ -17,6 +17,10 @@ class BriefingEndpoint extends Endpoint {
 
   Future<IncidentBrief> generate(Session session, int incidentId) async {
     final actor = await Access.require(session, {UserRole.command});
+    Access.requireIncident(
+      actor,
+      await Orchestrator.load(session, incidentId),
+    );
     final before = await _snapshot(session, incidentId);
     final service = _briefing;
     var result = await service.generate(before);

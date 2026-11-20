@@ -2,6 +2,8 @@
 class: CampusTwin
 fields:
   campusName: String
+  ### Map frame, attribution and affiliation note of the caller's campus.
+  campus: Campus
   zones: List<Zone>
   roads: List<RoadSegment>
   cameras: List<Camera>

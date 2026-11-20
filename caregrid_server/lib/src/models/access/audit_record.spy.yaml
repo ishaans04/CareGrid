@@ -2,6 +2,8 @@
 class: AuditRecord
 table: audit_record
 fields:
+  ### Null only for deployment-operator records that precede any campus membership.
+  campusId: int?, relation(parent=campus, onDelete=Restrict)
   at: DateTime
   userId: int?
   userName: String
@@ -12,3 +14,5 @@ fields:
 indexes:
   audit_at_idx:
     fields: at
+  audit_campus_at_idx:
+    fields: campusId, at

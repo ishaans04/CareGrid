@@ -1,11 +1,14 @@
 import 'package:serverpod/serverpod.dart' hide Responder;
 
+import '../core/access.dart';
 import '../generated/protocol.dart';
 
-/// In-memory copy of the campus digital twin. The live pipeline loads it from
-/// the database; the Stress-Test Engine mutates a private copy of it.
+/// In-memory copy of one campus's digital twin. The live pipeline loads it
+/// from the database; the Stress-Test Engine mutates a private copy of it.
+/// A snapshot never mixes campuses.
 class TwinSnapshot {
   TwinSnapshot({
+    required this.campus,
     required this.zones,
     required this.roads,
     required this.cameras,
@@ -13,19 +16,40 @@ class TwinSnapshot {
     required this.policies,
   });
 
+  final Campus campus;
   final Map<String, Zone> zones;
   final List<RoadSegment> roads;
   final Map<String, Camera> cameras;
   final Map<String, Responder> responders;
   final List<ZonePolicy> policies;
 
-  static Future<TwinSnapshot> load(Session session) async {
-    final zones = await Zone.db.find(session);
-    final roads = await RoadSegment.db.find(session);
-    final cameras = await Camera.db.find(session);
-    final responders = await Responder.db.find(session);
-    final policies = await ZonePolicy.db.find(session);
+  int get campusId => campus.id!;
+
+  static Future<TwinSnapshot> load(Session session, int campusId) async {
+    final campus = await Campus.db.findById(session, campusId);
+    if (campus == null) throw notFound('Campus $campusId');
+    final zones = await Zone.db.find(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    final roads = await RoadSegment.db.find(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    final cameras = await Camera.db.find(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    final responders = await Responder.db.find(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    final policies = await ZonePolicy.db.find(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
     return TwinSnapshot(
+      campus: campus,
       zones: {for (final z in zones) z.code: z},
       roads: roads,
       cameras: {for (final c in cameras) c.code: c},
@@ -36,6 +60,7 @@ class TwinSnapshot {
 
   /// Deep copy, so what-if changes never leak into the live twin.
   TwinSnapshot copy() => TwinSnapshot(
+    campus: campus.copyWith(),
     zones: {for (final e in zones.entries) e.key: e.value.copyWith()},
     roads: [for (final r in roads) r.copyWith()],
     cameras: {for (final e in cameras.entries) e.key: e.value.copyWith()},

@@ -2,6 +2,7 @@
 class: SensorEvent
 table: sensor_event
 fields:
+  campusId: int, relation(parent=campus, onDelete=Restrict)
   source: SignalSource
   eventType: EventType
   zoneCode: String
@@ -19,6 +20,13 @@ fields:
   contextHour: int?
   scenarioRunId: int?
   reporterUserId: int?, scope=serverOnly
+  ### Producer's event id, when supplied. Unique per campus and source.
+  sourceEventId: String?
 indexes:
   sensor_event_incident_idx:
     fields: incidentId
+  sensor_event_source_event_idx:
+    fields: campusId, source, sourceEventId
+    unique: true
+  sensor_event_campus_idx:
+    fields: campusId, receivedAt

@@ -10,6 +10,7 @@
 // ignore_for_file: invalid_use_of_internal_member
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:caregrid_server/src/generated/protocol.dart' as _ighx06pg;
 import 'package:serverpod/serverpod.dart' as _is;
 import '../enums/road_status.dart' as _iralfy71;
 
@@ -18,6 +19,7 @@ abstract class RoadSegment
     implements _is.TableRow<int?>, _is.ProtocolSerialization {
   RoadSegment._({
     this.id,
+    required this.campusId,
     required this.code,
     required this.name,
     required this.fromZone,
@@ -25,11 +27,13 @@ abstract class RoadSegment
     required this.lengthMeters,
     _iralfy71.RoadStatus? status,
     bool? isOutsideCampus,
+    this.path,
   }) : status = status ?? _iralfy71.RoadStatus.open,
        isOutsideCampus = isOutsideCampus ?? false;
 
   factory RoadSegment({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required String fromZone,
@@ -37,11 +41,13 @@ abstract class RoadSegment
     required int lengthMeters,
     _iralfy71.RoadStatus? status,
     bool? isOutsideCampus,
+    List<double>? path,
   }) = _RoadSegmentImpl;
 
   factory RoadSegment.fromJson(Map<String, dynamic> jsonSerialization) {
     return RoadSegment(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       code: jsonSerialization['code'] as String,
       name: jsonSerialization['name'] as String,
       fromZone: jsonSerialization['fromZone'] as String,
@@ -57,6 +63,11 @@ abstract class RoadSegment
           : _is.BoolJsonExtension.fromJson(
               jsonSerialization['isOutsideCampus'],
             ),
+      path: jsonSerialization['path'] == null
+          ? null
+          : _ighx06pg.Protocol().deserialize<List<double>>(
+              jsonSerialization['path'],
+            ),
     );
   }
 
@@ -67,6 +78,9 @@ abstract class RoadSegment
   @override
   int? id;
 
+  int campusId;
+
+  /// Unique within its campus.
   String code;
 
   String name;
@@ -81,6 +95,9 @@ abstract class RoadSegment
 
   bool isOutsideCampus;
 
+  /// Drawn shape as flattened x,y canvas pairs from fromZone to toZone; null draws a straight line.
+  List<double>? path;
+
   @override
   _is.Table<int?> get table => t;
 
@@ -89,6 +106,7 @@ abstract class RoadSegment
   @_is.useResult
   RoadSegment copyWith({
     int? id,
+    int? campusId,
     String? code,
     String? name,
     String? fromZone,
@@ -96,12 +114,14 @@ abstract class RoadSegment
     int? lengthMeters,
     _iralfy71.RoadStatus? status,
     bool? isOutsideCampus,
+    List<double>? path,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'RoadSegment',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'fromZone': fromZone,
@@ -109,6 +129,7 @@ abstract class RoadSegment
       'lengthMeters': lengthMeters,
       'status': status.toJson(),
       'isOutsideCampus': isOutsideCampus,
+      if (path != null) 'path': path?.toJson(),
     };
   }
 
@@ -117,6 +138,7 @@ abstract class RoadSegment
     return {
       '__className__': 'RoadSegment',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'fromZone': fromZone,
@@ -124,6 +146,7 @@ abstract class RoadSegment
       'lengthMeters': lengthMeters,
       'status': status.toJson(),
       'isOutsideCampus': isOutsideCampus,
+      if (path != null) 'path': path?.toJson(),
     };
   }
 
@@ -160,6 +183,7 @@ class _Undefined {}
 class _RoadSegmentImpl extends RoadSegment {
   _RoadSegmentImpl({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required String fromZone,
@@ -167,8 +191,10 @@ class _RoadSegmentImpl extends RoadSegment {
     required int lengthMeters,
     _iralfy71.RoadStatus? status,
     bool? isOutsideCampus,
+    List<double>? path,
   }) : super._(
          id: id,
+         campusId: campusId,
          code: code,
          name: name,
          fromZone: fromZone,
@@ -176,6 +202,7 @@ class _RoadSegmentImpl extends RoadSegment {
          lengthMeters: lengthMeters,
          status: status,
          isOutsideCampus: isOutsideCampus,
+         path: path,
        );
 
   /// Returns a shallow copy of this [RoadSegment]
@@ -184,6 +211,7 @@ class _RoadSegmentImpl extends RoadSegment {
   @override
   RoadSegment copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? code,
     String? name,
     String? fromZone,
@@ -191,9 +219,11 @@ class _RoadSegmentImpl extends RoadSegment {
     int? lengthMeters,
     _iralfy71.RoadStatus? status,
     bool? isOutsideCampus,
+    Object? path = _Undefined,
   }) {
     return RoadSegment(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       code: code ?? this.code,
       name: name ?? this.name,
       fromZone: fromZone ?? this.fromZone,
@@ -201,12 +231,18 @@ class _RoadSegmentImpl extends RoadSegment {
       lengthMeters: lengthMeters ?? this.lengthMeters,
       status: status ?? this.status,
       isOutsideCampus: isOutsideCampus ?? this.isOutsideCampus,
+      path: path is List<double>? ? path : this.path?.map((e0) => e0).toList(),
     );
   }
 }
 
 class RoadSegmentUpdateTable extends _is.UpdateTable<RoadSegmentTable> {
   RoadSegmentUpdateTable(super.table);
+
+  _is.ColumnValue<int, int> campusId(int value) => _is.ColumnValue(
+    table.campusId,
+    value,
+  );
 
   _is.ColumnValue<String, String> code(String value) => _is.ColumnValue(
     table.code,
@@ -244,11 +280,21 @@ class RoadSegmentUpdateTable extends _is.UpdateTable<RoadSegmentTable> {
     table.isOutsideCampus,
     value,
   );
+
+  _is.ColumnValue<List<double>, List<double>> path(List<double>? value) =>
+      _is.ColumnValue(
+        table.path,
+        value,
+      );
 }
 
 class RoadSegmentTable extends _is.Table<int?> {
   RoadSegmentTable({super.tableRelation}) : super(tableName: 'road_segment') {
     updateTable = RoadSegmentUpdateTable(this);
+    campusId = _is.ColumnInt(
+      'campusId',
+      this,
+    );
     code = _is.ColumnString(
       'code',
       this,
@@ -280,10 +326,17 @@ class RoadSegmentTable extends _is.Table<int?> {
       this,
       hasDefault: true,
     );
+    path = _is.ColumnSerializable<List<double>>(
+      'path',
+      this,
+    );
   }
 
   late final RoadSegmentUpdateTable updateTable;
 
+  late final _is.ColumnInt campusId;
+
+  /// Unique within its campus.
   late final _is.ColumnString code;
 
   late final _is.ColumnString name;
@@ -298,9 +351,13 @@ class RoadSegmentTable extends _is.Table<int?> {
 
   late final _is.ColumnBool isOutsideCampus;
 
+  /// Drawn shape as flattened x,y canvas pairs from fromZone to toZone; null draws a straight line.
+  late final _is.ColumnSerializable<List<double>> path;
+
   @override
   List<_is.Column> get columns => [
     id,
+    campusId,
     code,
     name,
     fromZone,
@@ -308,6 +365,7 @@ class RoadSegmentTable extends _is.Table<int?> {
     lengthMeters,
     status,
     isOutsideCampus,
+    path,
   ];
 }
 

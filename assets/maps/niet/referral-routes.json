@@ -1,0 +1,43 @@
+{
+ "source": "OSRM public demo server (router.project-osrm.org), driving profile, OpenStreetMap road data (ODbL)",
+ "fetched": "2026-11-20T08:01:40Z",
+ "note": "Free-flow car estimates. Real ambulance times depend on traffic and are not guaranteed.",
+ "hospitals": {
+  "yatharth": {
+   "name": "Yatharth Hospital, Greater Noida",
+   "lat": 28.451666,
+   "lon": 77.5096421
+  },
+  "kailash": {
+   "name": "Kailash Hospital, Greater Noida (Pari Chowk)",
+   "lat": 28.4707769,
+   "lon": 77.5053503
+  }
+ },
+ "routes": [
+  {
+   "from": "old-gate",
+   "to": "yatharth",
+   "meters": 2999,
+   "seconds": 313
+  },
+  {
+   "from": "new-gate",
+   "to": "yatharth",
+   "meters": 2697,
+   "seconds": 302
+  },
+  {
+   "from": "old-gate",
+   "to": "kailash",
+   "meters": 3972,
+   "seconds": 334
+  },
+  {
+   "from": "new-gate",
+   "to": "kailash",
+   "meters": 3670,
+   "seconds": 323
+  }
+ ]
+}

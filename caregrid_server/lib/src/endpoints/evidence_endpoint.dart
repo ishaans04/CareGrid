@@ -15,7 +15,10 @@ class EvidenceEndpoint extends Endpoint {
 
   Future<(Actor, Incident)> _authorize(Session session, int incidentId) async {
     final actor = await Access.require(session, {UserRole.command});
-    return (actor, await Orchestrator.load(session, incidentId));
+    final incident = await Orchestrator.load(session, incidentId);
+    // Another campus's case is "not found"; its evidence is never reachable.
+    Access.requireIncident(actor, incident);
+    return (actor, incident);
   }
 
   Future<EvidencePage> list(

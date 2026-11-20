@@ -20,6 +20,7 @@ abstract class Responder
     implements _is.TableRow<int?>, _is.ProtocolSerialization {
   Responder._({
     this.id,
+    required this.campusId,
     required this.code,
     required this.name,
     required this.type,
@@ -36,6 +37,7 @@ abstract class Responder
 
   factory Responder({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required _iua0ui51.ResponderType type,
@@ -53,6 +55,7 @@ abstract class Responder
   factory Responder.fromJson(Map<String, dynamic> jsonSerialization) {
     return Responder(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       code: jsonSerialization['code'] as String,
       name: jsonSerialization['name'] as String,
       type: _iua0ui51.ResponderType.fromJson(
@@ -82,6 +85,8 @@ abstract class Responder
 
   @override
   int? id;
+
+  int campusId;
 
   String code;
 
@@ -119,6 +124,7 @@ abstract class Responder
   @_is.useResult
   Responder copyWith({
     int? id,
+    int? campusId,
     String? code,
     String? name,
     _iua0ui51.ResponderType? type,
@@ -137,6 +143,7 @@ abstract class Responder
     return {
       '__className__': 'Responder',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'type': type.toJson(),
@@ -157,6 +164,7 @@ abstract class Responder
     return {
       '__className__': 'Responder',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'type': type.toJson(),
@@ -205,6 +213,7 @@ class _Undefined {}
 class _ResponderImpl extends Responder {
   _ResponderImpl({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required _iua0ui51.ResponderType type,
@@ -219,6 +228,7 @@ class _ResponderImpl extends Responder {
     String? statusNote,
   }) : super._(
          id: id,
+         campusId: campusId,
          code: code,
          name: name,
          type: type,
@@ -239,6 +249,7 @@ class _ResponderImpl extends Responder {
   @override
   Responder copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? code,
     String? name,
     _iua0ui51.ResponderType? type,
@@ -254,6 +265,7 @@ class _ResponderImpl extends Responder {
   }) {
     return Responder(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       code: code ?? this.code,
       name: name ?? this.name,
       type: type ?? this.type,
@@ -274,6 +286,11 @@ class _ResponderImpl extends Responder {
 
 class ResponderUpdateTable extends _is.UpdateTable<ResponderTable> {
   ResponderUpdateTable(super.table);
+
+  _is.ColumnValue<int, int> campusId(int value) => _is.ColumnValue(
+    table.campusId,
+    value,
+  );
 
   _is.ColumnValue<String, String> code(String value) => _is.ColumnValue(
     table.code,
@@ -345,6 +362,10 @@ class ResponderUpdateTable extends _is.UpdateTable<ResponderTable> {
 class ResponderTable extends _is.Table<int?> {
   ResponderTable({super.tableRelation}) : super(tableName: 'responder') {
     updateTable = ResponderUpdateTable(this);
+    campusId = _is.ColumnInt(
+      'campusId',
+      this,
+    );
     code = _is.ColumnString(
       'code',
       this,
@@ -400,6 +421,8 @@ class ResponderTable extends _is.Table<int?> {
 
   late final ResponderUpdateTable updateTable;
 
+  late final _is.ColumnInt campusId;
+
   late final _is.ColumnString code;
 
   late final _is.ColumnString name;
@@ -431,6 +454,7 @@ class ResponderTable extends _is.Table<int?> {
   @override
   List<_is.Column> get columns => [
     id,
+    campusId,
     code,
     name,
     type,

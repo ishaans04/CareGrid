@@ -2,7 +2,8 @@
 class: ZonePolicy
 table: zone_policy
 fields:
-  code: String, unique
+  campusId: int, relation(parent=campus, onDelete=Restrict)
+  code: String
   name: String
   ### Null means the policy applies to every zone type.
   zoneType: ZoneType?
@@ -27,3 +28,7 @@ fields:
   arrivalSlaSeconds: int
   careSlaSeconds: int
   instructions: List<String>
+indexes:
+  policy_campus_code_idx:
+    fields: campusId, code
+    unique: true

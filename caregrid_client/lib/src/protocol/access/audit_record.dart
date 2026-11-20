@@ -17,6 +17,7 @@ abstract class AuditRecord
     implements _isc.SerializableModel, _isc.ProtocolSerialization {
   AuditRecord._({
     this.id,
+    this.campusId,
     required this.at,
     this.userId,
     required this.userName,
@@ -28,6 +29,7 @@ abstract class AuditRecord
 
   factory AuditRecord({
     int? id,
+    int? campusId,
     required DateTime at,
     int? userId,
     required String userName,
@@ -40,6 +42,7 @@ abstract class AuditRecord
   factory AuditRecord.fromJson(Map<String, dynamic> jsonSerialization) {
     return AuditRecord(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int?,
       at: _isc.DateTimeJsonExtension.fromJson(jsonSerialization['at']),
       userId: jsonSerialization['userId'] as int?,
       userName: jsonSerialization['userName'] as String,
@@ -54,6 +57,9 @@ abstract class AuditRecord
   /// database or if it has been fetched from the database. Otherwise,
   /// the id will be null.
   int? id;
+
+  /// Null only for deployment-operator records that precede any campus membership.
+  int? campusId;
 
   DateTime at;
 
@@ -74,6 +80,7 @@ abstract class AuditRecord
   @_isc.useResult
   AuditRecord copyWith({
     int? id,
+    int? campusId,
     DateTime? at,
     int? userId,
     String? userName,
@@ -87,6 +94,7 @@ abstract class AuditRecord
     return {
       '__className__': 'AuditRecord',
       if (id != null) 'id': id,
+      if (campusId != null) 'campusId': campusId,
       'at': at.toJson(),
       if (userId != null) 'userId': userId,
       'userName': userName,
@@ -102,6 +110,7 @@ abstract class AuditRecord
     return {
       '__className__': 'AuditRecord',
       if (id != null) 'id': id,
+      if (campusId != null) 'campusId': campusId,
       'at': at.toJson(),
       if (userId != null) 'userId': userId,
       'userName': userName,
@@ -123,6 +132,7 @@ class _Undefined {}
 class _AuditRecordImpl extends AuditRecord {
   _AuditRecordImpl({
     int? id,
+    int? campusId,
     required DateTime at,
     int? userId,
     required String userName,
@@ -132,6 +142,7 @@ class _AuditRecordImpl extends AuditRecord {
     String? detail,
   }) : super._(
          id: id,
+         campusId: campusId,
          at: at,
          userId: userId,
          userName: userName,
@@ -147,6 +158,7 @@ class _AuditRecordImpl extends AuditRecord {
   @override
   AuditRecord copyWith({
     Object? id = _Undefined,
+    Object? campusId = _Undefined,
     DateTime? at,
     Object? userId = _Undefined,
     String? userName,
@@ -157,6 +169,7 @@ class _AuditRecordImpl extends AuditRecord {
   }) {
     return AuditRecord(
       id: id is int? ? id : this.id,
+      campusId: campusId is int? ? campusId : this.campusId,
       at: at ?? this.at,
       userId: userId is int? ? userId : this.userId,
       userName: userName ?? this.userName,

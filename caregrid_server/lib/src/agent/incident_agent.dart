@@ -26,50 +26,107 @@ class IncidentAgent {
   /// Same-camera persistence that counts as temporal corroboration.
   static const persistenceSeconds = 8;
 
+  /// Producers may report events this late (clock skew, buffered edge
+  /// gateways) or this far ahead; anything outside is rejected.
+  static const maxLateness = Duration(hours: 24);
+  static const maxClockSkew = Duration(seconds: 60);
+
+  /// Ingests one signal into [campusId]'s pipeline. Zone and camera codes are
+  /// resolved only inside that campus.
+  ///
   /// [targetIncidentId] binds negative evidence to one known incident (a
   /// member withdrawing their own SOS) instead of searching the zone.
   static Future<SensorEvent> ingest(
     Session session,
+    int campusId,
     SignalInput input, {
     int? scenarioRunId,
     int? reporterUserId,
     int? targetIncidentId,
   }) async {
     final now = CampusClock.now();
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, campusId);
     final zone = twin.zone(input.zoneCode);
     if (zone == null) throw badRequest('Unknown zone ${input.zoneCode}.');
     final camera = input.cameraCode == null
         ? null
         : twin.cameras[input.cameraCode];
+    if (input.cameraCode != null && camera == null) {
+      throw badRequest('Unknown camera ${input.cameraCode}.');
+    }
+    if (input.confidence.isNaN ||
+        input.confidence < 0 ||
+        input.confidence > 1) {
+      throw badRequest('Confidence must be between 0 and 1.');
+    }
+    final eventId = input.eventId?.trim();
+    if (eventId != null && (eventId.isEmpty || eventId.length > 128)) {
+      throw badRequest('Event ids are 1-128 characters.');
+    }
+    final observedAt = input.observedAt?.toUtc() ?? now;
+    if (observedAt.isAfter(now.add(maxClockSkew)) ||
+        observedAt.isBefore(now.subtract(maxLateness))) {
+      throw badRequest(
+        'observedAt must be within the last 24 hours and no more than '
+        '60 seconds ahead of the server clock.',
+      );
+    }
+    final lateBy = now.difference(observedAt);
 
-    var event = await SensorEvent.db.insertRow(
-      session,
-      SensorEvent(
-        source: input.source,
-        eventType: input.eventType,
-        zoneCode: input.zoneCode,
-        cameraCode: input.cameraCode,
-        trackId: input.trackId,
-        confidence: input.confidence,
-        detail: input.detail,
-        locationDetail: input.locationDetail,
-        observedAt: now,
-        receivedAt: now,
-        contextHour: input.contextHour,
-        scenarioRunId: scenarioRunId,
-        reporterUserId: reporterUserId,
-      ),
-    );
+    Future<SensorEvent?> duplicate() async => eventId == null
+        ? null
+        : SensorEvent.db.findFirstRow(
+            session,
+            where: (t) =>
+                t.campusId.equals(campusId) &
+                t.source.equals(input.source) &
+                t.sourceEventId.equals(eventId),
+          );
+
+    final seen = await duplicate();
+    if (seen != null) return seen;
+
+    SensorEvent event;
+    try {
+      event = await SensorEvent.db.insertRow(
+        session,
+        SensorEvent(
+          campusId: campusId,
+          source: input.source,
+          eventType: input.eventType,
+          zoneCode: input.zoneCode,
+          cameraCode: input.cameraCode,
+          trackId: input.trackId,
+          confidence: input.confidence,
+          detail: input.detail,
+          locationDetail: input.locationDetail,
+          observedAt: observedAt,
+          receivedAt: now,
+          contextHour: input.contextHour,
+          scenarioRunId: scenarioRunId,
+          reporterUserId: reporterUserId,
+          sourceEventId: eventId,
+        ),
+      );
+    } on DatabaseException {
+      // A concurrent retry of the same producer event won the unique index.
+      final winner = await duplicate();
+      if (winner != null) return winner;
+      rethrow;
+    }
 
     Future<SensorEvent> finish(String outcome, Incident? incident) async {
       event
-        ..outcome = outcome
+        ..outcome = lateBy > const Duration(minutes: 2)
+            ? '$outcome (reported ${formatSeconds(lateBy.inSeconds)} after '
+                  'it was observed)'
+            : outcome
         ..incidentId = incident?.id;
       event = await SensorEvent.db.updateRow(session, event);
       await OpsBus.publish(
         session,
         'signal',
+        campusId: campusId,
         incidentId: incident?.id,
         message: outcome,
       );
@@ -87,6 +144,7 @@ class IncidentAgent {
     if (input.eventType.negative) {
       final (incident, outcome) = await _applyNegativeEvidence(
         session,
+        campusId,
         input,
         scenarioRunId,
         targetIncidentId: targetIncidentId,
@@ -102,6 +160,7 @@ class IncidentAgent {
 
     final (existing, keptSeparate) = await _findFusionTarget(
       session,
+      campusId,
       input,
       family,
       scenarioRunId,
@@ -136,6 +195,7 @@ class IncidentAgent {
       scenarioRunId: scenarioRunId,
       reporterUserId: reporterUserId,
       keptSeparateFrom: keptSeparate,
+      observedAt: observedAt,
     );
     return finish(
       keptSeparate.isEmpty
@@ -161,9 +221,15 @@ class IncidentAgent {
     int? reporterUserId,
     int? parentIncidentId,
     List<Incident> keptSeparateFrom = const [],
+    DateTime? observedAt,
   }) async {
     final now = CampusClock.now();
-    final hour = input.contextHour ?? CampusClock.localHour(now);
+    final hour =
+        input.contextHour ??
+        CampusClock.localHourAt(
+          observedAt ?? now,
+          twin.campus.utcOffsetMinutes,
+        );
     final policy = PolicyEngine.select(twin.policies, zone.type, family, hour);
     final observability = twin.observabilityOf(zone.code);
     final humanReport =
@@ -200,6 +266,7 @@ class IncidentAgent {
     var incident = await Incident.db.insertRow(
       session,
       Incident(
+        campusId: twin.campusId,
         code: _provisionalCode(),
         title: '${input.eventType.label} at ${zone.name}',
         eventType: input.eventType,
@@ -222,12 +289,12 @@ class IncidentAgent {
         reporterUserId: reporterUserId,
         scenarioRunId: scenarioRunId,
         contextHour: input.contextHour,
-        onsetAt: now,
+        onsetAt: observedAt ?? now,
         detectedAt: now,
         updatedAt: now,
       ),
     );
-    incident = await _assignCode(session, incident);
+    incident = await _assignCode(session, incident, twin.campus);
     final code = incident.code;
     await Orchestrator.log(
       session,
@@ -316,6 +383,7 @@ class IncidentAgent {
   /// signal was deliberately kept apart from.
   static Future<(Incident?, List<Incident>)> _findFusionTarget(
     Session session,
+    int campusId,
     SignalInput input,
     EventFamily family,
     int? scenarioRunId,
@@ -325,6 +393,7 @@ class IncidentAgent {
     final candidates = await Incident.db.find(
       session,
       where: (t) =>
+          t.campusId.equals(campusId) &
           t.zoneCode.equals(input.zoneCode) &
           (t.onsetAt > since) &
           t.parentIncidentId.equals(null) &
@@ -489,6 +558,7 @@ class IncidentAgent {
     var victim = await Incident.db.insertRow(
       session,
       Incident(
+        campusId: parent.campusId,
         code: _provisionalCode(),
         title: 'Victim ${victims + 1} of ${parent.code}',
         eventType: input.eventType,
@@ -522,7 +592,7 @@ class IncidentAgent {
         updatedAt: now,
       ),
     );
-    victim = await _assignCode(session, victim);
+    victim = await _assignCode(session, victim, twin.campus);
     final code = victim.code;
     await Orchestrator.log(
       session,
@@ -590,6 +660,7 @@ class IncidentAgent {
   /// dispatch it only informs: humans own escalation and closure.
   static Future<(Incident?, String)> _applyNegativeEvidence(
     Session session,
+    int campusId,
     SignalInput input,
     int? scenarioRunId, {
     int? targetIncidentId,
@@ -601,7 +672,7 @@ class IncidentAgent {
 
     if (targetIncidentId != null) {
       final target = await Incident.db.findById(session, targetIncidentId);
-      if (target == null || !target.state.open) {
+      if (target == null || target.campusId != campusId || !target.state.open) {
         return (null, 'No open incident to update.');
       }
       incident = target;
@@ -620,6 +691,7 @@ class IncidentAgent {
       final candidates = (await Incident.db.find(
         session,
         where: (t) =>
+            t.campusId.equals(campusId) &
             t.zoneCode.equals(input.zoneCode) &
             t.family.equals(family) &
             t.scenarioRunId.equals(scenarioRunId) &
@@ -766,10 +838,17 @@ class IncidentAgent {
       'NEW-${DateTime.now().microsecondsSinceEpoch}-'
       '${_random.nextInt(1 << 32).toRadixString(16)}';
 
-  /// Derives the public code from the database id, so concurrent signals can
-  /// never compute the same code.
-  static Future<Incident> _assignCode(Session session, Incident incident) {
-    incident.code = 'INC-${1000 + incident.id!}';
+  /// Derives the public code from the database id and the campus prefix, so
+  /// concurrent signals can never compute the same code.
+  static Future<Incident> _assignCode(
+    Session session,
+    Incident incident,
+    Campus campus,
+  ) {
+    incident.code = incidentCode(campus, incident.id!);
     return Incident.db.updateRow(session, incident);
   }
+
+  static String incidentCode(Campus campus, int id) =>
+      '${campus.incidentPrefix}-${1000 + id}';
 }

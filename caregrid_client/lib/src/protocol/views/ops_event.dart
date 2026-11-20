@@ -17,6 +17,7 @@ abstract class OpsEvent
     implements _isc.SerializableModel, _isc.ProtocolSerialization {
   OpsEvent._({
     required this.kind,
+    this.campusId,
     this.incidentId,
     this.message,
     required this.at,
@@ -24,6 +25,7 @@ abstract class OpsEvent
 
   factory OpsEvent({
     required String kind,
+    int? campusId,
     int? incidentId,
     String? message,
     required DateTime at,
@@ -32,6 +34,7 @@ abstract class OpsEvent
   factory OpsEvent.fromJson(Map<String, dynamic> jsonSerialization) {
     return OpsEvent(
       kind: jsonSerialization['kind'] as String,
+      campusId: jsonSerialization['campusId'] as int?,
       incidentId: jsonSerialization['incidentId'] as int?,
       message: jsonSerialization['message'] as String?,
       at: _isc.DateTimeJsonExtension.fromJson(jsonSerialization['at']),
@@ -40,6 +43,9 @@ abstract class OpsEvent
 
   /// incident, dispatch, twin, scenario, readiness or hello.
   String kind;
+
+  /// Campus the change belongs to; streams only deliver a member's own campus.
+  int? campusId;
 
   int? incidentId;
 
@@ -52,6 +58,7 @@ abstract class OpsEvent
   @_isc.useResult
   OpsEvent copyWith({
     String? kind,
+    int? campusId,
     int? incidentId,
     String? message,
     DateTime? at,
@@ -61,6 +68,7 @@ abstract class OpsEvent
     return {
       '__className__': 'OpsEvent',
       'kind': kind,
+      if (campusId != null) 'campusId': campusId,
       if (incidentId != null) 'incidentId': incidentId,
       if (message != null) 'message': message,
       'at': at.toJson(),
@@ -72,6 +80,7 @@ abstract class OpsEvent
     return {
       '__className__': 'OpsEvent',
       'kind': kind,
+      if (campusId != null) 'campusId': campusId,
       if (incidentId != null) 'incidentId': incidentId,
       if (message != null) 'message': message,
       'at': at.toJson(),
@@ -89,11 +98,13 @@ class _Undefined {}
 class _OpsEventImpl extends OpsEvent {
   _OpsEventImpl({
     required String kind,
+    int? campusId,
     int? incidentId,
     String? message,
     required DateTime at,
   }) : super._(
          kind: kind,
+         campusId: campusId,
          incidentId: incidentId,
          message: message,
          at: at,
@@ -105,12 +116,14 @@ class _OpsEventImpl extends OpsEvent {
   @override
   OpsEvent copyWith({
     String? kind,
+    Object? campusId = _Undefined,
     Object? incidentId = _Undefined,
     Object? message = _Undefined,
     DateTime? at,
   }) {
     return OpsEvent(
       kind: kind ?? this.kind,
+      campusId: campusId is int? ? campusId : this.campusId,
       incidentId: incidentId is int? ? incidentId : this.incidentId,
       message: message is String? ? message : this.message,
       at: at ?? this.at,

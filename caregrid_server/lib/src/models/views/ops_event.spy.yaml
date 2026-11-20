@@ -3,6 +3,8 @@ class: OpsEvent
 fields:
   ### incident, dispatch, twin, scenario, readiness or hello.
   kind: String
+  ### Campus the change belongs to; streams only deliver a member's own campus.
+  campusId: int?
   incidentId: int?
   message: String?
   at: DateTime

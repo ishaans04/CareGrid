@@ -23,6 +23,8 @@ abstract class DemoAccount
     required this.title,
     required this.pinHint,
     required this.description,
+    required this.campusCode,
+    required this.campusName,
   });
 
   factory DemoAccount({
@@ -32,6 +34,8 @@ abstract class DemoAccount
     required String title,
     required String pinHint,
     required String description,
+    required String campusCode,
+    required String campusName,
   }) = _DemoAccountImpl;
 
   factory DemoAccount.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -42,6 +46,8 @@ abstract class DemoAccount
       title: jsonSerialization['title'] as String,
       pinHint: jsonSerialization['pinHint'] as String,
       description: jsonSerialization['description'] as String,
+      campusCode: jsonSerialization['campusCode'] as String,
+      campusName: jsonSerialization['campusName'] as String,
     );
   }
 
@@ -57,6 +63,10 @@ abstract class DemoAccount
 
   String description;
 
+  String campusCode;
+
+  String campusName;
+
   /// Returns a shallow copy of this [DemoAccount]
   /// with some or all fields replaced by the given arguments.
   @_is.useResult
@@ -67,6 +77,8 @@ abstract class DemoAccount
     String? title,
     String? pinHint,
     String? description,
+    String? campusCode,
+    String? campusName,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -78,6 +90,8 @@ abstract class DemoAccount
       'title': title,
       'pinHint': pinHint,
       'description': description,
+      'campusCode': campusCode,
+      'campusName': campusName,
     };
   }
 
@@ -91,6 +105,8 @@ abstract class DemoAccount
       'title': title,
       'pinHint': pinHint,
       'description': description,
+      'campusCode': campusCode,
+      'campusName': campusName,
     };
   }
 
@@ -108,6 +124,8 @@ class _DemoAccountImpl extends DemoAccount {
     required String title,
     required String pinHint,
     required String description,
+    required String campusCode,
+    required String campusName,
   }) : super._(
          handle: handle,
          displayName: displayName,
@@ -115,6 +133,8 @@ class _DemoAccountImpl extends DemoAccount {
          title: title,
          pinHint: pinHint,
          description: description,
+         campusCode: campusCode,
+         campusName: campusName,
        );
 
   /// Returns a shallow copy of this [DemoAccount]
@@ -128,6 +148,8 @@ class _DemoAccountImpl extends DemoAccount {
     String? title,
     String? pinHint,
     String? description,
+    String? campusCode,
+    String? campusName,
   }) {
     return DemoAccount(
       handle: handle ?? this.handle,
@@ -136,6 +158,8 @@ class _DemoAccountImpl extends DemoAccount {
       title: title ?? this.title,
       pinHint: pinHint ?? this.pinHint,
       description: description ?? this.description,
+      campusCode: campusCode ?? this.campusCode,
+      campusName: campusName ?? this.campusName,
     );
   }
 }

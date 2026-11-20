@@ -1,0 +1,2620 @@
+{
+ "type": "FeatureCollection",
+ "attribution": "\u00a9 OpenStreetMap contributors, ODbL 1.0",
+ "features": [
+  {
+   "type": "Feature",
+   "id": "way/63575266",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary",
+    "lane_markings": "no",
+    "name": "APJ Abdul Kalam Road",
+    "name:etymology:wikidata": "Q9513",
+    "oneway": "yes",
+    "surface": "asphalt"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.494532601956,
+      28.464652274720194
+     ],
+     [
+      77.4947498,
+      28.4643881
+     ],
+     [
+      77.4948372,
+      28.4642818
+     ],
+     [
+      77.49492513669156,
+      28.46418656928956
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/63575361",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary",
+    "name": "APJ Abdul Kalam Road",
+    "name:etymology:wikidata": "Q9513",
+    "oneway": "yes",
+    "surface": "asphalt"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.49492513669156,
+      28.463947291189914
+     ],
+     [
+      77.4948354,
+      28.464044
+     ],
+     [
+      77.4946973,
+      28.4641928
+     ],
+     [
+      77.494522,
+      28.4643525
+     ],
+     [
+      77.49419285075848,
+      28.464652274720194
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/87156231",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.49131395978819,
+      28.464652274720194
+     ],
+     [
+      77.4898338,
+      28.4636359
+     ],
+     [
+      77.4886166621468,
+      28.462817242496133
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/87156238",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4886166621468,
+      28.46085192140517
+     ],
+     [
+      77.49004852780249,
+      28.459197424103333
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/87156241",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4886166621468,
+      28.46317753264985
+     ],
+     [
+      77.4898982,
+      28.4640368
+     ],
+     [
+      77.49082946429856,
+      28.464652274720194
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/87159058",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary_link",
+    "surface": "asphalt"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.49492513669156,
+      28.46361636281613
+     ],
+     [
+      77.494897,
+      28.463721
+     ],
+     [
+      77.4948622,
+      28.4638507
+     ],
+     [
+      77.4948354,
+      28.464044
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/87159084",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary"
+   },
+   "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+     [
+      [
+       77.49492513669156,
+       28.463209234189936
+      ],
+      [
+       77.4942363,
+       28.4639551
+      ],
+      [
+       77.494199,
+       28.4639955
+      ],
+      [
+       77.4939954,
+       28.4642011
+      ],
+      [
+       77.4937389,
+       28.4643845
+      ],
+      [
+       77.4935252,
+       28.464495
+      ],
+      [
+       77.4932965,
+       28.4645857
+      ],
+      [
+       77.49300227696894,
+       28.464652274720194
+      ]
+     ],
+     [
+      [
+       77.49184422438942,
+       28.464652274720194
+      ],
+      [
+       77.4917478,
+       28.4646299
+      ],
+      [
+       77.4915793,
+       28.464579
+      ],
+      [
+       77.4898392,
+       28.4634237
+      ],
+      [
+       77.4886166621468,
+       28.462582429145797
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/87159097",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary_link",
+    "lanes": "2",
+    "surface": "asphalt"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.49492513669156,
+      28.45945405796778
+     ],
+     [
+      77.49456888689714,
+      28.459197424103333
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/87159118",
+   "properties": {
+    "kind": "road",
+    "highway": "residential"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.49034110340028,
+      28.459197424103333
+     ],
+     [
+      77.4917084,
+      28.4602085
+     ],
+     [
+      77.4919149,
+      28.4603532
+     ],
+     [
+      77.4924488,
+      28.4607456
+     ],
+     [
+      77.4928562,
+      28.461045
+     ],
+     [
+      77.4935064,
+      28.4615228
+     ],
+     [
+      77.4940684,
+      28.4619358
+     ],
+     [
+      77.4942188,
+      28.4620463
+     ],
+     [
+      77.494329,
+      28.4621264
+     ],
+     [
+      77.49492513669156,
+      28.462565080825435
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/87176929",
+   "properties": {
+    "kind": "campus",
+    "addr:city": "Greater Noida",
+    "addr:district": "Gautam Buddha Nagar",
+    "addr:housenumber": "Plot No. 19",
+    "addr:postcode": "201306",
+    "addr:street": "Knowledge Park 2",
+    "amenity": "college",
+    "name": "Noida Institute of Engineering and Technology (Old Campus)",
+    "operator": "Noida Institute of Engineering and Technology (Old Campus)",
+    "operator:type": "private",
+    "website": "https://www.niet.co.in/"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4893315,
+       28.4629646
+      ],
+      [
+       77.4909187,
+       28.4640239
+      ],
+      [
+       77.4921835,
+       28.4625616
+      ],
+      [
+       77.4906195,
+       28.4614901
+      ],
+      [
+       77.4893315,
+       28.4629646
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/351607573",
+   "properties": {
+    "kind": "building",
+    "building": "college",
+    "building:levels": "5",
+    "name": "D Block"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.491288,
+       28.4627218
+      ],
+      [
+       77.4913755,
+       28.4627817
+      ],
+      [
+       77.4913856,
+       28.4627704
+      ],
+      [
+       77.4914545,
+       28.4628176
+      ],
+      [
+       77.4917633,
+       28.4624694
+      ],
+      [
+       77.4916069,
+       28.4623622
+      ],
+      [
+       77.491288,
+       28.4627218
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/351607593",
+   "properties": {
+    "kind": "building",
+    "building": "college",
+    "building:levels": "5",
+    "name": "A Block"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4895034,
+       28.4629432
+      ],
+      [
+       77.4895935,
+       28.4630001
+      ],
+      [
+       77.4896631,
+       28.4629157
+      ],
+      [
+       77.4896864,
+       28.4630304
+      ],
+      [
+       77.4897728,
+       28.4631255
+      ],
+      [
+       77.4899089,
+       28.4632156
+      ],
+      [
+       77.4899648,
+       28.4631125
+      ],
+      [
+       77.4899716,
+       28.4629894
+      ],
+      [
+       77.4899608,
+       28.4629349
+      ],
+      [
+       77.4899001,
+       28.4628673
+      ],
+      [
+       77.4896945,
+       28.4627321
+      ],
+      [
+       77.4895034,
+       28.4629432
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/351607640",
+   "properties": {
+    "kind": "building",
+    "building": "college",
+    "name": "Pharmacy Block"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4910544,
+       28.4625808
+      ],
+      [
+       77.4912047,
+       28.4626838
+      ],
+      [
+       77.4915216,
+       28.4623264
+      ],
+      [
+       77.4913713,
+       28.4622234
+      ],
+      [
+       77.4910544,
+       28.4625808
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/351607676",
+   "properties": {
+    "kind": "hostel",
+    "building": "dormitory",
+    "guest_house": "student_accommodation",
+    "name": "Women's Hostel",
+    "operator": "NIET",
+    "smoking": "no",
+    "website": "https://niet.co.in"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4914824,
+       28.4628894
+      ],
+      [
+       77.4916018,
+       28.4629712
+      ],
+      [
+       77.4919182,
+       28.4626145
+      ],
+      [
+       77.4917987,
+       28.4625327
+      ],
+      [
+       77.4914824,
+       28.4628894
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/422171289",
+   "properties": {
+    "kind": "road",
+    "highway": "residential"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4886166621468,
+      28.46339157464849
+     ],
+     [
+      77.4888119,
+      28.4635151
+     ],
+     [
+      77.4903217,
+      28.4644674
+     ],
+     [
+      77.49061484423771,
+      28.464652274720194
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/422171314",
+   "properties": {
+    "kind": "road",
+    "highway": "residential"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4886166621468,
+      28.463753585746154
+     ],
+     [
+      77.4888119,
+      28.4635151
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/661414156",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary_link"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.494522,
+      28.4643525
+     ],
+     [
+      77.4947498,
+      28.4643881
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/661504019",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary_link"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4898392,
+      28.4634237
+     ],
+     [
+      77.4898338,
+      28.4636359
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/661504020",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary_link"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4898982,
+      28.4640368
+     ],
+     [
+      77.4898338,
+      28.4636359
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1060961829",
+   "properties": {
+    "kind": "road",
+    "highway": "residential",
+    "source": "maxar"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4901644179316,
+      28.464652274720194
+     ],
+     [
+      77.4902198,
+      28.4645878
+     ],
+     [
+      77.4903217,
+      28.4644674
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1060961833",
+   "properties": {
+    "kind": "road",
+    "highway": "residential",
+    "source": "maxar"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4941792,
+      28.4592169
+     ],
+     [
+      77.4948496,
+      28.4597026
+     ],
+     [
+      77.4948656,
+      28.4597733
+     ],
+     [
+      77.4945921,
+      28.4600421
+     ],
+     [
+      77.494324,
+      28.4603533
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1060961834",
+   "properties": {
+    "kind": "road",
+    "highway": "residential",
+    "source": "maxar"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4941792,
+      28.4592169
+     ],
+     [
+      77.4941512142668,
+      28.459197424103333
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1060961835",
+   "properties": {
+    "kind": "road",
+    "highway": "residential",
+    "source": "maxar"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4941792,
+      28.4592169
+     ],
+     [
+      77.494202517916,
+      28.459197424103333
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602057",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4923683,
+      28.4608251
+     ],
+     [
+      77.4922669,
+      28.4609253
+     ],
+     [
+      77.491982,
+      28.4607151
+     ],
+     [
+      77.4916249,
+      28.4604504
+     ],
+     [
+      77.4915943,
+      28.4603324
+     ],
+     [
+      77.4916274,
+      28.4602965
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602058",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+     [
+      [
+       77.491982,
+       28.4607151
+      ],
+      [
+       77.4918399,
+       28.4608691
+      ]
+     ],
+     [
+      [
+       77.4918399,
+       28.4608691
+      ],
+      [
+       77.491626,
+       28.4611008
+      ],
+      [
+       77.4917584,
+       28.4611907
+      ],
+      [
+       77.4917979,
+       28.4611437
+      ],
+      [
+       77.4918257,
+       28.4610763
+      ],
+      [
+       77.4918399,
+       28.4608691
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602060",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.492393,
+      28.4645225
+     ],
+     [
+      77.49241,
+      28.4645425
+     ],
+     [
+      77.4924336,
+      28.4645566
+     ],
+     [
+      77.492461,
+      28.4645633
+     ],
+     [
+      77.4924894,
+      28.4645617
+     ],
+     [
+      77.4925158,
+      28.4645522
+     ],
+     [
+      77.4925371,
+      28.4645356
+     ],
+     [
+      77.4925513,
+      28.4645138
+     ],
+     [
+      77.4925566,
+      28.4644891
+     ],
+     [
+      77.4925525,
+      28.4644643
+     ],
+     [
+      77.4925394,
+      28.4644419
+     ],
+     [
+      77.4925188,
+      28.4644246
+     ],
+     [
+      77.4924928,
+      28.464414
+     ],
+     [
+      77.4924644,
+      28.4644115
+     ],
+     [
+      77.4924366,
+      28.4644172
+     ],
+     [
+      77.4924124,
+      28.4644306
+     ],
+     [
+      77.4923945,
+      28.4644501
+     ],
+     [
+      77.4923848,
+      28.4644736
+     ],
+     [
+      77.4923843,
+      28.4644986
+     ],
+     [
+      77.492393,
+      28.4645225
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602061",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.492393,
+      28.4645225
+     ],
+     [
+      77.4919537,
+      28.4645658
+     ],
+     [
+      77.4919087,
+      28.4645658
+     ],
+     [
+      77.4918665,
+      28.464551
+     ],
+     [
+      77.491844,
+      28.4645213
+     ],
+     [
+      77.4918243,
+      28.4644694
+     ],
+     [
+      77.4917493,
+      28.4640717
+     ],
+     [
+      77.4916359,
+      28.4634708
+     ],
+     [
+      77.4916359,
+      28.4634263
+     ],
+     [
+      77.4916472,
+      28.4633942
+     ],
+     [
+      77.4921027,
+      28.4628702
+     ],
+     [
+      77.4921308,
+      28.4628479
+     ],
+     [
+      77.4921674,
+      28.462838
+     ],
+     [
+      77.4928253,
+      28.4632385
+     ],
+     [
+      77.4928562,
+      28.4632854
+     ],
+     [
+      77.4929748,
+      28.4639
+     ],
+     [
+      77.4930727,
+      28.4644076
+     ],
+     [
+      77.4925566,
+      28.4644891
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602062",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4924894,
+      28.4645617
+     ],
+     [
+      77.49250032035633,
+      28.464652274720194
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602063",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4930727,
+      28.4644076
+     ],
+     [
+      77.4932611,
+      28.4643582
+     ],
+     [
+      77.4934495,
+      28.4642766
+     ],
+     [
+      77.4938628,
+      28.4640393
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602064",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4917493,
+      28.4640717
+     ],
+     [
+      77.4929748,
+      28.4639
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602065",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.49341,
+      28.4616222
+     ],
+     [
+      77.4932484,
+      28.4617887
+     ],
+     [
+      77.4926606,
+      28.4623947
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602066",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4932484,
+      28.4617887
+     ],
+     [
+      77.4939525,
+      28.4623129
+     ],
+     [
+      77.494132,
+      28.4621332
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602067",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+     [
+      [
+       77.4937617,
+       28.4635823
+      ],
+      [
+       77.4940753,
+       28.4637867
+      ],
+      [
+       77.4941683,
+       28.4637605
+      ],
+      [
+       77.4947538,
+       28.4631336
+      ],
+      [
+       77.49492513669156,
+       28.46296415305136
+      ]
+     ],
+     [
+      [
+       77.49492513669156,
+       28.462716475104692
+      ],
+      [
+       77.4942143,
+       28.4622442
+      ],
+      [
+       77.4942529,
+       28.4622046
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602068",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.49492513669156,
+      28.461021947078624
+     ],
+     [
+      77.4947352,
+      28.4612234
+     ],
+     [
+      77.4946751,
+      28.4612871
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602087",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4919149,
+      28.4603532
+     ],
+     [
+      77.4924045,
+      28.4598273
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1175602088",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4899427,
+      28.4633215
+     ],
+     [
+      77.4907904,
+      28.4638789
+     ],
+     [
+      77.4915515,
+      28.4630237
+     ],
+     [
+      77.4907295,
+      28.4624435
+     ],
+     [
+      77.490232,
+      28.4620938
+     ],
+     [
+      77.4897053,
+      28.4626819
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185435775",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4898618,
+      28.4633994
+     ],
+     [
+      77.4899427,
+      28.4633215
+     ],
+     [
+      77.4901971,
+      28.4630265
+     ],
+     [
+      77.4907295,
+      28.4624435
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185435776",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4898392,
+      28.4634237
+     ],
+     [
+      77.4898618,
+      28.4633994
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185435827",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4899427,
+      28.4633215
+     ],
+     [
+      77.4894435,
+      28.4629794
+     ],
+     [
+      77.4897053,
+      28.4626819
+     ],
+     [
+      77.4901971,
+      28.4630265
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185436216",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4916274,
+      28.4602965
+     ],
+     [
+      77.4917084,
+      28.4602085
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185436217",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4924488,
+      28.4607456
+     ],
+     [
+      77.4923683,
+      28.4608251
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185436564",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4922669,
+      28.4609253
+     ],
+     [
+      77.4917515,
+      28.4615265
+     ],
+     [
+      77.4914511,
+      28.461881
+     ],
+     [
+      77.4922036,
+      28.46238
+     ],
+     [
+      77.4924475,
+      28.4621093
+     ],
+     [
+      77.4929889,
+      28.4615341
+     ],
+     [
+      77.4930049,
+      28.4614441
+     ],
+     [
+      77.4922669,
+      28.4609253
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185436565",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4924475,
+      28.4621093
+     ],
+     [
+      77.4917515,
+      28.4615265
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185437146",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4939525,
+      28.4623129
+     ],
+     [
+      77.4933832,
+      28.4629504
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185437147",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.494132,
+      28.4621332
+     ],
+     [
+      77.4942188,
+      28.4620463
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185437148",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4935064,
+      28.4615228
+     ],
+     [
+      77.49341,
+      28.4616222
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185437575",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4942143,
+      28.4622442
+     ],
+     [
+      77.4940131,
+      28.4624673
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185437576",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4942529,
+      28.4622046
+     ],
+     [
+      77.494329,
+      28.4621264
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185438180",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+     [
+      [
+       77.4929681,
+       28.4609243
+      ],
+      [
+       77.4930083,
+       28.460881
+      ]
+     ],
+     [
+      [
+       77.4930083,
+       28.460881
+      ],
+      [
+       77.4928033,
+       28.4607555
+      ],
+      [
+       77.493034,
+       28.4605154
+      ],
+      [
+       77.4932842,
+       28.460255
+      ],
+      [
+       77.4935808,
+       28.4606059
+      ],
+      [
+       77.4937826,
+       28.4608447
+      ],
+      [
+       77.4934653,
+       28.4612003
+      ],
+      [
+       77.4932314,
+       28.4610368
+      ],
+      [
+       77.4930083,
+       28.460881
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1185438183",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4928562,
+      28.461045
+     ],
+     [
+      77.4929681,
+      28.4609243
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1322514765",
+   "properties": {
+    "kind": "road",
+    "highway": "residential"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4897460402547,
+      28.459197424103333
+     ],
+     [
+      77.4886166621468,
+      28.46053780873033
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1408786197",
+   "properties": {
+    "kind": "campus",
+    "addr:city": "Greater Noida",
+    "addr:district": "Gautam Buddha Nagar",
+    "addr:housenumber": "Plot No.14",
+    "addr:postcode": "201306",
+    "addr:street": "Knowledge Park II",
+    "amenity": "college",
+    "name": "Noida Institute of Engineering and Technology (New Campus)",
+    "operator": "Noida Institute of Engineering and Technology",
+    "operator:type": "private",
+    "website": "https://www.niet.co.in/"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4927225,
+       28.4608075
+      ],
+      [
+       77.4934997,
+       28.4613661
+      ],
+      [
+       77.4942099,
+       28.4605914
+      ],
+      [
+       77.4936152,
+       28.4598262
+      ],
+      [
+       77.4927225,
+       28.4608075
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422860068",
+   "properties": {
+    "kind": "sport",
+    "landuse": "recreation_ground",
+    "name": "Playground",
+    "operator": "NIET",
+    "operator:type": "private_for_profit"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4907849,
+       28.4638189
+      ],
+      [
+       77.4914735,
+       28.4630534
+      ],
+      [
+       77.4912573,
+       28.4629037
+      ],
+      [
+       77.4910193,
+       28.4627342
+      ],
+      [
+       77.4907011,
+       28.4625274
+      ],
+      [
+       77.4900415,
+       28.4633145
+      ],
+      [
+       77.4907849,
+       28.4638189
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422861834",
+   "properties": {
+    "kind": "building",
+    "building": "college",
+    "name": "E Block"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4905337,
+       28.462595
+      ],
+      [
+       77.4906647,
+       28.4624441
+      ],
+      [
+       77.4902403,
+       28.4621429
+      ],
+      [
+       77.4901003,
+       28.4622885
+      ],
+      [
+       77.4905337,
+       28.462595
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422873686",
+   "properties": {
+    "kind": "parking",
+    "amenity": "parking",
+    "operator": "NIET",
+    "operator:type": "private_for_profit"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4899751,
+       28.4624088
+      ],
+      [
+       77.4898834,
+       28.4623454
+      ],
+      [
+       77.4895087,
+       28.4627643
+      ],
+      [
+       77.4896004,
+       28.4628277
+      ],
+      [
+       77.4899751,
+       28.4624088
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422873687",
+   "properties": {
+    "kind": "parking",
+    "amenity": "parking",
+    "operator": "NIET",
+    "operator:type": "private_for_profit"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.489914,
+       28.4632659
+      ],
+      [
+       77.4895552,
+       28.4630123
+      ],
+      [
+       77.4894751,
+       28.4630999
+      ],
+      [
+       77.4898338,
+       28.4633536
+      ],
+      [
+       77.489914,
+       28.4632659
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422873688",
+   "properties": {
+    "kind": "parking",
+    "amenity": "parking",
+    "operator": "NIET",
+    "operator:type": "private_for_profit"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4908551,
+       28.4638736
+      ],
+      [
+       77.4909626,
+       28.4639449
+      ],
+      [
+       77.4914501,
+       28.4633765
+      ],
+      [
+       77.4913427,
+       28.4633053
+      ],
+      [
+       77.4908551,
+       28.4638736
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422873689",
+   "properties": {
+    "kind": "parking",
+    "amenity": "parking",
+    "operator": "NIET",
+    "operator:type": "private_for_profit"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4907702,
+       28.4638187
+      ],
+      [
+       77.4904784,
+       28.4636257
+      ],
+      [
+       77.4904247,
+       28.4636885
+      ],
+      [
+       77.4907165,
+       28.4638815
+      ],
+      [
+       77.4907702,
+       28.4638187
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422874239",
+   "properties": {
+    "kind": "building",
+    "building": "yes",
+    "shop": "stationery"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4893502,
+       28.4629704
+      ],
+      [
+       77.4894119,
+       28.463011
+      ],
+      [
+       77.4894401,
+       28.4629778
+      ],
+      [
+       77.4893784,
+       28.4629372
+      ],
+      [
+       77.4893502,
+       28.4629704
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422874240",
+   "properties": {
+    "kind": "building",
+    "amenity": "fast_food",
+    "building": "yes",
+    "fast_food": "cafeteria",
+    "operator": "NIET"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4901538,
+       28.4620354
+      ],
+      [
+       77.4900073,
+       28.4621991
+      ],
+      [
+       77.4900626,
+       28.4622374
+      ],
+      [
+       77.4902092,
+       28.4620738
+      ],
+      [
+       77.4901538,
+       28.4620354
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422874791",
+   "properties": {
+    "kind": "construction",
+    "check_date": "2025-08-17",
+    "landuse": "construction",
+    "operator": "NIET"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4901921,
+       28.4619995
+      ],
+      [
+       77.490623,
+       28.4623026
+      ],
+      [
+       77.4910582,
+       28.4618245
+      ],
+      [
+       77.4906272,
+       28.4615213
+      ],
+      [
+       77.4901921,
+       28.4619995
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422877160",
+   "properties": {
+    "kind": "sport",
+    "leisure": "pitch",
+    "sport": "basketball"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.490908,
+       28.4628549
+      ],
+      [
+       77.491146,
+       28.4630244
+      ],
+      [
+       77.4912573,
+       28.4629037
+      ],
+      [
+       77.4910193,
+       28.4627342
+      ],
+      [
+       77.490908,
+       28.4628549
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422878976",
+   "properties": {
+    "kind": "hostel",
+    "building": "dormitory",
+    "name": "Girl's Hostel",
+    "smoking": "no"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4934239,
+       28.4611033
+      ],
+      [
+       77.4937107,
+       28.4608037
+      ],
+      [
+       77.4935667,
+       28.4606972
+      ],
+      [
+       77.49328,
+       28.4609969
+      ],
+      [
+       77.4934239,
+       28.4611033
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422878977",
+   "properties": {
+    "kind": "hostel",
+    "building": "dormitory",
+    "name": "Boy's Hostel",
+    "smoking": "no"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4933049,
+       28.4606531
+      ],
+      [
+       77.4934395,
+       28.4605189
+      ],
+      [
+       77.4932409,
+       28.4603648
+      ],
+      [
+       77.4931062,
+       28.460499
+      ],
+      [
+       77.4933049,
+       28.4606531
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422878978",
+   "properties": {
+    "kind": "building",
+    "building": "college"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.493241,
+       28.4609687
+      ],
+      [
+       77.4933819,
+       28.4608103
+      ],
+      [
+       77.4930049,
+       28.4605511
+      ],
+      [
+       77.492864,
+       28.4607095
+      ],
+      [
+       77.493241,
+       28.4609687
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422879611",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4932314,
+      28.4610368
+     ],
+     [
+      77.493423,
+      28.4608005
+     ],
+     [
+      77.4935808,
+      28.4606059
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422879612",
+   "properties": {
+    "kind": "road",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.493034,
+      28.4605154
+     ],
+     [
+      77.493423,
+      28.4608005
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422879712",
+   "properties": {
+    "kind": "sport",
+    "landuse": "recreation_ground"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4941699,
+       28.4605975
+      ],
+      [
+       77.4936282,
+       28.4598702
+      ],
+      [
+       77.4933011,
+       28.4602171
+      ],
+      [
+       77.4938826,
+       28.4609277
+      ],
+      [
+       77.4941699,
+       28.4605975
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1422881473",
+   "properties": {
+    "kind": "road",
+    "highway": "tertiary_link"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4948354,
+      28.464044
+     ],
+     [
+      77.49492513669156,
+      28.464087897424204
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1526396553",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4946751,
+      28.4612871
+     ],
+     [
+      77.4942563,
+      28.4617349
+     ],
+     [
+      77.4941933,
+      28.4618022
+     ],
+     [
+      77.494151,
+      28.4618474
+     ],
+     [
+      77.4940684,
+      28.4619358
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1526396554",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4937762,
+      28.461389
+     ],
+     [
+      77.4942563,
+      28.4617349
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1526396555",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.4947095,
+      28.4603883
+     ],
+     [
+      77.49492513669156,
+      28.460535941960654
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1526396556",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.49492513669156,
+      28.46233122262451
+     ],
+     [
+      77.4941933,
+      28.4618022
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1526396557",
+   "properties": {
+    "kind": "road",
+    "access": "private",
+    "highway": "service"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.49492513669156,
+      28.46136249234464
+     ],
+     [
+      77.4947352,
+      28.4612234
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1562553445",
+   "properties": {
+    "kind": "road",
+    "highway": "cycleway"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.49392557520643,
+      28.464652274720194
+     ],
+     [
+      77.494701,
+      28.4638978
+     ],
+     [
+      77.494897,
+      28.463721
+     ],
+     [
+      77.49492513669156,
+      28.46369012746669
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "way/1562553446",
+   "properties": {
+    "kind": "road",
+    "highway": "cycleway"
+   },
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      77.49479568096358,
+      28.464652274720194
+     ],
+     [
+      77.4948505,
+      28.4645859
+     ],
+     [
+      77.49492513669156,
+      28.46450279461259
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "relation/5247446",
+   "properties": {
+    "kind": "building",
+    "building": "college",
+    "name": "B Block",
+    "type": "multipolygon"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4897633,
+       28.4626568
+      ],
+      [
+       77.4901969,
+       28.4629633
+      ],
+      [
+       77.4905337,
+       28.462595
+      ],
+      [
+       77.4901003,
+       28.4622885
+      ],
+      [
+       77.4897633,
+       28.4626568
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "relation/5247458",
+   "properties": {
+    "kind": "hostel",
+    "building": "dormitory",
+    "guest_house": "student_accommodation",
+    "name": "Men's Hostel",
+    "operator": "NIET",
+    "smoking": "no",
+    "type": "multipolygon",
+    "website": "https://niet.co.in/"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       77.4908512,
+       28.46238
+      ],
+      [
+       77.4908759,
+       28.4623521
+      ],
+      [
+       77.490931,
+       28.4623899
+      ],
+      [
+       77.4909063,
+       28.4624178
+      ],
+      [
+       77.490997,
+       28.46248
+      ],
+      [
+       77.4912643,
+       28.4621786
+      ],
+      [
+       77.4909864,
+       28.4619881
+      ],
+      [
+       77.4907191,
+       28.4622895
+      ],
+      [
+       77.4908512,
+       28.46238
+      ]
+     ],
+     [
+      [
+       77.491038,
+       28.4621335
+      ],
+      [
+       77.4910855,
+       28.4621661
+      ],
+      [
+       77.490981,
+       28.4622838
+      ],
+      [
+       77.4909335,
+       28.4622513
+      ],
+      [
+       77.491038,
+       28.4621335
+      ]
+     ]
+    ]
+   }
+  }
+ ]
+}

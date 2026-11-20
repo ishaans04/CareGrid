@@ -2,6 +2,7 @@ import '../agent/policy_engine.dart';
 import '../core/clock.dart';
 import '../generated/protocol.dart';
 import '../response/response_planner.dart';
+import '../twin/campus_graph.dart';
 import '../twin/twin_snapshot.dart';
 
 /// Stress-Test Engine: rehearses an emergency plus compound failures on a
@@ -13,10 +14,43 @@ class StressTestEngine {
 
   final TwinSnapshot live;
 
-  /// Hub where re-staged ambulances wait; other unit types use the central
-  /// junction.
-  static const ambulanceHub = 'HOS';
-  static const centralStandby = 'J5';
+  /// Where a re-staged ambulance waits: the campus's own hospital or health
+  /// centre (first by code, for determinism). Null skips ambulance re-staging.
+  static String? ambulanceHubOf(TwinSnapshot twin) {
+    final hubs =
+        twin.zones.values.where((z) => z.type == ZoneType.hospital).toList()
+          ..sort((a, b) => a.code.compareTo(b.code));
+    return hubs.firstOrNull?.code;
+  }
+
+  /// Where other re-staged units wait: the junction with the shortest total
+  /// road distance to every building on campus (its graph centre). Derived
+  /// from each campus's own road network rather than a hard-coded code.
+  static String? centralStandbyOf(TwinSnapshot twin) {
+    const notBuildings = {ZoneType.junction, ZoneType.gate, ZoneType.outside};
+    final buildings = twin.zones.values
+        .where((z) => !notBuildings.contains(z.type))
+        .map((z) => z.code)
+        .toList();
+    final junctions =
+        twin.zones.values.where((z) => z.type == ZoneType.junction).toList()
+          ..sort((a, b) => a.code.compareTo(b.code));
+    final graph = CampusGraph(twin);
+    String? best;
+    var bestTotal = double.infinity;
+    for (final j in junctions) {
+      var total = 0.0;
+      for (final b in buildings) {
+        final route = graph.route(j.code, b);
+        total += route.found ? route.meters : 1e6;
+      }
+      if (total < bestTotal) {
+        bestTotal = total;
+        best = j.code;
+      }
+    }
+    return best;
+  }
 
   StressTestRun run(StressScenario scenario, String ranBy) {
     final failed = _withFailures(live, scenario.failures);
@@ -32,10 +66,14 @@ class StressTestEngine {
       for (final fix in candidates) {
         final alone = _simulate(_applyFix(failed, fix.code), scenario);
         fix.passesAlone = alone.pass;
-        // Only report fixes that actually shorten the response.
+        // Only report fixes that actually improve the response: it passes,
+        // arrives sooner, has fewer late types, or reaches a responder type
+        // that could not be reached at all before (a route where none
+        // existed is an improvement even if it is still late).
         if (alone.pass ||
             alone.worstArrival < base.worstArrival ||
-            alone.lateTypes.length < base.lateTypes.length) {
+            alone.lateTypes.length < base.lateTypes.length ||
+            alone.uncoveredTypes.length < base.uncoveredTypes.length) {
           fixes.add(fix);
         }
       }
@@ -49,6 +87,7 @@ class StressTestEngine {
     }
 
     return StressTestRun(
+      campusId: live.campusId,
       scenarioCode: scenario.code,
       scenarioName: scenario.name,
       ranAt: CampusClock.now(),
@@ -204,10 +243,12 @@ class StressTestEngine {
         );
       }
     }
+    final uncoveredTypes = <ResponderType>{};
     if (missing) {
       for (final type in policy.responderTypes) {
         if (!plan.options.any((o) => o.responderType == type)) {
           lateTypes.add(type);
+          uncoveredTypes.add(type);
         }
       }
     }
@@ -244,6 +285,7 @@ class StressTestEngine {
       plan: lines,
       findings: findings,
       lateTypes: lateTypes,
+      uncoveredTypes: uncoveredTypes,
     );
   }
 
@@ -296,10 +338,13 @@ class StressTestEngine {
       ...base.lateTypes,
       if (base.lateTypes.isNotEmpty) ...?policy?.fallbackTypes,
     }.where(mobile.contains);
+    final ambulanceHub = ambulanceHubOf(failed);
+    final centralStandby = centralStandbyOf(failed);
     for (final type in restageTypes) {
       final hub = type == ResponderType.ambulance
           ? ambulanceHub
           : centralStandby;
+      if (hub == null) continue;
       for (final r in failed.responders.values.where(
         (r) =>
             r.type == type &&
@@ -389,10 +434,14 @@ class StressPrediction {
     required this.plan,
     required this.findings,
     this.lateTypes = const {},
+    this.uncoveredTypes = const {},
   });
 
   /// Required responder types that miss the SLA or have no unit at all.
   final Set<ResponderType> lateTypes;
+
+  /// Required responder types no available unit can reach at all.
+  final Set<ResponderType> uncoveredTypes;
   final bool pass;
   final int worstArrival;
   final int slaSeconds;

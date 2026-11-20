@@ -1,0 +1,34 @@
+### A campus served by this CareGrid deployment. Every operational record (twin, incidents, units, users, audit) belongs to exactly one campus, and every query is scoped to the caller's campus.
+class: Campus
+table: campus
+fields:
+  ### Stable identifier used in configuration and seeds, e.g. 'meridian', 'niet'.
+  code: String
+  name: String
+  ### Short label for tight spaces, e.g. 'NIET'.
+  shortName: String
+  city: String?
+  description: String?
+  ### Minutes east of UTC for local-hour policies and display (330 = IST).
+  utcOffsetMinutes: int
+  ### Prefix of this campus's incident codes, e.g. 'NIET' gives NIET-1042.
+  incidentPrefix: String
+  ### True for an invented demo campus; false when modelled from real public map data.
+  fictional: bool
+  ### Credit shown wherever the campus map appears, e.g. the OpenStreetMap ODbL notice.
+  attribution: String?
+  ### Plain statement of the relationship between CareGrid and the institution.
+  affiliationNote: String?
+  ### WGS84 point of canvas (0, 0); null for a schematic campus.
+  originLat: double?
+  originLon: double?
+  ### Metres per canvas unit; canvas y grows southwards.
+  metersPerUnit: double
+  mapWidth: double
+  mapHeight: double
+  ### Non-routing map context as JSON in canvas units: plot outlines, parking, courts, construction and surrounding streets. Drawn under the twin; never used for routing.
+  mapLayers: String?
+indexes:
+  campus_code_idx:
+    fields: code
+    unique: true

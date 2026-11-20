@@ -2,6 +2,7 @@ import 'package:caregrid_server/src/agent/policy_engine.dart';
 import 'package:caregrid_server/src/generated/protocol.dart';
 import 'package:caregrid_server/src/readiness/stress_test_engine.dart';
 import 'package:caregrid_server/src/response/response_planner.dart';
+import 'package:caregrid_server/src/seed/campus_seed.dart';
 import 'package:caregrid_server/src/seed/seed_data.dart';
 import 'package:caregrid_server/src/twin/campus_graph.dart';
 import 'package:caregrid_server/src/twin/twin_snapshot.dart';
@@ -10,6 +11,7 @@ import 'package:test/test.dart';
 TwinSnapshot seededTwin() {
   final zones = SeedData.zones();
   return TwinSnapshot(
+    campus: const MeridianSeed().campus.copyWith(id: 1),
     zones: {for (final z in zones) z.code: z},
     roads: SeedData.roads(zones),
     cameras: {for (final c in SeedData.cameras()) c.code: c},

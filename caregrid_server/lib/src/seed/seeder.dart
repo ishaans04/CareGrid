@@ -1,78 +1,195 @@
 import 'package:serverpod/serverpod.dart' hide Responder;
 
+import '../agent/incident_agent.dart';
 import '../agent/policy_engine.dart';
 import '../core/clock.dart';
 import '../generated/protocol.dart';
-import 'seed_data.dart';
+import 'campus_seed.dart';
 
-/// Loads [SeedData] into the database. Runs on first boot (empty twin) and
-/// when an administrator resets the demo.
+/// Loads every [CampusSeed] into the database. Runs on first boot and when an
+/// administrator resets their campus's demo. Campuses are seeded and reset
+/// independently; one campus's reset never touches another.
 class Seeder {
   Seeder._();
 
+  /// Creates each campus that does not exist yet (with its twin and
+  /// history) and any missing demo accounts. A database migrated from the
+  /// single-campus prototype keeps its data as the Meridian campus.
   static Future<void> seedIfEmpty(Session session) async {
-    if (await Zone.db.count(session) > 0) return;
-    await _seedUsers(session);
-    await _seedTwin(session);
-    await _seedHistory(session);
-    session.log('CareGrid seed data loaded (${SeedData.campusName}).');
+    for (final seed in CampusSeeds.all) {
+      final campus = await _campusRow(session, seed);
+      final hasTwin = await Zone.db.count(
+        session,
+        where: (t) => t.campusId.equals(campus.id),
+      );
+      if (hasTwin == 0) {
+        await _seedTwin(session, seed, campus);
+        await _seedHistory(session, seed, campus);
+        session.log('CareGrid seed data loaded (${campus.name}).');
+      }
+      await _seedUsers(session, seed.users, campus.id);
+    }
+    await _seedUsers(session, CampusSeeds.networkUsers, null);
   }
 
-  /// Wipes operational data and the twin, then reseeds. Users, tokens and
-  /// the audit log are kept so nobody is signed out and the reset is audited.
-  static Future<void> reset(Session session) async {
-    await TimelineEntry.db.deleteWhere(session, where: (t) => t.id > 0);
-    await Dispatch.db.deleteWhere(session, where: (t) => t.id > 0);
-    await SensorEvent.db.deleteWhere(session, where: (t) => t.id > 0);
-    await Incident.db.deleteWhere(session, where: (t) => t.id > 0);
-    await ScenarioRun.db.deleteWhere(session, where: (t) => t.id > 0);
-    await StressTestRun.db.deleteWhere(session, where: (t) => t.id > 0);
-    await StressScenario.db.deleteWhere(session, where: (t) => t.id > 0);
-    await ZonePolicy.db.deleteWhere(session, where: (t) => t.id > 0);
-    await Responder.db.deleteWhere(session, where: (t) => t.id > 0);
-    await Camera.db.deleteWhere(session, where: (t) => t.id > 0);
-    await RoadSegment.db.deleteWhere(session, where: (t) => t.id > 0);
-    await Zone.db.deleteWhere(session, where: (t) => t.id > 0);
-    await _seedTwin(session);
-    await _seedHistory(session);
+  /// Wipes one campus's operational data and twin, then reseeds it. Users,
+  /// tokens and the audit log are kept so nobody is signed out and the reset
+  /// is audited.
+  static Future<void> reset(Session session, int campusId) async {
+    final campus = await Campus.db.findById(session, campusId);
+    if (campus == null) throw StateError('Unknown campus $campusId.');
+    final seed = CampusSeeds.byCode(campus.code);
+    if (seed == null) throw StateError('No seed for campus ${campus.code}.');
+    final incidentIds = (await Incident.db.find(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    )).map((i) => i.id!).toSet();
+    if (incidentIds.isNotEmpty) {
+      await TimelineEntry.db.deleteWhere(
+        session,
+        where: (t) => t.incidentId.inSet(incidentIds),
+      );
+    }
+    await Dispatch.db.deleteWhere(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    await SensorEvent.db.deleteWhere(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    await Incident.db.deleteWhere(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    await ScenarioRun.db.deleteWhere(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    await StressTestRun.db.deleteWhere(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    await StressScenario.db.deleteWhere(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    await ZonePolicy.db.deleteWhere(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    await Responder.db.deleteWhere(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    await Camera.db.deleteWhere(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    await RoadSegment.db.deleteWhere(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    await Zone.db.deleteWhere(
+      session,
+      where: (t) => t.campusId.equals(campusId),
+    );
+    await _seedTwin(session, seed, campus);
+    await _seedHistory(session, seed, campus);
   }
 
-  static Future<void> _seedUsers(Session session) async {
-    if (await AppUser.db.count(session) > 0) return;
+  static Future<Campus> _campusRow(Session session, CampusSeed seed) async {
+    final code = seed.campus.code;
+    final existing = await Campus.db.findFirstRow(
+      session,
+      where: (t) => t.code.equals(code),
+    );
+    if (existing != null) return existing;
+    return Campus.db.insertRow(session, seed.campus);
+  }
+
+  static Future<void> _seedUsers(
+    Session session,
+    List<SeedUser> users,
+    int? campusId,
+  ) async {
+    final existing = {
+      for (final u in await AppUser.db.find(
+        session,
+        where: (t) => t.handle.inSet(users.map((u) => u.handle).toSet()),
+      ))
+        u.handle,
+    };
+    final missing = users.where((u) => !existing.contains(u.handle)).toList();
+    if (missing.isEmpty) return;
     await AppUser.db.insert(session, [
-      for (final (handle, name, role, title, pin, responder, _)
-          in SeedData.users)
+      for (final u in missing)
         AppUser(
-          handle: handle,
-          displayName: name,
-          role: role,
-          title: title,
-          pin: pin,
-          responderCode: responder,
+          campusId: campusId,
+          handle: u.handle,
+          displayName: u.name,
+          role: u.role,
+          title: u.title,
+          pin: u.pin,
+          responderCode: u.responderCode,
         ),
     ]);
   }
 
-  static Future<void> _seedTwin(Session session) async {
-    final zones = SeedData.zones();
+  static Future<void> _seedTwin(
+    Session session,
+    CampusSeed seed,
+    Campus campus,
+  ) async {
+    final id = campus.id!;
+    final zones = [for (final z in seed.zones()) z.copyWith(campusId: id)];
     await Zone.db.insert(session, zones);
-    await RoadSegment.db.insert(session, SeedData.roads(zones));
-    await Camera.db.insert(session, SeedData.cameras());
-    await Responder.db.insert(session, SeedData.responders());
-    await ZonePolicy.db.insert(session, SeedData.policies());
-    await StressScenario.db.insert(session, SeedData.stressScenarios());
+    await RoadSegment.db.insert(session, [
+      for (final r in seed.roads(zones)) r.copyWith(campusId: id),
+    ]);
+    await Camera.db.insert(session, [
+      for (final c in seed.cameras()) c.copyWith(campusId: id),
+    ]);
+    await Responder.db.insert(session, [
+      for (final r in seed.responders()) r.copyWith(campusId: id),
+    ]);
+    await ZonePolicy.db.insert(session, [
+      for (final p in seed.policies()) p.copyWith(campusId: id),
+    ]);
+    await StressScenario.db.insert(session, [
+      for (final s in seed.stressScenarios()) s.copyWith(campusId: id),
+    ]);
   }
 
-  static Future<void> _seedHistory(Session session) async {
-    final zones = {for (final z in await Zone.db.find(session)) z.code: z};
-    final policies = await ZonePolicy.db.find(session);
-    final responders = {
-      for (final r in await Responder.db.find(session)) r.code: r,
+  static Future<void> _seedHistory(
+    Session session,
+    CampusSeed seed,
+    Campus campus,
+  ) async {
+    final id = campus.id!;
+    final zones = {
+      for (final z in await Zone.db.find(
+        session,
+        where: (t) => t.campusId.equals(id),
+      ))
+        z.code: z,
     };
+    final policies = await ZonePolicy.db.find(
+      session,
+      where: (t) => t.campusId.equals(id),
+    );
+    final responders = {
+      for (final r in await Responder.db.find(
+        session,
+        where: (t) => t.campusId.equals(id),
+      ))
+        r.code: r,
+    };
+    final offset = Duration(minutes: campus.utcOffsetMinutes);
     final now = CampusClock.now();
-    final localToday = now.add(CampusClock.utcOffset);
+    final localToday = now.add(offset);
 
-    final items = [...SeedData.history]
+    final items = [...seed.history]
       ..sort(
         (a, b) => b.daysAgo != a.daysAgo
             ? b.daysAgo.compareTo(a.daysAgo)
@@ -89,7 +206,7 @@ class Seeder {
         day.day,
         h.hour,
         h.minute,
-      ).subtract(CampusClock.utcOffset);
+      ).subtract(offset);
       final zone = zones[h.zoneCode]!;
       final family = PolicyEngine.familyOf(h.eventType);
       final policy = PolicyEngine.select(policies, zone.type, family, h.hour);
@@ -113,10 +230,11 @@ class Seeder {
           care ?? onScene ?? acknowledged ?? dispatched ?? verified ?? detected;
       final dismissed = h.dismissal != null;
 
-      final incident = await Incident.db.insertRow(
+      var incident = await Incident.db.insertRow(
         session,
         Incident(
-          code: 'INC-${1000 + n}',
+          campusId: id,
+          code: 'SEED-${campus.code}-$n',
           title: '${h.eventType.label} at ${zone.name}',
           eventType: h.eventType,
           family: family,
@@ -147,6 +265,8 @@ class Seeder {
           updatedAt: last,
         ),
       );
+      incident.code = IncidentAgent.incidentCode(campus, incident.id!);
+      incident = await Incident.db.updateRow(session, incident);
 
       final lines = <(DateTime, TimelineKind, String, String)>[
         (
@@ -205,6 +325,7 @@ class Seeder {
         await Dispatch.db.insert(session, [
           for (final (i, code) in h.responders.indexed)
             Dispatch(
+              campusId: id,
               incidentId: incident.id!,
               responderCode: code,
               responderName: responders[code]?.name ?? code,

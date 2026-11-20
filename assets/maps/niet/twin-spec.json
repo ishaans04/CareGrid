@@ -1,0 +1,41 @@
+{
+  "campus": {
+    "code": "niet",
+    "name": "NIET Greater Noida",
+    "frameMarginMeters": 70,
+    "plots": [
+      { "osm": "way/87176929", "name": "Old campus · Plot 19" },
+      { "osm": "way/1408786197", "name": "New campus · Plot 14" }
+    ]
+  },
+  "zones": [
+    { "code": "ABLK", "osm": "way/351607593", "plot": "way/87176929", "name": "A Block", "type": "academic", "description": "Five-storey academic block. Career Management Cell, 1st floor (NIET NAAC SSR, 2017)." },
+    { "code": "BBLK", "osm": "relation/5247446", "plot": "way/87176929", "name": "B Block", "type": "academic", "description": "Academic block with the auditorium (1st-2nd floor) and Students' Welfare (NAAC SSR, 2017)." },
+    { "code": "DBLK", "osm": "way/351607573", "plot": "way/87176929", "name": "D Block", "type": "academic", "description": "Five-storey academic block." },
+    { "code": "EBLK", "osm": "way/1422861834", "plot": "way/87176929", "name": "E Block", "type": "libraryHall", "description": "Academic block; reading room on the 1st floor (NAAC SSR, 2017)." },
+    { "code": "PHRM", "osm": "way/351607640", "plot": "way/87176929", "name": "Pharmacy Block", "type": "lab", "restricted": true, "description": "Pharmacy department and laboratories. Restricted lab areas." },
+    { "code": "MHOS", "osm": "relation/5247458", "plot": "way/87176929", "name": "Men's Hostel", "type": "hostel", "privacySensitive": true, "description": "Boys' residence on the old campus." },
+    { "code": "WHOS", "osm": "way/351607676", "plot": "way/87176929", "name": "Women's Hostel", "type": "hostel", "privacySensitive": true, "description": "Girls' residence on the old campus." },
+    { "code": "PLAY", "osm": "way/1422860068", "plot": "way/87176929", "name": "Playground", "type": "sports", "description": "Main playground with a basketball court." },
+    { "code": "FOOD", "osm": "way/1422874240", "plot": "way/87176929", "name": "Food court", "type": "commons", "description": "Food outlet near the south-west lane (Mother Dairy point mapped in OpenStreetMap)." },
+    { "code": "NACD", "osm": "way/1422878978", "plot": "way/1408786197", "name": "New Campus Block", "type": "academic", "description": "Academic building on Plot 14. Unnamed in OpenStreetMap; student reviews describe first-year teaching on the new campus." },
+    { "code": "GHOS", "osm": "way/1422878976", "plot": "way/1408786197", "name": "Girls' Hostel (new campus)", "type": "hostel", "privacySensitive": true, "description": "Girls' residence on Plot 14." },
+    { "code": "BHOS", "osm": "way/1422878977", "plot": "way/1408786197", "name": "Boys' Hostel (new campus)", "type": "hostel", "privacySensitive": true, "description": "Boys' residence on Plot 14." },
+    { "code": "NGND", "osm": "way/1422879712", "plot": "way/1408786197", "name": "New Campus Ground", "type": "sports", "description": "Open ground on Plot 14." }
+  ],
+  "approximateZones": [
+    { "code": "HLTH", "name": "Health Centre (C Block)", "type": "hospital", "plot": "way/87176929", "nearZone": "BBLK", "offset": [-6, -34], "description": "NIET's report places the health centre (full-time doctor and nurse) on the C Block ground floor. C Block is not in OpenStreetMap, so this position is an assumption to confirm with the campus." }
+  ],
+  "gates": [
+    { "code": "GT1", "node": 11011576848, "name": "Old Campus Main Gate", "description": "The only vehicle gate of Plot 19 mapped in OpenStreetMap; marked wheelchair accessible.", "open": true },
+    { "code": "GT2", "node": 11011606005, "name": "New Campus Gate", "description": "Plot 14 entrance from the IILM Road side; marked wheelchair accessible.", "open": true }
+  ],
+  "approximateGates": [
+    { "code": "GT1W", "name": "West Corner Emergency Entrance (to survey)", "plot": "way/87176929", "towardsWay": 87159084, "awayFromGate": "GT1", "minSeparationMeters": 40, "open": false, "description": "Only one vehicle gate to Plot 19 is mapped, so a blocked main gate cuts the old campus off. The plot meets the same public ring road again at its west corner; modelled here as a closed candidate emergency entrance so rehearsals can test it. Confirm on site before relying on it." }
+  ],
+  "hospitals": [
+    { "code": "YATH", "routeKey": "yatharth", "name": "Yatharth Hospital", "description": "Multi-specialty hospital with an NIET tie-up (NAAC SSR, 2017). Road distances from OSRM." },
+    { "code": "KAIL", "routeKey": "kailash", "name": "Kailash Hospital", "description": "Multi-specialty hospital near Pari Chowk with an NIET tie-up (NAAC SSR, 2017). Road distances from OSRM." }
+  ],
+  "gateRouteKeys": { "GT1": "old-gate", "GT2": "new-gate" }
+}

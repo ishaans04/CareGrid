@@ -20,6 +20,7 @@ abstract class StressScenario
     implements _isc.SerializableModel, _isc.ProtocolSerialization {
   StressScenario._({
     this.id,
+    required this.campusId,
     required this.code,
     required this.name,
     required this.description,
@@ -32,6 +33,7 @@ abstract class StressScenario
 
   factory StressScenario({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required String description,
@@ -45,6 +47,7 @@ abstract class StressScenario
   factory StressScenario.fromJson(Map<String, dynamic> jsonSerialization) {
     return StressScenario(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       code: jsonSerialization['code'] as String,
       name: jsonSerialization['name'] as String,
       description: jsonSerialization['description'] as String,
@@ -66,6 +69,8 @@ abstract class StressScenario
   /// database or if it has been fetched from the database. Otherwise,
   /// the id will be null.
   int? id;
+
+  int campusId;
 
   String code;
 
@@ -89,6 +94,7 @@ abstract class StressScenario
   @_isc.useResult
   StressScenario copyWith({
     int? id,
+    int? campusId,
     String? code,
     String? name,
     String? description,
@@ -103,6 +109,7 @@ abstract class StressScenario
     return {
       '__className__': 'StressScenario',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'description': description,
@@ -119,6 +126,7 @@ abstract class StressScenario
     return {
       '__className__': 'StressScenario',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'name': name,
       'description': description,
@@ -141,6 +149,7 @@ class _Undefined {}
 class _StressScenarioImpl extends StressScenario {
   _StressScenarioImpl({
     int? id,
+    required int campusId,
     required String code,
     required String name,
     required String description,
@@ -151,6 +160,7 @@ class _StressScenarioImpl extends StressScenario {
     bool? builtIn,
   }) : super._(
          id: id,
+         campusId: campusId,
          code: code,
          name: name,
          description: description,
@@ -167,6 +177,7 @@ class _StressScenarioImpl extends StressScenario {
   @override
   StressScenario copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? code,
     String? name,
     String? description,
@@ -178,6 +189,7 @@ class _StressScenarioImpl extends StressScenario {
   }) {
     return StressScenario(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       code: code ?? this.code,
       name: name ?? this.name,
       description: description ?? this.description,

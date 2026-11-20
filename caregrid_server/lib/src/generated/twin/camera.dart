@@ -18,28 +18,37 @@ import '../enums/asset_health.dart' as _ienw8okx;
 abstract class Camera implements _is.TableRow<int?>, _is.ProtocolSerialization {
   Camera._({
     this.id,
+    required this.campusId,
     required this.code,
     required this.zoneCode,
     required this.label,
     _ienw8okx.AssetHealth? health,
     required this.adjacentCameras,
     bool? privacyMasked,
+    this.x,
+    this.y,
+    this.rangeMeters,
   }) : health = health ?? _ienw8okx.AssetHealth.online,
        privacyMasked = privacyMasked ?? true;
 
   factory Camera({
     int? id,
+    required int campusId,
     required String code,
     required String zoneCode,
     required String label,
     _ienw8okx.AssetHealth? health,
     required List<String> adjacentCameras,
     bool? privacyMasked,
+    double? x,
+    double? y,
+    double? rangeMeters,
   }) = _CameraImpl;
 
   factory Camera.fromJson(Map<String, dynamic> jsonSerialization) {
     return Camera(
       id: jsonSerialization['id'] as int?,
+      campusId: jsonSerialization['campusId'] as int,
       code: jsonSerialization['code'] as String,
       zoneCode: jsonSerialization['zoneCode'] as String,
       label: jsonSerialization['label'] as String,
@@ -54,6 +63,9 @@ abstract class Camera implements _is.TableRow<int?>, _is.ProtocolSerialization {
       privacyMasked: jsonSerialization['privacyMasked'] == null
           ? null
           : _is.BoolJsonExtension.fromJson(jsonSerialization['privacyMasked']),
+      x: (jsonSerialization['x'] as num?)?.toDouble(),
+      y: (jsonSerialization['y'] as num?)?.toDouble(),
+      rangeMeters: (jsonSerialization['rangeMeters'] as num?)?.toDouble(),
     );
   }
 
@@ -64,6 +76,9 @@ abstract class Camera implements _is.TableRow<int?>, _is.ProtocolSerialization {
   @override
   int? id;
 
+  int campusId;
+
+  /// Unique within its campus.
   String code;
 
   String zoneCode;
@@ -78,6 +93,14 @@ abstract class Camera implements _is.TableRow<int?>, _is.ProtocolSerialization {
   /// Faces and identities are never processed; masked cameras only emit anonymous track events.
   bool privacyMasked;
 
+  /// Mounting point in canvas units; null places the camera at its zone.
+  double? x;
+
+  double? y;
+
+  /// Approximate useful viewing radius in metres, for coverage planning.
+  double? rangeMeters;
+
   @override
   _is.Table<int?> get table => t;
 
@@ -86,24 +109,32 @@ abstract class Camera implements _is.TableRow<int?>, _is.ProtocolSerialization {
   @_is.useResult
   Camera copyWith({
     int? id,
+    int? campusId,
     String? code,
     String? zoneCode,
     String? label,
     _ienw8okx.AssetHealth? health,
     List<String>? adjacentCameras,
     bool? privacyMasked,
+    double? x,
+    double? y,
+    double? rangeMeters,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       '__className__': 'Camera',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'zoneCode': zoneCode,
       'label': label,
       'health': health.toJson(),
       'adjacentCameras': adjacentCameras.toJson(),
       'privacyMasked': privacyMasked,
+      if (x != null) 'x': x,
+      if (y != null) 'y': y,
+      if (rangeMeters != null) 'rangeMeters': rangeMeters,
     };
   }
 
@@ -112,12 +143,16 @@ abstract class Camera implements _is.TableRow<int?>, _is.ProtocolSerialization {
     return {
       '__className__': 'Camera',
       if (id != null) 'id': id,
+      'campusId': campusId,
       'code': code,
       'zoneCode': zoneCode,
       'label': label,
       'health': health.toJson(),
       'adjacentCameras': adjacentCameras.toJson(),
       'privacyMasked': privacyMasked,
+      if (x != null) 'x': x,
+      if (y != null) 'y': y,
+      if (rangeMeters != null) 'rangeMeters': rangeMeters,
     };
   }
 
@@ -154,20 +189,28 @@ class _Undefined {}
 class _CameraImpl extends Camera {
   _CameraImpl({
     int? id,
+    required int campusId,
     required String code,
     required String zoneCode,
     required String label,
     _ienw8okx.AssetHealth? health,
     required List<String> adjacentCameras,
     bool? privacyMasked,
+    double? x,
+    double? y,
+    double? rangeMeters,
   }) : super._(
          id: id,
+         campusId: campusId,
          code: code,
          zoneCode: zoneCode,
          label: label,
          health: health,
          adjacentCameras: adjacentCameras,
          privacyMasked: privacyMasked,
+         x: x,
+         y: y,
+         rangeMeters: rangeMeters,
        );
 
   /// Returns a shallow copy of this [Camera]
@@ -176,15 +219,20 @@ class _CameraImpl extends Camera {
   @override
   Camera copyWith({
     Object? id = _Undefined,
+    int? campusId,
     String? code,
     String? zoneCode,
     String? label,
     _ienw8okx.AssetHealth? health,
     List<String>? adjacentCameras,
     bool? privacyMasked,
+    Object? x = _Undefined,
+    Object? y = _Undefined,
+    Object? rangeMeters = _Undefined,
   }) {
     return Camera(
       id: id is int? ? id : this.id,
+      campusId: campusId ?? this.campusId,
       code: code ?? this.code,
       zoneCode: zoneCode ?? this.zoneCode,
       label: label ?? this.label,
@@ -192,12 +240,20 @@ class _CameraImpl extends Camera {
       adjacentCameras:
           adjacentCameras ?? this.adjacentCameras.map((e0) => e0).toList(),
       privacyMasked: privacyMasked ?? this.privacyMasked,
+      x: x is double? ? x : this.x,
+      y: y is double? ? y : this.y,
+      rangeMeters: rangeMeters is double? ? rangeMeters : this.rangeMeters,
     );
   }
 }
 
 class CameraUpdateTable extends _is.UpdateTable<CameraTable> {
   CameraUpdateTable(super.table);
+
+  _is.ColumnValue<int, int> campusId(int value) => _is.ColumnValue(
+    table.campusId,
+    value,
+  );
 
   _is.ColumnValue<String, String> code(String value) => _is.ColumnValue(
     table.code,
@@ -232,11 +288,30 @@ class CameraUpdateTable extends _is.UpdateTable<CameraTable> {
     table.privacyMasked,
     value,
   );
+
+  _is.ColumnValue<double, double> x(double? value) => _is.ColumnValue(
+    table.x,
+    value,
+  );
+
+  _is.ColumnValue<double, double> y(double? value) => _is.ColumnValue(
+    table.y,
+    value,
+  );
+
+  _is.ColumnValue<double, double> rangeMeters(double? value) => _is.ColumnValue(
+    table.rangeMeters,
+    value,
+  );
 }
 
 class CameraTable extends _is.Table<int?> {
   CameraTable({super.tableRelation}) : super(tableName: 'camera') {
     updateTable = CameraUpdateTable(this);
+    campusId = _is.ColumnInt(
+      'campusId',
+      this,
+    );
     code = _is.ColumnString(
       'code',
       this,
@@ -264,10 +339,25 @@ class CameraTable extends _is.Table<int?> {
       this,
       hasDefault: true,
     );
+    x = _is.ColumnDouble(
+      'x',
+      this,
+    );
+    y = _is.ColumnDouble(
+      'y',
+      this,
+    );
+    rangeMeters = _is.ColumnDouble(
+      'rangeMeters',
+      this,
+    );
   }
 
   late final CameraUpdateTable updateTable;
 
+  late final _is.ColumnInt campusId;
+
+  /// Unique within its campus.
   late final _is.ColumnString code;
 
   late final _is.ColumnString zoneCode;
@@ -282,15 +372,27 @@ class CameraTable extends _is.Table<int?> {
   /// Faces and identities are never processed; masked cameras only emit anonymous track events.
   late final _is.ColumnBool privacyMasked;
 
+  /// Mounting point in canvas units; null places the camera at its zone.
+  late final _is.ColumnDouble x;
+
+  late final _is.ColumnDouble y;
+
+  /// Approximate useful viewing radius in metres, for coverage planning.
+  late final _is.ColumnDouble rangeMeters;
+
   @override
   List<_is.Column> get columns => [
     id,
+    campusId,
     code,
     zoneCode,
     label,
     health,
     adjacentCameras,
     privacyMasked,
+    x,
+    y,
+    rangeMeters,
   ];
 }
 

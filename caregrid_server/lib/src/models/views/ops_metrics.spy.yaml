@@ -4,6 +4,14 @@ fields:
   generatedAt: DateTime
   ### Mean Time To Care: onset to care initiated, in seconds.
   mttcSeconds: double?
+  ### Distribution of the same measurement: means hide the slow tail that matters in an emergency.
+  mttcMedianSeconds: double?
+  mttcP90Seconds: double?
+  ### Number of incidents with both onset and care recorded (the MTTC denominator).
+  mttcSamples: int
+  ### Closed dispatched incidents (the RCI denominator) and how many of them were fully verified.
+  rciClosed: int
+  rciVerified: int
   ### Mean latency of each stage (detection, verification, dispatch, acknowledgement, arrival, care start).
   stages: List<StageEstimate>
   ### Response Completion Integrity: share of dispatched incidents verified through arrival and care with no silent failure.

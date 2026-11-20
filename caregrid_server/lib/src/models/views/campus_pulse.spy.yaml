@@ -1,0 +1,27 @@
+### De-identified operating picture of one campus for the network view. Counts and timings only: no incident codes, locations, people or evidence.
+class: CampusPulse
+fields:
+  code: String
+  name: String
+  shortName: String
+  city: String?
+  fictional: bool
+  attribution: String?
+  openIncidents: int
+  ### Open P0/P1 incidents.
+  urgentOpen: int
+  escalatedOpen: int
+  ### Open incidents whose next deadline has already passed.
+  overdueOpen: int
+  unitsAvailable: int
+  unitsTotal: int
+  camerasDegraded: int
+  camerasTotal: int
+  ### Mean onset-to-care over resolved incidents in the last 30 days; null when none.
+  mttcSeconds: int?
+  ### Response Completion Integrity over the last 30 days; null when no dispatched case closed.
+  rciPercent: double?
+  resolved30d: int
+  ### Latest readiness-suite score for the campus; null before any run.
+  readinessPercent: int?
+  readinessRanAt: DateTime?

@@ -2,11 +2,12 @@
 class: Zone
 table: zone
 fields:
-  ### Stable short code, e.g. HB for Birch Hostel.
-  code: String, unique
+  campusId: int, relation(parent=campus, onDelete=Restrict)
+  ### Stable short code, unique within its campus, e.g. HB for Birch Hostel.
+  code: String
   name: String
   type: ZoneType
-  ### Schematic map position (0..1000 x 0..700 canvas units).
+  ### Map position in campus canvas units (see Campus.metersPerUnit).
   x: double
   y: double
   description: String?
@@ -18,3 +19,15 @@ fields:
   isRestricted: bool, default=false
   ### Privacy-sensitive zones only expose minimum context to non-command roles.
   privacySensitive: bool, default=false
+  ### Building outline as flattened x,y canvas pairs; null for a schematic node.
+  footprint: List<double>?
+  ### Above-ground floors, when known.
+  levels: int?
+  ### True when the position is a planning assumption rather than mapped data.
+  approximate: bool, default=false
+  ### Where the geometry came from, e.g. 'OpenStreetMap way 351607593'.
+  source: String?
+indexes:
+  zone_campus_code_idx:
+    fields: campusId, code
+    unique: true

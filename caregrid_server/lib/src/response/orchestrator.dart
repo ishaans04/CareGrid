@@ -74,7 +74,12 @@ class Orchestrator {
         );
       },
     );
-    await OpsBus.publish(session, 'incident', incidentId: saved.id);
+    await OpsBus.publish(
+      session,
+      'incident',
+      campusId: saved.campusId,
+      incidentId: saved.id,
+    );
     return saved;
   }
 
@@ -83,7 +88,7 @@ class Orchestrator {
     if (code == null) return Future.value(null);
     return ZonePolicy.db.findFirstRow(
       session,
-      where: (t) => t.code.equals(code),
+      where: (t) => t.campusId.equals(incident.campusId) & t.code.equals(code),
     );
   }
 
@@ -182,7 +187,7 @@ class Orchestrator {
       );
     }
 
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, incident.campusId);
     final plan = ResponsePlanner(twin).plan(
       zoneCode: incident.zoneCode,
       policy: policy,
@@ -271,8 +276,13 @@ class Orchestrator {
       incident.state = IncidentState.dispatched;
     }
     incident.verifiedAt ??= now;
-    await OpsBus.publish(session, 'dispatch', incidentId: incident.id);
-    await OpsBus.publish(session, 'twin');
+    await OpsBus.publish(
+      session,
+      'dispatch',
+      campusId: incident.campusId,
+      incidentId: incident.id,
+    );
+    await OpsBus.publish(session, 'twin', campusId: incident.campusId);
     return recompute(session, incident);
   }
 
@@ -286,7 +296,9 @@ class Orchestrator {
   ) async {
     final found = await Responder.db.findFirstRow(
       session,
-      where: (t) => t.code.equals(option.responderCode),
+      where: (t) =>
+          t.campusId.equals(incident.campusId) &
+          t.code.equals(option.responderCode),
     );
     if (found == null) return null;
     return RowLock.on(session, LockedTable.responder, found.id!, (
@@ -303,6 +315,7 @@ class Orchestrator {
       final d = await Dispatch.db.insertRow(
         session,
         Dispatch(
+          campusId: incident.campusId,
           incidentId: incident.id!,
           responderCode: responder.code,
           responderName: responder.name,
@@ -356,7 +369,7 @@ class Orchestrator {
     }
     final policy = await policyOf(session, incident);
     if (policy == null) throw invalidState('No policy for ${incident.code}.');
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, incident.campusId);
     final planner = ResponsePlanner(twin);
     final active = (await dispatchesOf(
       session,
@@ -449,7 +462,9 @@ class Orchestrator {
     }
     final responder = await Responder.db.findFirstRow(
       session,
-      where: (t) => t.code.equals(current.responderCode),
+      where: (t) =>
+          t.campusId.equals(current.campusId) &
+          t.code.equals(current.responderCode),
     );
     final now = CampusClock.now();
     final d = await transition(session, dispatchId, (d) {
@@ -508,7 +523,9 @@ class Orchestrator {
       session,
       columnValues: (t) => [t.zoneCode(incident.zoneCode)],
       where: (t) =>
-          t.code.equals(d.responderCode) & t.activeDispatchId.equals(d.id),
+          t.campusId.equals(d.campusId) &
+          t.code.equals(d.responderCode) &
+          t.activeDispatchId.equals(d.id),
     );
     incident.onSceneAt ??= now;
     await log(
@@ -642,7 +659,12 @@ class Orchestrator {
       actorLabel,
       'Stood down ${d.responderName}: $reason',
     );
-    await OpsBus.publish(session, 'dispatch', incidentId: incident.id);
+    await OpsBus.publish(
+      session,
+      'dispatch',
+      campusId: incident.campusId,
+      incidentId: incident.id,
+    );
     return recompute(session, incident);
   }
 
@@ -656,7 +678,7 @@ class Orchestrator {
   ) async {
     final policy = await policyOf(session, incident);
     if (policy == null) return recompute(session, incident);
-    final twin = await TwinSnapshot.load(session);
+    final twin = await TwinSnapshot.load(session, incident.campusId);
     final tried = (await dispatchesOf(
       session,
       incident.id!,
@@ -837,7 +859,8 @@ class Orchestrator {
   static Future<void> _release(Session session, Dispatch d) async {
     final found = await Responder.db.findFirstRow(
       session,
-      where: (t) => t.code.equals(d.responderCode),
+      where: (t) =>
+          t.campusId.equals(d.campusId) & t.code.equals(d.responderCode),
     );
     if (found == null) return;
     final released = await RowLock.on(
@@ -861,7 +884,7 @@ class Orchestrator {
         return true;
       },
     );
-    if (released) await OpsBus.publish(session, 'twin');
+    if (released) await OpsBus.publish(session, 'twin', campusId: d.campusId);
   }
 
   /// Marks a unit unreachable after a missed acknowledgement, if it is still
@@ -869,7 +892,8 @@ class Orchestrator {
   static Future<void> markUnreachable(Session session, Dispatch d) async {
     final found = await Responder.db.findFirstRow(
       session,
-      where: (t) => t.code.equals(d.responderCode),
+      where: (t) =>
+          t.campusId.equals(d.campusId) & t.code.equals(d.responderCode),
     );
     if (found == null) return;
     await RowLock.on(session, LockedTable.responder, found.id!, (
@@ -887,7 +911,7 @@ class Orchestrator {
         ..statusNote = 'Missed acknowledgement: radio check required';
       await Responder.db.updateRow(session, r, transaction: transaction);
     });
-    await OpsBus.publish(session, 'twin');
+    await OpsBus.publish(session, 'twin', campusId: d.campusId);
   }
 
   // ------------------------------------------------------------ recompute
