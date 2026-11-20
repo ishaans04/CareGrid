@@ -2,6 +2,7 @@ import 'package:serverpod/serverpod.dart';
 
 import '../core/access.dart';
 import '../core/audit.dart';
+import '../core/runtime_policy.dart';
 import '../generated/protocol.dart';
 import '../response/orchestrator.dart';
 import '../simulation/scenario_library.dart';
@@ -12,6 +13,7 @@ class SimulationEndpoint extends Endpoint {
   static const _roles = {UserRole.command, UserRole.admin};
 
   Future<SimulationStatus> status(Session session) async {
+    RuntimePolicy.requireDemo(session);
     await Access.require(session, _roles);
     final runs = await ScenarioRun.db.find(
       session,
@@ -29,6 +31,7 @@ class SimulationEndpoint extends Endpoint {
     String code,
     bool autopilot,
   ) async {
+    RuntimePolicy.requireDemo(session);
     final actor = await Access.require(session, _roles);
     final run = await SimulationEngine.start(
       session,
@@ -47,6 +50,7 @@ class SimulationEndpoint extends Endpoint {
   }
 
   Future<ScenarioRun> stop(Session session, int runId) async {
+    RuntimePolicy.requireDemo(session);
     final actor = await Access.require(session, _roles);
     final run = await SimulationEngine.stop(session, runId);
     await Audit.log(session, actor, 'scenario-stop', target: run.scenarioCode);
@@ -55,6 +59,7 @@ class SimulationEndpoint extends Endpoint {
 
   /// Stands down every open scenario incident so demos can be repeated.
   Future<int> clear(Session session) async {
+    RuntimePolicy.requireDemo(session);
     final actor = await Access.require(session, _roles);
     final open = await Incident.db.find(
       session,

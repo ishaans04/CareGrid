@@ -4,7 +4,7 @@
 
 > **Startup Buildathon India 2026 · Team Duality (Hriday Vig + Ishaan Sharma).** Start with the [submission package](docs/buildathon/README.md), [Google solution architecture](docs/buildathon/SOLUTION-ARCHITECTURE.md), and [interactive web prototype](caregrid_web/README.md). [Pitch assets](assets/pitch/README.md) include the architecture graphic and product captures. The older Flutter/Serverpod documentation below describes the inherited prototype; Serverpod Cloud is a historical deployment path. The proposed event architecture uses Google Cloud. No live Google resources or campus pilot are claimed.
 
-> **20 November update:** the [connected web MVP](docs/buildathon/CONNECTED-MVP.md) now runs member SOS, command dispatch, responder proof, care handoff, readiness and analytics against the actual Serverpod/PostgreSQL backend. Start on Windows with `powershell -File scripts/start-local.ps1` from this repository. [Connected product screenshots](assets/pitch/connected/README.md). Verification: 29 backend tests, 10 Node tests, three Chrome workflow tests; backend static analysis clean.
+> **20 November update:** the [connected web MVP](docs/buildathon/CONNECTED-MVP.md) now runs member SOS, command dispatch, responder proof, care handoff, readiness and analytics against the actual Serverpod/PostgreSQL backend. Start on Windows with `powershell -File scripts/start-local.ps1` from this repository. [Connected product screenshots](assets/pitch/connected/README.md). Verification: 49 backend checks, 15 Node tests and four Chrome tests (three real workflows plus one Google-entry configuration preview); backend static analysis clean. [Google runtime and identity](docs/buildathon/GOOGLE-RUNTIME.md) are implemented for deployment verification once a project exists.
 
 **The AI emergency response operating system for campuses**
 
@@ -16,7 +16,7 @@
 [![Google Cloud target](https://img.shields.io/badge/Target-Google%20Cloud-4285F4)](docs/buildathon/SOLUTION-ARCHITECTURE.md)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%2B-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org)
 [![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS%20%7C%20Web-success)](#run-it-locally)
-[![Tests](https://img.shields.io/badge/backend%20tests-29%20passing-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/backend%20tests-49%20passing-brightgreen)](#tests)
 
 </div>
 

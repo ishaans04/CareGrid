@@ -2,6 +2,7 @@ import 'package:serverpod/serverpod.dart' hide Responder;
 
 import '../core/access.dart';
 import '../core/audit.dart';
+import '../core/runtime_policy.dart';
 import '../core/ops_bus.dart';
 import '../generated/protocol.dart';
 import '../seed/seeder.dart';
@@ -177,6 +178,7 @@ class AdminEndpoint extends Endpoint {
 
   /// Restores the seeded twin and history. Users and the audit log are kept.
   Future<void> resetDemo(Session session) async {
+    RuntimePolicy.requireDemo(session);
     final actor = await Access.require(session, {UserRole.admin});
     await Seeder.reset(session);
     await Audit.log(session, actor, 'demo-reset');

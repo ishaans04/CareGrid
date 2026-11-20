@@ -185,6 +185,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.9"
+  dart_jsonwebtoken:
+    dependency: transitive
+    description:
+      name: dart_jsonwebtoken
+      sha256: ad84e60181696513d04d5f2078e0bbc20365b911f46f647797317414bdc88fbe
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.1"
   dbus:
     dependency: transitive
     description:
@@ -739,7 +747,7 @@ packages:
     source: hosted
     version: "4.0.4"
   serverpod_shared:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: serverpod_shared
       sha256: f53f81b55bf4483cf352970da3c3fe63c6eeba9370f315d0d0720ae72c352717
@@ -871,6 +879,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.2"
+  sqlite_async:
+    dependency: transitive
+    description:
+      name: sqlite_async
+      sha256: "40c7d6f660322e4a2b4367ff75b9d5111389441aaa87e44f417420b56e0b0c97"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.14.5"
   sqlite3:
     dependency: transitive
     description:
@@ -895,14 +911,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.4"
-  sqlite_async:
-    dependency: transitive
-    description:
-      name: sqlite_async
-      sha256: "40c7d6f660322e4a2b4367ff75b9d5111389441aaa87e44f417420b56e0b0c97"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.14.5"
   sqlparser:
     dependency: transitive
     description:

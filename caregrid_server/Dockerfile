@@ -25,15 +25,11 @@ RUN mv build/bundle/bin/main build/bundle/bin/server
 # Add a fallback for the copy of possibly missing directories.
 RUN mkdir -p config web migrations
 
-# Final stage
-FROM alpine:latest
+# Dart's /runtime contains the Linux runtime libraries used by its executable.
+# A scratch image avoids mixing the Debian-built binary with Alpine's musl.
+FROM scratch
 WORKDIR /app
-
-# Environment variables
-ENV runmode=production
-ENV serverid=default
-ENV logging=normal
-ENV role=monolith
+ENV CAREGRID_PROCESS_ROLE=api
 
 # Copy runtime dependencies
 COPY --from=build /runtime/ /
@@ -42,17 +38,15 @@ COPY --from=build /runtime/ /
 COPY --from=build /app/caregrid_server/build/bundle/ ./
 
 # Copy configuration files and resources
-COPY --from=build /app/caregrid_server/config/ config/
+COPY --from=build /app/caregrid_server/config/production.yaml config/production.yaml
 COPY --from=build /app/caregrid_server/web/ web/
 COPY --from=build /app/caregrid_server/migrations/ migrations/
 
 # This file is required to enable the endpoint log filter in Insights.
 COPY --from=build /app/caregrid_server/lib/src/generated/protocol.yaml lib/src/generated/protocol.yaml
 
-# Expose ports
+USER 10001:10001
 EXPOSE 8080
-EXPOSE 8081
-EXPOSE 8082
-
-# Define the entrypoint command
-ENTRYPOINT ./bin/server --mode=$runmode --server-id=$serverid --logging=$logging --role=$role
+# Exec form forwards SIGTERM to Serverpod. Override args for a migration job.
+ENTRYPOINT ["./bin/server"]
+CMD ["--mode=production", "--logging=normal"]

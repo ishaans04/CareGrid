@@ -19,13 +19,19 @@ class ProofOfResponse {
 
   static const simulatedOperator = 'Simulated operator (autopilot)';
 
-  static Future<void> tick(Session session) async {
+  static Future<void> tick(
+    Session session, {
+    bool includeSimulations = true,
+  }) async {
     final open = await Incident.db.find(
       session,
       where: (t) =>
           t.resolvedAt.equals(null) &
           t.dismissedAt.equals(null) &
-          t.parentIncidentId.equals(null),
+          t.parentIncidentId.equals(null) &
+          (includeSimulations
+              ? Constant.bool(true)
+              : t.scenarioRunId.equals(null)),
     );
     if (open.isEmpty) return;
     final runs = <int, ScenarioRun?>{};

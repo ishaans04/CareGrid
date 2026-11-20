@@ -26,19 +26,23 @@ const state = {
   epoch: 0,
   readiness: null,
   runs: [],
+  config: null,
 };
+let identity;
 let toastTimer;
 let modalAction;
 let pendingSync = Promise.resolve();
 async function api(path, { method = "GET", body, signal } = {}) {
   let response;
   try {
+    const token = await identity?.token();
     response = await fetch(`/api/${path}`, {
       method,
       credentials: "same-origin",
       cache: "no-store",
       signal: signal || AbortSignal.timeout(13_000),
       headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         "X-CareGrid-Request": "1",
         ...(body ? { "Content-Type": "application/json" } : {}),
       },
@@ -46,7 +50,7 @@ async function api(path, { method = "GET", body, signal } = {}) {
     });
   } catch {
     throw Error(
-      "Connection lost. Check the local service, then reconnect. Your action has not been retried.",
+      "Connection lost. Check the service and your connection, then reconnect. Your action has not been retried.",
     );
   }
   const result = await response.json();
@@ -70,7 +74,7 @@ const button = (
   action,
   { primary = false, danger = false, id = "", disabled = false } = {},
 ) =>
-  `<button type="button" class="button ${primary ? "primary" : ""} ${danger ? "danger" : ""}" data-action="${action}" ${id !== "" ? `data-id="${e(id)}"` : ""} ${state.busy || disabled || (state.error && !["refresh", "logout", "close-dialog", "select-incident"].includes(action)) ? "disabled" : ""}>${e(text)}</button>`;
+  `<button type="button" class="button ${primary ? "primary" : ""} ${danger ? "danger" : ""}" data-action="${action}" ${id !== "" ? `data-id="${e(id)}"` : ""} ${state.busy || disabled || (state.error && !["refresh", "logout", "close-dialog", "select-incident", "google-signin"].includes(action)) ? "disabled" : ""}>${e(text)}</button>`;
 const note = (message) => {
   const target = document.querySelector("#notice");
   target.textContent = message;
@@ -90,6 +94,7 @@ const banner = () =>
     : "";
 
 function login() {
+  const googleSignIn = `<div style="margin-top:32px">${button(state.busy ? "Signing in…" : "Continue with Google", "google-signin", { primary: true })}<p class="muted small" style="margin-top:16px">Use the account assigned by your campus administrator. Access follows your CareGrid role.</p></div>`;
   app.innerHTML = `<main id="main" class="login"><section class="login-story"><a class="wordmark" href="/"><img src="assets/mark.svg" alt="" />CareGrid<span class="lime">.</span></a><div><p class="eyebrow lime">Team Duality / campus response</p><h1 style="margin-top:22px">Every signal.<br />An owner.<br /><em>A response.</em></h1><p>One shared workspace for the command desk, the people responding, and the team ready to receive them.</p><div class="orbit" aria-hidden="true"><svg viewBox="0 0 600 180"><path d="M0 90H130L190 45H340L400 130H600M80 180V90M260 0V45M490 0V130" fill="none" stroke="#ece9e13a" stroke-width="2"/><path d="M130 90L190 45H340L400 130H490" fill="none" stroke="#c6ff3d" stroke-width="3"/>${[
     [130, 90],
     [190, 45],
@@ -103,7 +108,7 @@ function login() {
     )
     .join(
       "",
-    )}</svg></div></div><footer class="eyebrow muted">From first signal to accountable care.</footer></section><section class="login-form-wrap"><p class="eyebrow cyan">Meridian Demo Campus</p><h2>Take your place.</h2><p class="muted">Sign in to the workspace for your role.</p><div style="margin-top:24px">${banner()}</div>${state.accounts.length ? `<form id="login-form"><label>Demo account<select name="handle" required>${state.accounts.map((account) => `<option value="${e(account.handle)}">${e(account.displayName)} · ${e(label(account.role))}</option>`).join("")}</select><small id="account-description"></small></label><label>Demo PIN<input name="pin" type="password" inputmode="numeric" maxlength="30" autocomplete="off" required aria-describedby="pin-hint"/><small id="pin-hint"></small></label><button class="button primary full" ${state.busy ? "disabled" : ""}>${state.busy ? "Signing in…" : "Enter workspace"}</button></form>` : `<div style="margin-top:24px">${empty("Service is not available", "Run node scripts/dev.mjs from the repository to start the backend and this console.")}</div>`}<div class="login-note">Connected local MVP · synthetic campus and seeded demo PINs. For a second role, open a separate browser profile or private window. <a href="index.html">Open the pitch presentation</a>.</div></section></main>`;
+    )}</svg></div></div><footer class="eyebrow muted">From first signal to accountable care.</footer></section><section class="login-form-wrap"><p class="eyebrow cyan">${e(state.config?.campus || "Meridian Demo Campus")}</p><h2>Take your place.</h2><p class="muted">Sign in to the workspace for your role.</p><div style="margin-top:24px">${banner()}</div>${state.config?.authentication === "firebase" ? googleSignIn : state.accounts.length ? `<form id="login-form"><label>Demo account<select name="handle" required>${state.accounts.map((account) => `<option value="${e(account.handle)}">${e(account.displayName)} · ${e(label(account.role))}</option>`).join("")}</select><small id="account-description"></small></label><label>Demo PIN<input name="pin" type="password" inputmode="numeric" maxlength="30" autocomplete="off" required aria-describedby="pin-hint"/><small id="pin-hint"></small></label><button class="button primary full" ${state.busy ? "disabled" : ""}>${state.busy ? "Signing in…" : "Enter workspace"}</button></form>` : `<div style="margin-top:24px">${empty("Service is not available", "Run node scripts/dev.mjs from the repository to start the backend and this console.")}</div>`}<div class="login-note">${state.config?.authentication === "firebase" ? "Google staging MVP · synthetic campus. Sign-in stays in memory and clears when this page reloads. For another role, use a separate tab." : "Connected local MVP · synthetic campus and seeded demo PINs. For a second role, open a separate browser profile or private window."} <a href="index.html">Open the pitch presentation</a>.</div></section></main>`;
   accountHint();
 }
 function accountHint() {
@@ -134,7 +139,7 @@ function shell() {
       new FormData(form),
     ]),
   );
-  app.innerHTML = `<div class="shell" data-role="${e(state.user.role)}"><aside class="sidebar"><a class="wordmark" href="/"><img src="assets/mark.svg" alt=""/>CareGrid<span class="lime">.</span></a><div class="campus-label"><span class="eyebrow muted">Connected workspace</span><strong>Meridian Demo Campus</strong></div><nav aria-label="Workspace">${nav.map(([key, title], index) => `<button class="nav-button ${state.view === key ? "active" : ""}" data-action="navigate" data-id="${key}" ${state.view === key ? 'aria-current="page"' : ""}><span>0${index + 1}</span>${e(title)}</button>`).join("")}</nav><div class="sidebar-foot"><p class="muted small">A signal is the beginning.<br />Care is the measure.</p><div class="identity"><strong>${e(state.user.displayName)}</strong><span class="muted small">${e(state.user.title)}</span></div>${button("Sign out", "logout")}</div></aside><div class="workspace"><header class="topbar"><span class="eyebrow">Campus response / <span class="lime">${e(label(state.user.role))}</span></span><div class="topbar-status" id="connection-status"></div></header><main id="main" class="main"><div id="connection-error" style="margin-bottom:${state.error ? 24 : 0}px">${banner()}</div>${state.lastSync ? view() : empty("Loading your workspace", "Reading the campus state from CareGrid…")}<footer class="context-note">Team Duality · Synthetic local MVP · The server enforces each account’s permissions. Camera analysis, mobile telemetry and Google Cloud delivery remain planned integrations.</footer></main></div></div>`;
+  app.innerHTML = `<div class="shell" data-role="${e(state.user.role)}"><aside class="sidebar"><a class="wordmark" href="/"><img src="assets/mark.svg" alt=""/>CareGrid<span class="lime">.</span></a><div class="campus-label"><span class="eyebrow muted">Connected workspace</span><strong>${e(state.config?.campus || "Meridian Demo Campus")}</strong></div><nav aria-label="Workspace">${nav.map(([key, title], index) => `<button class="nav-button ${state.view === key ? "active" : ""}" data-action="navigate" data-id="${key}" ${state.view === key ? 'aria-current="page"' : ""}><span>0${index + 1}</span>${e(title)}</button>`).join("")}</nav><div class="sidebar-foot"><p class="muted small">A signal is the beginning.<br />Care is the measure.</p><div class="identity"><strong>${e(state.user.displayName)}</strong><span class="muted small">${e(state.user.title)}</span></div>${button("Sign out", "logout")}</div></aside><div class="workspace"><header class="topbar"><span class="eyebrow">Campus response / <span class="lime">${e(label(state.user.role))}</span></span><div class="topbar-status" id="connection-status"></div></header><main id="main" class="main"><div id="connection-error" style="margin-bottom:${state.error ? 24 : 0}px">${banner()}</div>${state.lastSync ? view() : empty("Loading your workspace", "Reading the campus state from CareGrid…")}<footer class="context-note">${state.config?.authentication === "firebase" ? "Team Duality · Google staging MVP · Synthetic campus data. Camera analysis, live telemetry and notification delivery remain separate integrations." : "Team Duality · Synthetic local MVP · The server enforces each account’s permissions. Camera analysis, mobile telemetry and Google Cloud delivery remain planned integrations."}</footer></main></div></div>`;
   updateConnection();
   for (const [id, values] of drafts) {
     const form = document.getElementById(id);
@@ -359,7 +364,9 @@ async function sync({ force = false } = {}) {
       [data.board, data.twin, data.simulation] = await Promise.all([
         rpc("incident", "board"),
         rpc("campus", "twin"),
-        rpc("simulation", "status"),
+        state.config?.demoEnabled
+          ? rpc("simulation", "status")
+          : Promise.resolve(null),
       ]);
     if (view === "care") data.cases = await rpc("care", "cases");
     if (view === "response") data.home = await rpc("responder", "home");
@@ -486,6 +493,30 @@ document.addEventListener("click", async (event) => {
   const { action, id } = target.dataset;
   const numericId = Number(id);
   if (action === "close-dialog") return dialog.close();
+  if (action === "google-signin") {
+    state.busy = true;
+    state.error = "";
+    shell();
+    try {
+      await identity.signIn();
+      await resetSession();
+      state.user = await api("session");
+      state.view = navigationFor(state.user.role)[0]?.[0];
+    } catch (error) {
+      state.error =
+        error.status === 401
+          ? "This Google account has no active CareGrid membership, or its sign-in has expired. Contact your campus administrator."
+          : error.code === "auth/popup-closed-by-user"
+            ? "Sign-in was closed. Continue when you are ready."
+            : "Google sign-in could not be completed. Reconnect and try again.";
+      await identity?.signOut();
+    } finally {
+      state.busy = false;
+    }
+    shell();
+    await sync({ force: true });
+    return;
+  }
   if (action === "refresh") {
     if (state.user) await sync({ force: true });
     else await initialize();
@@ -508,10 +539,13 @@ document.addEventListener("click", async (event) => {
   if (action === "logout") {
     state.busy = true;
     try {
+      await identity?.signOut();
       await api("session", { method: "DELETE" });
     } catch {
       note(
-        "Could not revoke the server session. Close this browser and restart the local service to clear it.",
+        identity
+          ? "Could not finish sign-out. Close this tab to clear its in-memory Google sign-in."
+          : "Could not revoke the server session. Close this browser and restart the local service to clear it.",
       );
     }
     await resetSession();
@@ -695,7 +729,17 @@ document.addEventListener("submit", async (event) => {
 });
 async function initialize() {
   try {
-    state.accounts = await api("accounts");
+    state.config = await api("config");
+    if (state.config.authentication === "firebase") {
+      if (!identity) {
+        const { createFirebaseIdentity } =
+          await import("./assets/generated/firebase-auth.js");
+        identity = await createFirebaseIdentity(state.config.firebase);
+      }
+      state.accounts = [];
+    } else {
+      state.accounts = await api("accounts");
+    }
     state.error = "";
   } catch (error) {
     state.error = error.message;

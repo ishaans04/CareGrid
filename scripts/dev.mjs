@@ -34,6 +34,10 @@ export async function prepareRuntime() {
     path.join(root, "caregrid_server", "analysis_options.yaml"),
     path.join(destination, "analysis_options.yaml"),
   );
+  await cp(
+    path.join(root, "caregrid_server", "dart_test.yaml"),
+    path.join(destination, "dart_test.yaml"),
+  );
   await cp(path.join(root, "pubspec.lock"), path.join(runtime, "pubspec.lock"));
   await writeFile(
     path.join(runtime, "pubspec.yaml"),

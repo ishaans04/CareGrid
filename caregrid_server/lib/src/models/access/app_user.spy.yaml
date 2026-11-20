@@ -11,3 +11,13 @@ fields:
   responderCode: String?
   ### Demo PIN. Never sent to clients.
   pin: String?, scope=serverOnly
+  ### Bound by a trusted operator, never inferred from email or client claims.
+  firebaseUid: String?, scope=serverOnly
+  ### Stops access on the next API call, including an unexpired Firebase token.
+  disabled: bool, default=false
+  ### Revokes earlier Firebase sessions; the user must reauthenticate afterwards.
+  tokensValidAfter: DateTime?, scope=serverOnly
+indexes:
+  app_user_firebase_uid_idx:
+    fields: firebaseUid
+    unique: true

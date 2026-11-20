@@ -35,7 +35,7 @@ class Access {
     final user = userId == null
         ? null
         : await AppUser.db.findById(session, userId);
-    if (user == null) {
+    if (user == null || user.disabled) {
       throw CareGridException(message: 'Unknown user.', code: 'forbidden');
     }
     if (roles.isNotEmpty && !roles.contains(user.role)) {

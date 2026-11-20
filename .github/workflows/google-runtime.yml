@@ -1,0 +1,110 @@
+name: Google runtime checks
+
+on:
+  push:
+    branches: [main, duality/google-cloud-foundation]
+    paths: ['caregrid_server/**', 'caregrid_web/**', 'pubspec.lock', '.dockerignore', '.github/workflows/google-runtime.yml']
+  pull_request:
+    paths: ['caregrid_server/**', 'caregrid_web/**', 'pubspec.lock', '.dockerignore', '.github/workflows/google-runtime.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Linux runtime image
+        run: docker build -f caregrid_server/Dockerfile -t caregrid-runtime:test .
+      - name: Verify Cloud Run port, migrations and demo lockout
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker network create caregrid-test
+          docker run -d --name caregrid-db --network caregrid-test \
+            -e POSTGRES_DB=caregrid -e POSTGRES_USER=caregrid \
+            -e POSTGRES_PASSWORD=ephemeral-ci-only postgres:16-bookworm
+          for attempt in $(seq 1 30); do
+            if docker exec caregrid-db pg_isready -U caregrid -d caregrid; then break; fi
+            sleep 1
+          done
+          common=(--network caregrid-test -e SERVERPOD_DATABASE_HOST=caregrid-db
+            -e SERVERPOD_DATABASE_NAME=caregrid -e SERVERPOD_DATABASE_USER=caregrid
+            -e SERVERPOD_DATABASE_PASSWORD=ephemeral-ci-only
+            -e SERVERPOD_DATABASE_REQUIRE_SSL=false
+            -e FIREBASE_PROJECT_ID=caregrid-test-project
+            -e SERVERPOD_SERVICE_SECRET=ephemeral-ci-service-secret)
+          docker run --rm "${common[@]}" -e CLOUD_RUN_JOB=caregrid-migrate \
+            caregrid-runtime:test --mode=production --role=maintenance --apply-migrations
+          docker run -d --name caregrid-api "${common[@]}" \
+            -e K_SERVICE=caregrid-api -e PORT=9099 -p 127.0.0.1:18080:9099 \
+            caregrid-runtime:test
+          for attempt in $(seq 1 40); do
+            if curl --fail --silent http://127.0.0.1:18080/startupz; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:18080/readyz
+          response=$(curl --silent -H 'Content-Type: application/json' -d '{}' \
+            http://127.0.0.1:18080/account/demoAccounts)
+          printf '%s' "$response" | python3 -c \
+            'import json,sys; value=json.load(sys.stdin); assert value["data"]["code"] == "forbidden", value'
+          count=$(docker exec caregrid-db psql -U caregrid -d caregrid -Atc 'SELECT count(*) FROM app_user')
+          test "$count" = '0'
+          docker run --rm "${common[@]}" -e CLOUD_RUN_JOB=caregrid-bootstrap \
+            -e CAREGRID_BOOTSTRAP_SYNTHETIC=true caregrid-runtime:test bootstrap seed-synthetic
+          docker run --rm "${common[@]}" -e CLOUD_RUN_JOB=caregrid-bootstrap \
+            caregrid-runtime:test bootstrap bind cmd.night firebase-ci-uid
+          docker run --rm "${common[@]}" -e CLOUD_RUN_JOB=caregrid-bootstrap \
+            caregrid-runtime:test bootstrap disable cmd.night
+          binding=$(docker exec caregrid-db psql -U caregrid -d caregrid -Atc \
+            'SELECT count(*) FROM app_user WHERE "firebaseUid" IS NOT NULL AND disabled=true')
+          test "$binding" = '1'
+      - name: Show runtime diagnostics on failure
+        if: failure()
+        run: |
+          docker logs caregrid-api || true
+          docker logs caregrid-db || true
+      - name: Stop test containers
+        if: always()
+        run: |
+          docker rm -f caregrid-api caregrid-db || true
+          docker network rm caregrid-test || true
+
+  web-container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the Google web gateway image
+        run: docker build -f caregrid_web/Dockerfile -t caregrid-web:test .
+      - name: Verify port, bundled identity SDK and deployed sign-in surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run -d --name caregrid-web -p 127.0.0.1:18081:9099 \
+            -e K_SERVICE=caregrid-web -e PORT=9099 \
+            -e CAREGRID_WEB_ORIGIN=https://caregrid.example.org \
+            -e CAREGRID_API_URL=https://caregrid-api.example.org \
+            -e FIREBASE_PROJECT_ID=caregrid-test-project \
+            -e FIREBASE_WEB_API_KEY=public-ci-placeholder \
+            -e FIREBASE_WEB_APP_ID=public-ci-placeholder caregrid-web:test
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:18081/healthz; then break; fi
+            sleep 1
+          done
+          curl --fail --silent -H 'Host: caregrid.example.org' \
+            http://127.0.0.1:18081/api/config | python3 -c \
+            'import json,sys; v=json.load(sys.stdin)["data"]; assert v["authentication"]=="firebase" and v["demoEnabled"] is False'
+          curl --fail --silent -H 'Host: caregrid.example.org' \
+            http://127.0.0.1:18081/assets/generated/firebase-auth.js > /dev/null
+          status=$(curl --silent -o /dev/null -w '%{http_code}' -H 'Host: caregrid.example.org' \
+            http://127.0.0.1:18081/api/accounts)
+          test "$status" = '404'
+      - name: Runtime diagnostics
+        if: failure()
+        run: docker logs caregrid-web || true
+      - name: Stop the owned web container
+        if: always()
+        run: docker rm -f caregrid-web || true
