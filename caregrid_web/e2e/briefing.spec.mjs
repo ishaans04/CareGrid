@@ -26,8 +26,8 @@ test("a slow optional draft leaves response actions usable and is discarded afte
         headers,
         data: {
           zoneCode: "HB",
-          locationDetail: "Briefing concurrency browser test",
-          note: "Synthetic test request",
+          locationDetail: "Block A, first-floor common room",
+          note: "A friend needs the campus response team.",
           forSelf: false,
         },
       },
@@ -101,7 +101,11 @@ test("a slow optional draft leaves response actions usable and is discarded afte
     if (incidentId)
       await page.request.post("/api/rpc/incident/dismiss", {
         headers: { "x-caregrid-request": "1" },
-        data: { incidentId, reason: "End synthetic briefing race test" },
+        data: {
+          incidentId,
+          reason:
+            "Command confirmed no further help needed (synthetic rehearsal).",
+        },
       });
     await member.close();
   }

@@ -5,6 +5,11 @@ prefix        = "caregrid-demo"
 rollout_stage = "foundation"
 public_web    = false
 
+# Optional inference stays off until real model/location validation.
+enable_gemini = false
+# gemini_model = "explicit-compatible-model-id"
+# gemini_location = "explicit-supported-location"
+
 # Keep secrets OUT of this file. Use ephemeral TF_VAR_ inputs in your process.
 # Once images are built, pin their immutable Artifact Registry digests:
 # server_image = "asia-south1-docker.pkg.dev/PROJECT/REPOSITORY/server@sha256:..."

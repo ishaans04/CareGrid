@@ -19,7 +19,7 @@ Use the command, responder and readiness images as the strongest product trio. C
 
 Caption image 09: **Google sign-in configuration preview · OAuth verification pending.**
 
-Reproduce with the full local MVP running:
+Reproduce with the full local MVP running against a separate initially empty synthetic database (see [test setup](../../../caregrid_web/README.md)):
 
 ```powershell
 cd caregrid_web
@@ -29,4 +29,4 @@ $env:CAREGRID_CAPTURE = '1'
 npm.cmd run test:browser
 ```
 
-Chrome uses temporary isolated contexts. Captures wait for synchronized state, load local fonts and hide only the transient notification toast. The campus graph is schematic. Test scripts create real synthetic database records, so incident codes, timestamps, recent cases and aggregate metrics change across runs. All screens were visually reviewed; [validation and limits](../../../docs/buildathon/VALIDATION.md).
+Chrome uses temporary isolated contexts. Captures wait for synchronized state, load local fonts, return scroll to the top before full-page export, and hide only the transient notification toast. The campus graph is schematic. Test scripts create real synthetic database records, so incident codes, timestamps, recent cases and aggregate metrics change across runs. All screens were visually reviewed; [validation and limits](../../../docs/buildathon/VALIDATION.md).
