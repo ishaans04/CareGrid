@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title description">
+  <title id="title">CareGrid — deployed Google architecture</title>
+  <desc id="description">Public Cloud Run web gateway authenticates users with Firebase and invokes a private Serverpod API through service identity. API, continuously running watchdog and maintenance jobs use Cloud SQL. Secret Manager, IAM, Cloud Build, Artifact Registry, GCS Terraform state and Cloud Monitoring support the deployment. Gemini and evidence workflows remain disabled.</desc>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#2b58bf"/></marker></defs>
+  <rect width="1600" height="1000" fill="#fff"/>
+  <g font-family="Inter, Arial, sans-serif">
+    <text x="60" y="65" font-size="36" font-weight="650" fill="#0a0a0a">CareGrid / deployed on Google</text>
+    <text x="60" y="104" font-family="monospace" font-size="19" fill="#777">CAREGRID-STAGING · ASIA-SOUTH1 · 20 NOVEMBER 2026 · SYNTHETIC MVP</text>
+    <rect x="713" y="258" width="827" height="428" rx="16" fill="#f6f8fd" stroke="#b6c7ef" stroke-dasharray="6 6"/>
+    <text x="744" y="292" font-family="monospace" font-size="17" fill="#2b58bf">IAM-RESTRICTED API / WORKER · SQL CONNECTOR</text>
+    <rect x="390" y="149" width="680" height="91" rx="12" fill="#f6dd78"/>
+    <text x="418" y="187" font-size="27" font-weight="600">Firebase Authentication</text>
+    <text x="418" y="219" font-size="21" fill="#4d4d4d">Google sign-in → verified ID token → SQL membership</text>
+    <g fill="white" stroke="#d6d6d6"><rect x="60" y="325" width="260" height="190" rx="12"/><rect x="390" y="325" width="280" height="190" rx="12"/><rect x="750" y="325" width="320" height="190" rx="12"/><rect x="1180" y="325" width="320" height="190" rx="12"/></g>
+    <g font-size="17" font-family="monospace" fill="#2b58bf"><text x="84" y="360">BROWSER</text><text x="414" y="360">CLOUD RUN · PUBLIC</text><text x="774" y="360">CLOUD RUN · PRIVATE</text><text x="1204" y="360">CLOUD SQL</text></g>
+    <g font-size="28" font-weight="600" fill="#0a0a0a"><text x="84" y="402">Web experience</text><text x="414" y="402">Node gateway</text><text x="774" y="402">Serverpod API</text><text x="1204" y="402">PostgreSQL 16</text></g>
+    <g font-size="21" fill="#4d4d4d"><text x="84" y="439">Landing / demo</text><text x="84" y="474">Connected console</text><text x="414" y="439">Same-origin RPC</text><text x="414" y="474">Stateless cloud auth</text><text x="774" y="439">Roles + campus scope</text><text x="774" y="474">Incident / proof / twin</text><text x="1204" y="439">Durable response state</text><text x="1204" y="474">Backup + PITR</text></g>
+    <g fill="none" stroke="#2b58bf" stroke-width="2.5" marker-end="url(#arrow)"><path d="M320 419H380"/><path d="M670 419H740"/><path d="M1070 419H1170"/><path d="M190 325V195H380"/><path d="M910 240V315"/></g>
+    <text x="674" y="395" font-size="14" fill="#4d4d4d">IAM</text>
+    <rect x="750" y="552" width="320" height="106" rx="12" fill="#2b58bf"/>
+    <text x="774" y="590" font-size="26" font-weight="600" fill="white">Cloud Run watchdog</text>
+    <text x="774" y="626" font-size="20" fill="#e4ecff">Always-on CPU · min 1</text>
+    <path d="M1070 605H1340V525" fill="none" stroke="#2b58bf" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <rect x="60" y="552" width="610" height="106" rx="12" fill="#f6f6f6" stroke="#d6d6d6" stroke-dasharray="6 6"/>
+    <text x="84" y="589" font-size="25" font-weight="600">Optional workflows · disabled in staging</text>
+    <text x="84" y="626" font-size="21" fill="#4d4d4d">Vertex AI Gemini drafts / private GCS evidence broker</text>
+    <path d="M60 724H1540" stroke="#e4e3e3"/>
+    <g fill="#f6f6f6"><rect x="60" y="755" width="460" height="86" rx="9"/><rect x="550" y="755" width="490" height="86" rx="9"/><rect x="1070" y="755" width="470" height="86" rx="9"/><rect x="60" y="863" width="460" height="86" rx="9"/><rect x="550" y="863" width="490" height="86" rx="9"/><rect x="1070" y="863" width="470" height="86" rx="9"/></g>
+    <g font-size="24" font-weight="600" fill="#0a0a0a"><text x="82" y="790">Cloud Build → Artifact Registry</text><text x="572" y="790">Secret Manager + IAM</text><text x="1092" y="790">Cloud Logging + Monitoring</text><text x="82" y="898">Private Cloud Run jobs</text><text x="572" y="898">Terraform → private GCS state</text><text x="1092" y="898">Billing budget → team email</text></g>
+    <g font-size="19" fill="#4d4d4d"><text x="82" y="821">Dedicated build identity · digest-pinned images</text><text x="572" y="821">Separate runtime identities · pinned secret versions</text><text x="1092" y="821">API errors / watchdog errors → team email</text><text x="82" y="929">Schema migration / synthetic seed / UID binding</text><text x="572" y="929">Versioned backend · reviewed staged rollout</text><text x="1092" y="929">$5 alert budget · ongoing costs remain</text></g>
+    <text x="60" y="980" font-family="monospace" font-size="16" fill="#777">Human dispatch and care milestones remain authoritative. Optional AI never controls dispatch or clinical decisions.</text>
+  </g>
+</svg>

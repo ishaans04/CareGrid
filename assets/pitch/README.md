@@ -1,5 +1,7 @@
 # Pitch visuals · CareGrid / Team Duality
 
+**Finalized UI:** use the [20 November launch gallery](launch/README.md) and [three slide-panel exports](launch/deck/README.md). They match the current blue/butter website and connected console. The older designs below remain historical references.
+
 **New, 20 November:** [connected MVP screenshots and gallery](connected/README.md) show the web workspace using real local Serverpod/PostgreSQL state. Use these for implementation evidence. The original captures below remain the separate presentation experience.
 
 All assets prepared 12 November 2026. [Open the visual gallery](index.html) locally, or use the links below. PNGs can be inserted directly into the organizer's deck; the architecture SVG stays editable and resolution-independent.

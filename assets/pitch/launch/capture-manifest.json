@@ -1,0 +1,73 @@
+{
+  "capturedAt": "2026-11-20T17:32:52.831Z",
+  "sourceRelease": "aa9e40d",
+  "origin": "http://127.0.0.1:4173",
+  "mode": "real local Serverpod/PostgreSQL; PIN identities; no provider mocks",
+  "brand": "finalized blue/butter editorial UI",
+  "captures": [
+    {
+      "file": "01-landing.png",
+      "description": "Finalized product landing page; illustrative campus model.",
+      "viewport": {
+        "width": 1600,
+        "height": 1100
+      }
+    },
+    {
+      "file": "02-command-centre.png",
+      "description": "Meridian command queue backed by local Serverpod/PostgreSQL synthetic seed.",
+      "viewport": {
+        "width": 1600,
+        "height": 1100
+      }
+    },
+    {
+      "file": "03-response-workspace.png",
+      "description": "Owned and dispatched response with per-unit proof; local connected synthetic data.",
+      "viewport": {
+        "width": 1600,
+        "height": 1100
+      }
+    },
+    {
+      "file": "04-readiness-lab.png",
+      "description": "Computed readiness scenarios using the Meridian routing twin; local connected synthetic data.",
+      "viewport": {
+        "width": 1600,
+        "height": 1100
+      }
+    },
+    {
+      "file": "05-audit-trail.png",
+      "description": "Server-written local audit records; synthetic operator personas.",
+      "viewport": {
+        "width": 1600,
+        "height": 1100
+      }
+    },
+    {
+      "file": "06-mobile-member.png",
+      "description": "390px member SOS interface; synthetic local account.",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "07-mobile-responder.png",
+      "description": "390px responder view; synthetic local ambulance account.",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "08-care-handoff.png",
+      "description": "Role-minimized care workspace; local synthetic handoffs.",
+      "viewport": {
+        "width": 1600,
+        "height": 1100
+      }
+    }
+  ]
+}
