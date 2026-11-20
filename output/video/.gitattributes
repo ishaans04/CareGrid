@@ -1,0 +1,9 @@
+*.mp4 binary
+*.zip binary
+*.png binary
+*.jpg binary
+*.srt text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.sha256 text eol=lf
+.gitattributes text eol=lf

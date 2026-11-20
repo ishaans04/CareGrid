@@ -1,0 +1,20 @@
+{
+  "file": "CareGrid-Team-Duality.mp4",
+  "duration": 170,
+  "video": {
+    "codec": "h264",
+    "width": 1920,
+    "height": 1080,
+    "fps": "30/1",
+    "frames": "5100",
+    "pixelFormat": "yuv420p"
+  },
+  "audio": {
+    "codec": "aac",
+    "sampleRate": "48000",
+    "channels": 2
+  },
+  "bytes": 12995132,
+  "fullDecode": "passed",
+  "syntheticData": true
+}
