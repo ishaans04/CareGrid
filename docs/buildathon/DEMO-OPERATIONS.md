@@ -13,6 +13,8 @@ Both teammates already had enabled Firebase users with the Google provider. The 
 
 Open `/console`, reload, and sign in with the corresponding Google account. The UI displays the **synthetic membership persona**, rather than the Google account's personal name. An administrator sees readiness, policies and audit; command sees incident ownership and dispatch. These different screens are expected.
 
+**Existing campus-label issue:** `/api/config` still reports the gateway's shared `Meridian Demo Campus` label. The finalized frontend uses that static label in its header, including for NIET memberships. The label does not choose the SQL campus or grant access; membership and campus-scoped endpoints do. Verify the NIET twin after sign-in rather than using the header as authorization evidence. Dynamic campus labelling needs an application follow-up; this task preserved the user's explicit instruction to leave the finalized application unchanged.
+
 One Google identity remains linked to one membership. A different identity cannot overwrite an already bound membership. No PIN login or role picker was enabled on the public deployment. Both teammates explicitly chose to retain these two roles for the demo.
 
 The previously quoted `tmp/google-setup/bind-user.sh` was an ignored machine-local helper and was unavailable here. Its durable replacement is [scripts/bind-google-user.ps1](../../scripts/bind-google-user.ps1). From a checkout with PowerShell and an authenticated Google Cloud SDK:
@@ -44,6 +46,8 @@ web_image    = "asia-south1-docker.pkg.dev/caregrid-staging/caregrid-demo-images
 ```
 
 After refreshing live state, the corrected configuration produced **no changes**. Do not apply an old saved plan or copy the new-environment example over this existing staging configuration. Keep stable secret inputs, the current GCS backend and the notification channel IDs. Review the entire plan before any future apply; moving the rollout stage backward removes workloads.
+
+The final refreshed plan **after** attaching the team alert channels also reported **no changes**.
 
 ## Billing and alerts
 
