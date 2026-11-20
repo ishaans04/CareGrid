@@ -14,12 +14,14 @@ Use the command, responder and readiness images as the strongest product trio. C
 | [06 · After action](06-after-action.png) | Backend-computed metrics from fictional history and local test activity; these are not measured customer results |
 | [07 · Audit trail](07-audit-trail.png) | Actual access/action records for the demo accounts |
 | [08 · Disconnected responder](08-mobile-disconnected.png) | Visible network failure with retained last-known context and blocked actions; no synthetic success fallback |
-
 | [09 · Google entry preview](09-google-entry-preview.png) | Bundled SDK and deployed-mode entry layout; mocked public configuration, no OAuth or live Google account |
+| [10 · Private attachment preview](10-private-attachments-preview.png) | Command-only image upload/view/removal layout with a synthetic floor plan; storage calls are mocked, while sign-in, case actions and role denial use the real local backend |
 
 Caption image 09: **Google sign-in configuration preview · OAuth verification pending.**
 
-Reproduce with the full local MVP running against a separate initially empty synthetic database (see [test setup](../../../caregrid_web/README.md)):
+Caption image 10: **Private attachment UI preview · synthetic image · mocked storage responses · live GCS verification pending.**
+
+Reproduce with the full local MVP running against a separate initially empty synthetic database with its own parent directory (see [test setup](../../../caregrid_web/README.md)):
 
 ```powershell
 cd caregrid_web
