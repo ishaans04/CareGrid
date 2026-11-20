@@ -1,6 +1,6 @@
 # CareGrid Google deployment foundation
 
-20 November 2026. **Prepared, not applied.** No project/billing is available. Schema validation and mocked plans do not establish that a Google deployment works. This module is for the synthetic staging MVP; the broader [solution architecture](../../docs/buildathon/SOLUTION-ARCHITECTURE.md) remains the pilot/expansion design.
+20 November 2026. **Application module prepared, not applied.** The billed `caregrid-staging` project, Firebase setup, budget and private state bucket now exist. A real GCS-backed foundation plan passed; no application workloads or SQL instance have been created. See the [provisioning record](../../docs/buildathon/GOOGLE-PROVISIONING.md) for exact identifiers, local tooling and remaining deployment work. Planning and mocked checks do not establish a working deployment. This module is for the synthetic staging MVP; the broader [solution architecture](../../docs/buildathon/SOLUTION-ARCHITECTURE.md) remains the pilot/expansion design.
 
 ## What is concrete
 
@@ -31,9 +31,9 @@ terraform test
 
 The ten mocked plan runs check foundation/jobs/services boundaries, lack of direct SQL allowlists, absence of web SQL/secret access, private evidence, continuously allocated watchdog CPU, explicit public entry, immutable image inputs, migration attestation, disabled-by-default inference/evidence and scoped model/bucket permissions. They use no Google credentials and create nothing. GitHub Actions repeats these checks on Linux. Cloud Build YAML is prepared but has not run on Google.
 
-## First rollout once a project exists
+## First application rollout
 
-Use Google Cloud Shell or a locally installed authenticated Google Cloud SDK and Terraform. Follow the actual project/region throughout; do not run these placeholder commands unchanged. Review the billable plan before apply. Cloud SQL and the continuously running watchdog incur ongoing charges. Create a project budget and verified alerts in Cloud Billing before provisioning; a budget notification is not a spending cap. Confirm the billing account currency, build credits, quotas and regional availability using Google's current calculator rather than presenting the staging settings as a price quote.
+Use Google Cloud Shell or a locally installed authenticated Google Cloud SDK and Terraform. For the existing staging environment, reuse the setup in the [provisioning record](../../docs/buildathon/GOOGLE-PROVISIONING.md); steps 1–3 below explain the required setup and are not instructions to duplicate it. Follow the actual project/region throughout; do not run these placeholder commands unchanged. Review the billable plan before apply. Cloud SQL and the continuously running watchdog incur ongoing charges. Recheck the existing budget, credit expiry and alert recipients before provisioning; a budget notification is not a spending cap. Confirm the billing account currency, quotas and regional availability using Google's current calculator rather than presenting the staging settings as a price quote.
 
 1. Select the existing billed project, add Firebase, register its web app and enable the Google provider as described in [Google identity](../../docs/buildathon/GOOGLE-IDENTITY.md). Confirm organization policies permit service accounts, Cloud Run and the chosen network/public-entry policy.
 2. Create a separate GCS state bucket with uniform access, public access prevention and versioning. Grant only the deployment operator/identity the required state object access. Copy `backend.hcl.example` to ignored `backend.hcl` with that bucket and an environment-specific prefix. State contains infrastructure identifiers/public configuration and still requires protection, even though secret values are write-only.

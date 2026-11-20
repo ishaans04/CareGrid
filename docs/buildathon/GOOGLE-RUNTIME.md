@@ -1,6 +1,6 @@
 # Google runtime implementation
 
-Updated 20 November 2026. No Google Cloud project exists yet. Nothing in this document implies a deployed service, live Firebase sign-in or a field-tested emergency system.
+Updated 20 November 2026. The billed `caregrid-staging` project, Firebase configuration, budget and private Terraform state bucket now exist; the application module remains unapplied. See the [provisioning record](GOOGLE-PROVISIONING.md). Nothing in this document implies a deployed service, live Firebase sign-in or a field-tested emergency system.
 
 ## Runtime foundation
 
@@ -18,7 +18,7 @@ The runtime-foundation commit passed its Linux image build, custom ingress port,
 
 The identity increment adds [Firebase identity and SQL membership](GOOGLE-IDENTITY.md), a stateless Google-authenticated web gateway, private bootstrap commands and an additive database migration. Both Linux image checks, maintenance/bootstrap checks, backend analysis/tests, Flutter analysis/format/tests and connected browser checks passed before [PR #2](https://github.com/ishaans04/CareGrid/pull/2) merged to main. Google IAM, OAuth, SQL connectivity and provider-side shutdown behavior still require a real project.
 
-The [Google infrastructure module and rollout runbook](../../infra/google/README.md) now prepare Cloud Run services/jobs, Cloud SQL, Artifact Registry, scoped identities/secrets, private build/evidence buckets, monitoring and a build-only Cloud Build pipeline. Terraform provider validation and ten mocked rollout plans pass without Google credentials. No real cloud plan/apply or Cloud Build run has occurred.
+The [Google infrastructure module and rollout runbook](../../infra/google/README.md) prepare Cloud Run services/jobs, Cloud SQL, Artifact Registry, scoped identities/secrets, private build/evidence buckets, monitoring and a build-only Cloud Build pipeline. Terraform provider validation and ten mocked rollout plans pass without Google credentials. A real authenticated GCS-backed foundation plan subsequently passed with 46 additions and no updates/deletions. No application apply or Cloud Build run has occurred; the [provisioning record](GOOGLE-PROVISIONING.md) distinguishes live setup from planned resources.
 
 The connected MVP was merged through [PR #1](https://github.com/ishaans04/CareGrid/pull/1). All analysis, formatting, backend and connected browser checks passed on main after that merge.
 

@@ -1,6 +1,6 @@
 # Google identity and membership
 
-Updated 20 November 2026. This code is implemented and tested with generated RSA fixtures and local PostgreSQL. No Firebase project, real OAuth exchange or deployed Google service has been tested yet.
+Updated 20 November 2026. This code is implemented and tested with generated RSA fixtures and local PostgreSQL. The Firebase project/web app now exist; the enabled Google provider and authorized domains were verified through live APIs. Real application OAuth exchange, UID membership binding and deployed service behavior remain untested. See the [provisioning record](GOOGLE-PROVISIONING.md) before repeating account setup.
 
 ## Request path
 
