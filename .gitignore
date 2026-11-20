@@ -24,3 +24,4 @@ node_modules/
 *.log
 test-results/
 playwright-report/
+caregrid_web/assets/generated/

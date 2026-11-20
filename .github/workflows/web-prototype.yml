@@ -44,6 +44,9 @@ jobs:
       - name: Install browser test dependencies
         working-directory: caregrid_web
         run: npm ci
+      - name: Build Firebase browser identity module
+        working-directory: caregrid_web
+        run: npm run build
       - name: Prepare server-only Dart workspace
         run: node scripts/dev.mjs --prepare-only
       - name: Analyze backend

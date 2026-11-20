@@ -59,7 +59,9 @@ class RuntimePolicy {
   }) {
     final policy = RuntimePolicy(config.runMode, environment: environment);
     policy.validate();
-    if (!policy.isCloudRun || config.role == ServerpodRole.maintenance) {
+    if (!policy.isCloudRun ||
+        policy.environment.containsKey('CLOUD_RUN_JOB') ||
+        config.role == ServerpodRole.maintenance) {
       return config;
     }
     final port = int.tryParse(policy.environment['PORT'] ?? '');

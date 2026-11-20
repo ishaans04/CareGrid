@@ -24,7 +24,10 @@ abstract class AppUser
     required this.title,
     this.responderCode,
     this.pin,
-  });
+    this.firebaseUid,
+    bool? disabled,
+    this.tokensValidAfter,
+  }) : disabled = disabled ?? false;
 
   factory AppUser({
     int? id,
@@ -34,6 +37,9 @@ abstract class AppUser
     required String title,
     String? responderCode,
     String? pin,
+    String? firebaseUid,
+    bool? disabled,
+    DateTime? tokensValidAfter,
   }) = _AppUserImpl;
 
   factory AppUser.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -45,6 +51,15 @@ abstract class AppUser
       title: jsonSerialization['title'] as String,
       responderCode: jsonSerialization['responderCode'] as String?,
       pin: jsonSerialization['pin'] as String?,
+      firebaseUid: jsonSerialization['firebaseUid'] as String?,
+      disabled: jsonSerialization['disabled'] == null
+          ? null
+          : _is.BoolJsonExtension.fromJson(jsonSerialization['disabled']),
+      tokensValidAfter: jsonSerialization['tokensValidAfter'] == null
+          ? null
+          : _is.DateTimeJsonExtension.fromJson(
+              jsonSerialization['tokensValidAfter'],
+            ),
     );
   }
 
@@ -70,6 +85,15 @@ abstract class AppUser
   /// Demo PIN. Never sent to clients.
   String? pin;
 
+  /// Bound by a trusted operator, never inferred from email or client claims.
+  String? firebaseUid;
+
+  /// Stops access on the next API call, including an unexpired Firebase token.
+  bool disabled;
+
+  /// Revokes earlier Firebase sessions; the user must reauthenticate afterwards.
+  DateTime? tokensValidAfter;
+
   @override
   _is.Table<int?> get table => t;
 
@@ -84,6 +108,9 @@ abstract class AppUser
     String? title,
     String? responderCode,
     String? pin,
+    String? firebaseUid,
+    bool? disabled,
+    DateTime? tokensValidAfter,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -96,6 +123,10 @@ abstract class AppUser
       'title': title,
       if (responderCode != null) 'responderCode': responderCode,
       if (pin != null) 'pin': pin,
+      if (firebaseUid != null) 'firebaseUid': firebaseUid,
+      'disabled': disabled,
+      if (tokensValidAfter != null)
+        'tokensValidAfter': tokensValidAfter?.toJson(),
     };
   }
 
@@ -109,6 +140,7 @@ abstract class AppUser
       'role': role.toJson(),
       'title': title,
       if (responderCode != null) 'responderCode': responderCode,
+      'disabled': disabled,
     };
   }
 
@@ -151,6 +183,9 @@ class _AppUserImpl extends AppUser {
     required String title,
     String? responderCode,
     String? pin,
+    String? firebaseUid,
+    bool? disabled,
+    DateTime? tokensValidAfter,
   }) : super._(
          id: id,
          handle: handle,
@@ -159,6 +194,9 @@ class _AppUserImpl extends AppUser {
          title: title,
          responderCode: responderCode,
          pin: pin,
+         firebaseUid: firebaseUid,
+         disabled: disabled,
+         tokensValidAfter: tokensValidAfter,
        );
 
   /// Returns a shallow copy of this [AppUser]
@@ -173,6 +211,9 @@ class _AppUserImpl extends AppUser {
     String? title,
     Object? responderCode = _Undefined,
     Object? pin = _Undefined,
+    Object? firebaseUid = _Undefined,
+    bool? disabled,
+    Object? tokensValidAfter = _Undefined,
   }) {
     return AppUser(
       id: id is int? ? id : this.id,
@@ -184,6 +225,11 @@ class _AppUserImpl extends AppUser {
           ? responderCode
           : this.responderCode,
       pin: pin is String? ? pin : this.pin,
+      firebaseUid: firebaseUid is String? ? firebaseUid : this.firebaseUid,
+      disabled: disabled ?? this.disabled,
+      tokensValidAfter: tokensValidAfter is DateTime?
+          ? tokensValidAfter
+          : this.tokensValidAfter,
     );
   }
 }
@@ -223,6 +269,22 @@ class AppUserUpdateTable extends _is.UpdateTable<AppUserTable> {
     table.pin,
     value,
   );
+
+  _is.ColumnValue<String, String> firebaseUid(String? value) => _is.ColumnValue(
+    table.firebaseUid,
+    value,
+  );
+
+  _is.ColumnValue<bool, bool> disabled(bool value) => _is.ColumnValue(
+    table.disabled,
+    value,
+  );
+
+  _is.ColumnValue<DateTime, DateTime> tokensValidAfter(DateTime? value) =>
+      _is.ColumnValue(
+        table.tokensValidAfter,
+        value,
+      );
 }
 
 class AppUserTable extends _is.Table<int?> {
@@ -253,6 +315,19 @@ class AppUserTable extends _is.Table<int?> {
       'pin',
       this,
     );
+    firebaseUid = _is.ColumnString(
+      'firebaseUid',
+      this,
+    );
+    disabled = _is.ColumnBool(
+      'disabled',
+      this,
+      hasDefault: true,
+    );
+    tokensValidAfter = _is.ColumnDateTime(
+      'tokensValidAfter',
+      this,
+    );
   }
 
   late final AppUserUpdateTable updateTable;
@@ -272,6 +347,15 @@ class AppUserTable extends _is.Table<int?> {
   /// Demo PIN. Never sent to clients.
   late final _is.ColumnString pin;
 
+  /// Bound by a trusted operator, never inferred from email or client claims.
+  late final _is.ColumnString firebaseUid;
+
+  /// Stops access on the next API call, including an unexpired Firebase token.
+  late final _is.ColumnBool disabled;
+
+  /// Revokes earlier Firebase sessions; the user must reauthenticate afterwards.
+  late final _is.ColumnDateTime tokensValidAfter;
+
   @override
   List<_is.Column> get columns => [
     id,
@@ -281,6 +365,9 @@ class AppUserTable extends _is.Table<int?> {
     title,
     responderCode,
     pin,
+    firebaseUid,
+    disabled,
+    tokensValidAfter,
   ];
 }
 

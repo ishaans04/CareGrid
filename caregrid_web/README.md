@@ -16,13 +16,14 @@ Open <http://127.0.0.1:4173>. The sign-in screen lists seeded accounts and inten
 
 To demonstrate arrival provenance, send an SOS from a member, approve its dispatch from command, then sign in as the assigned responder. Elapsed time cannot confirm arrival for this case. The responder must acknowledge, depart, confirm arrival and record care before command can close it. The per-unit proof panel and timeline update from the database. Rehearsal scenarios use explicitly labelled simulated travel instead.
 
-This is loopback development authentication, not production identity. No camera, live GPS, emergency service, Gemini, Maps, Firebase or Google Cloud deployment is connected. Gateway sessions are held in memory and end on restart. The database is persistent locally; the one-second watchdog is not a durable cloud worker. [Cloud acceptance gates](../docs/buildathon/IMPLEMENTATION-PLAN.md) remain open.
+This is loopback development authentication, not production identity. No camera, live GPS, emergency service, Gemini, Maps or Google Cloud deployment is connected. Local gateway sessions are held in memory and end on restart. Cloud mode instead uses bundled Firebase Google sign-in, stateless bearer forwarding and Cloud Run service identity; see [identity setup and limits](../docs/buildathon/GOOGLE-IDENTITY.md). Its real OAuth flow remains untested without a project. SQL deadlines and a coordinated separate watchdog runtime are implemented; transactional effects and pilot reliability gates remain open. [Cloud acceptance gates](../docs/buildathon/IMPLEMENTATION-PLAN.md) remain open.
 
 ## Checks and connected screenshots
 
 ```powershell
 cd caregrid_web
 npm.cmd ci
+npm.cmd run build
 npm.cmd test
 # With the complete backend running and Google Chrome installed:
 npm.cmd run test:browser
@@ -31,7 +32,7 @@ $env:CAREGRID_CAPTURE = '1'
 npm.cmd run test:browser
 ```
 
-Browser tests use separate, temporary Chrome contexts, never a personal profile. They cover the shared multi-role loop, missing-care closure guard, unauthorized API calls, backend readiness/analytics, mobile overflow, draft retention and connection failure. Captures go to [assets/pitch/connected](../assets/pitch/connected/README.md). `node --test caregrid_web/tests/*.test.mjs` runs the domain/gateway tests without an npm install. For backend checks, prepare with `node scripts/dev.mjs --prepare-only`, then run `dart test` and `dart analyze` from `tmp/server-runtime/caregrid_server` using the same SDK/PUB_CACHE as the launcher.
+Browser tests use separate, temporary Chrome contexts, never a personal profile. They include a separate Google-entry configuration preview (not OAuth) and cover the shared multi-role loop, missing-care closure guard, unauthorized API calls, backend readiness/analytics, mobile overflow, draft retention and connection failure. Captures go to [assets/pitch/connected](../assets/pitch/connected/README.md). `node --test caregrid_web/tests/*.test.mjs` runs the domain/gateway tests without an npm install. For backend checks, prepare with `node scripts/dev.mjs --prepare-only`, then run `dart test` and `dart analyze` from `tmp/server-runtime/caregrid_server` using the same SDK/PUB_CACHE as the launcher.
 
 ## Original pitch presentation
 

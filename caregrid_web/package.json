@@ -8,13 +8,22 @@
     "start": "node server.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "playwright test",
-    "dev:full": "node ../scripts/dev.mjs"
+    "dev:full": "node ../scripts/dev.mjs",
+    "build": "node build.mjs"
   },
   "engines": {
     "node": ">=22"
   },
   "devDependencies": {
     "@playwright/test": "1.65.1",
+    "esbuild": "0.28.2",
+    "firebase": "12.5.0",
     "prettier": "3.10.1"
+  },
+  "dependencies": {
+    "google-auth-library": "11.3.4"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "1.14.7"
   }
 }

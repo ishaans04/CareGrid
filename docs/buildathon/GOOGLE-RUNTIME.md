@@ -14,7 +14,9 @@ The container uses Dart's supplied Linux runtime, an unprivileged numeric user a
 
 ## Verification
 
-Local Dart analysis and **37 tests passed**: the previous 29 plus four runtime-policy checks, two production boundary checks and two real-PostgreSQL watchdog ownership/failure checks. The Linux image build, custom ingress port, migration job, readiness probe, zero automatic users and deployed PIN lockout are covered by the new Google runtime CI workflow. Its result must be checked before merge.
+The runtime-foundation commit passed its Linux image build, custom ingress port, migration job, readiness probe, zero automatic users and deployed PIN lockout in GitHub Actions. The local suite then contained 37 passing tests, including real-PostgreSQL watchdog ownership/failure checks.
+
+The next increment adds [Firebase identity and SQL membership](GOOGLE-IDENTITY.md), a stateless Google-authenticated web gateway, private bootstrap commands and an additive database migration. CI now also builds the web image and exercises membership setup. Current checks are in [validation](VALIDATION.md); Google IAM, OAuth, SQL connectivity and provider-side shutdown behavior still require a real project.
 
 The connected MVP was merged through [PR #1](https://github.com/ishaans04/CareGrid-/pull/1). All analysis, formatting, backend and connected browser checks passed on main after that merge.
 

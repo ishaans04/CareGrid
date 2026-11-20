@@ -3,6 +3,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { randomBytes } from "node:crypto";
+import {
+  cloudConfigFromEnvironment,
+  googleBackendHeaders,
+} from "./cloud-auth.mjs";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const types = {
@@ -99,7 +103,19 @@ export function createCareGridServer({
   fetchImpl = fetch,
   sessionLifetimeMs = 8 * 60 * 60 * 1000,
   now = Date.now,
+  cloud = null,
+  backendHeaders = async () => ({}),
 } = {}) {
+  const cloudOrigin = cloud ? new URL(cloud.origin) : null;
+  if (
+    cloud &&
+    (cloudOrigin.protocol !== "https:" ||
+      cloudOrigin.origin !== cloud.origin ||
+      !cloud.firebase?.projectId ||
+      cloud.firebase.authDomain !==
+        `${cloud.firebase.projectId}.firebaseapp.com`)
+  )
+    throw Error("Invalid cloud console configuration.");
   const backend = new URL(backendUrl);
   if (
     !["http:", "https:"].includes(backend.protocol) ||
@@ -120,6 +136,7 @@ export function createCareGridServer({
         redirect: "error",
         signal: AbortSignal.timeout(10_000),
         headers: {
+          ...(await backendHeaders()),
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -182,6 +199,15 @@ export function createCareGridServer({
         "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
     }))
       res.setHeader(key, value);
+    if (cloud) {
+      res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+      res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+      res.setHeader("Strict-Transport-Security", "max-age=31536000");
+      res.setHeader(
+        "Content-Security-Policy",
+        `default-src 'self'; script-src 'self' https://apis.google.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://${cloud.firebase.authDomain}; frame-src https://${cloud.firebase.authDomain} https://accounts.google.com; base-uri 'none'; frame-ancestors 'none'; form-action 'self'`,
+      );
+    }
     const json = (status, value) => {
       res.writeHead(status, {
         "Content-Type": "application/json; charset=utf-8",
@@ -189,11 +215,19 @@ export function createCareGridServer({
       res.end(JSON.stringify(value));
     };
     try {
+      if (req.url === "/healthz" && ["GET", "HEAD"].includes(req.method))
+        return json(200, { status: "ok" });
       const host = req.headers.host;
       const port = server.address()?.port;
-      if (![`127.0.0.1:${port}`, `localhost:${port}`].includes(host))
-        throw new ApiError(403, "Use the local CareGrid address.");
-      const url = new URL(req.url, `http://${host}`);
+      if (
+        !(cloud
+          ? host === cloudOrigin.host
+          : [`127.0.0.1:${port}`, `localhost:${port}`].includes(host))
+      )
+        throw new ApiError(403, "Use the configured CareGrid address.");
+      const url = new URL(req.url, cloud ? cloud.origin : `http://${host}`);
+      if (url.origin !== (cloud ? cloud.origin : `http://${host}`))
+        throw new ApiError(403, "Use the configured CareGrid address.");
       if (url.pathname.startsWith("/api/")) {
         if (
           req.headers["sec-fetch-site"] === "cross-site" ||
@@ -219,6 +253,21 @@ export function createCareGridServer({
         )?.[1];
         const session = sessions.get(sessionId);
         const authenticated = () => {
+          if (cloud) {
+            const token =
+              /^Bearer ([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/.exec(
+                req.headers.authorization || "",
+              )?.[1];
+            if (!token || token.length > 16384)
+              throw new ApiError(
+                401,
+                "Sign in with your campus Google account.",
+                "unauthorized",
+              );
+            // The API verifies Google's signature, project, expiry and SQL
+            // membership on every request. The gateway grants no role.
+            return { token };
+          }
           if (!session || session.expires <= now()) {
             sessions.delete(sessionId);
             throw new ApiError(
@@ -235,13 +284,19 @@ export function createCareGridServer({
           return json(200, {
             data: {
               mode: "connected",
-              authentication: "local-demo-pin",
-              campus: "Meridian Demo Campus",
+              authentication: cloud ? "firebase" : "local-demo-pin",
+              campus: cloud?.campus || "Meridian Demo Campus",
+              demoEnabled: !cloud,
+              ...(cloud ? { firebase: cloud.firebase } : {}),
             },
           });
-        if (url.pathname === "/api/accounts" && req.method === "GET")
+        if (!cloud && url.pathname === "/api/accounts" && req.method === "GET")
           return json(200, { data: await rpc("account", "demoAccounts") });
-        if (url.pathname === "/api/session" && req.method === "POST") {
+        if (
+          !cloud &&
+          url.pathname === "/api/session" &&
+          req.method === "POST"
+        ) {
           const address = req.socket.remoteAddress;
           let attempt = attempts.get(address);
           if (!attempt || attempt.reset <= now()) {
@@ -296,6 +351,7 @@ export function createCareGridServer({
             ),
           });
         if (url.pathname === "/api/session" && req.method === "DELETE") {
+          if (cloud) return json(200, { data: null });
           sessions.delete(sessionId);
           res.setHeader("Set-Cookie", cookie("", 0));
           if (session)
@@ -312,6 +368,11 @@ export function createCareGridServer({
           req.method === "POST" &&
           methods.has(`${match[1]}/${match[2]}`)
         ) {
+          if (cloud && match[1] === "simulation")
+            throw new ApiError(
+              404,
+              "Demo simulations are disabled in deployment.",
+            );
           const current = authenticated();
           const args = await readJson(req);
           if ("method" in args) throw new ApiError(400, "Reserved argument.");
@@ -365,14 +426,24 @@ if (
   path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
   const port = Number(process.env.PORT || 4173);
-  const server = createCareGridServer();
+  const cloud = cloudConfigFromEnvironment();
+  const backendUrl = process.env.CAREGRID_API_URL || "http://127.0.0.1:8080/";
+  const server = createCareGridServer({
+    backendUrl,
+    cloud,
+    ...(cloud
+      ? { backendHeaders: await googleBackendHeaders(backendUrl) }
+      : {}),
+  });
   server.on("error", (error) => {
     console.error(error.message);
     process.exitCode = 1;
   });
-  server.listen(port, "127.0.0.1", () =>
+  server.listen(port, cloud ? "0.0.0.0" : "127.0.0.1", () =>
     console.log(
-      `CareGrid connected console: http://127.0.0.1:${port}\nPitch presentation: http://127.0.0.1:${port}/index.html`,
+      cloud
+        ? `CareGrid console listening on port ${port}.`
+        : `CareGrid connected console: http://127.0.0.1:${port}\nPitch presentation: http://127.0.0.1:${port}/index.html`,
     ),
   );
   for (const signal of ["SIGINT", "SIGTERM"])

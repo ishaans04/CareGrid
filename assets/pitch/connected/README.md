@@ -1,6 +1,6 @@
 # Connected CareGrid MVP · product captures
 
-Exported 20 November 2026 by browser tests operating the real local Serverpod/PostgreSQL backend. [Open the gallery](index.html). Founders: Hriday Vig and Ishaan Sharma · Team Duality.
+Exported 20 November 2026. Images 01–08 come from browser tests operating the real local Serverpod/PostgreSQL backend. Image 09 is a separate Google-entry configuration preview with mocked public Firebase configuration; it does not demonstrate sign-in. [Open the gallery](index.html). Founders: Hriday Vig and Ishaan Sharma · Team Duality.
 
 Use the command, responder and readiness images as the strongest product trio. Caption every screenshot: **Connected local MVP · synthetic campus data · Google deployment planned.** The screenshots demonstrate software behavior; they do not demonstrate a field pilot, live Gemini, camera inference, GPS, real notifications or clinical outcomes.
 
@@ -15,11 +15,16 @@ Use the command, responder and readiness images as the strongest product trio. C
 | [07 · Audit trail](07-audit-trail.png) | Actual access/action records for the demo accounts |
 | [08 · Disconnected responder](08-mobile-disconnected.png) | Visible network failure with retained last-known context and blocked actions; no synthetic success fallback |
 
+| [09 · Google entry preview](09-google-entry-preview.png) | Bundled SDK and deployed-mode entry layout; mocked public configuration, no OAuth or live Google account |
+
+Caption image 09: **Google sign-in configuration preview · OAuth verification pending.**
+
 Reproduce with the full local MVP running:
 
 ```powershell
 cd caregrid_web
 npm.cmd ci
+npm.cmd run build
 $env:CAREGRID_CAPTURE = '1'
 npm.cmd run test:browser
 ```

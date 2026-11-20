@@ -23,7 +23,8 @@ abstract class AppUser
     required this.role,
     required this.title,
     this.responderCode,
-  });
+    bool? disabled,
+  }) : disabled = disabled ?? false;
 
   factory AppUser({
     int? id,
@@ -32,6 +33,7 @@ abstract class AppUser
     required _ifev4lwy.UserRole role,
     required String title,
     String? responderCode,
+    bool? disabled,
   }) = _AppUserImpl;
 
   factory AppUser.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -42,6 +44,9 @@ abstract class AppUser
       role: _ifev4lwy.UserRole.fromJson((jsonSerialization['role'] as String)),
       title: jsonSerialization['title'] as String,
       responderCode: jsonSerialization['responderCode'] as String?,
+      disabled: jsonSerialization['disabled'] == null
+          ? null
+          : _isc.BoolJsonExtension.fromJson(jsonSerialization['disabled']),
     );
   }
 
@@ -62,6 +67,9 @@ abstract class AppUser
   /// Responder unit this user operates (responder role only).
   String? responderCode;
 
+  /// Stops access on the next API call, including an unexpired Firebase token.
+  bool disabled;
+
   /// Returns a shallow copy of this [AppUser]
   /// with some or all fields replaced by the given arguments.
   @_isc.useResult
@@ -72,6 +80,7 @@ abstract class AppUser
     _ifev4lwy.UserRole? role,
     String? title,
     String? responderCode,
+    bool? disabled,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -83,6 +92,7 @@ abstract class AppUser
       'role': role.toJson(),
       'title': title,
       if (responderCode != null) 'responderCode': responderCode,
+      'disabled': disabled,
     };
   }
 
@@ -96,6 +106,7 @@ abstract class AppUser
       'role': role.toJson(),
       'title': title,
       if (responderCode != null) 'responderCode': responderCode,
+      'disabled': disabled,
     };
   }
 
@@ -115,6 +126,7 @@ class _AppUserImpl extends AppUser {
     required _ifev4lwy.UserRole role,
     required String title,
     String? responderCode,
+    bool? disabled,
   }) : super._(
          id: id,
          handle: handle,
@@ -122,6 +134,7 @@ class _AppUserImpl extends AppUser {
          role: role,
          title: title,
          responderCode: responderCode,
+         disabled: disabled,
        );
 
   /// Returns a shallow copy of this [AppUser]
@@ -135,6 +148,7 @@ class _AppUserImpl extends AppUser {
     _ifev4lwy.UserRole? role,
     String? title,
     Object? responderCode = _Undefined,
+    bool? disabled,
   }) {
     return AppUser(
       id: id is int? ? id : this.id,
@@ -145,6 +159,7 @@ class _AppUserImpl extends AppUser {
       responderCode: responderCode is String?
           ? responderCode
           : this.responderCode,
+      disabled: disabled ?? this.disabled,
     );
   }
 }
