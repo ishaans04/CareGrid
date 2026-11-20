@@ -7,7 +7,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-export const runtime = path.join(root, "tmp", "server-runtime");
+// Generated workspaces, the pub cache and embedded PostgreSQL write thousands
+// of small files. A checkout inside OneDrive/Dropbox makes those writes slow
+// enough for Serverpod start-up to time out, so the location is configurable.
+export const workDir = process.env.CAREGRID_WORK_DIR
+  ? path.resolve(process.env.CAREGRID_WORK_DIR)
+  : path.join(root, "tmp");
+export const runtime = path.join(workDir, "server-runtime");
+export const pubCache = process.env.PUB_CACHE || path.join(workDir, "pub-cache");
 export async function prepareRuntime() {
   await mkdir(runtime, { recursive: true });
   const destination = path.join(runtime, "caregrid_server");
@@ -77,7 +84,7 @@ async function main() {
   const destination = await prepareRuntime();
   const environment = {
     ...process.env,
-    PUB_CACHE: path.join(root, "tmp", "pub-cache"),
+    PUB_CACHE: pubCache,
   };
   const children = new Set();
   let stopping = false;

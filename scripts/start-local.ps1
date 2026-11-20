@@ -1,7 +1,9 @@
 $ErrorActionPreference = 'Stop'
 $workspacePath = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $dartVersion = '3.12.2'
-$toolchainPath = Join-Path $workspacePath 'tmp\toolchains'
+# CAREGRID_WORK_DIR moves generated files out of synced folders such as OneDrive.
+$workPath = if ($env:CAREGRID_WORK_DIR) { $env:CAREGRID_WORK_DIR } else { Join-Path $workspacePath 'tmp' }
+$toolchainPath = Join-Path $workPath 'toolchains'
 $dartPath = Join-Path $toolchainPath 'dart-sdk\bin\dart.exe'
 if (-not (Get-Command node -ErrorAction SilentlyContinue)) { throw 'Install Node.js 22 or newer before starting CareGrid.' }
 if (-not (Test-Path -LiteralPath $dartPath)) {

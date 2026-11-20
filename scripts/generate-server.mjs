@@ -3,13 +3,13 @@ import { cp, readFile, writeFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { prepareRuntime, runtime } from "./dev.mjs";
+import { prepareRuntime, pubCache, runtime } from "./dev.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dart = process.env.DART_EXECUTABLE || "dart";
 const env = {
   ...process.env,
-  PUB_CACHE: path.join(root, "tmp", "pub-cache"),
+  PUB_CACHE: pubCache,
   CI: "true",
 };
 // Serverpod's supported CI path skips its global Flutter prerequisite. This

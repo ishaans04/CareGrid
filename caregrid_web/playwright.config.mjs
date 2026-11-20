@@ -1,10 +1,13 @@
+import path from "node:path";
 import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./e2e",
   workers: 1,
   retries: 0,
   timeout: 60_000,
-  outputDir: "../tmp/browser-results",
+  outputDir: process.env.CAREGRID_WORK_DIR
+    ? path.join(path.resolve(process.env.CAREGRID_WORK_DIR), "browser-results")
+    : "../tmp/browser-results",
   reporter: "list",
   use: {
     baseURL: "http://127.0.0.1:4173",
