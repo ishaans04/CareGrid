@@ -72,6 +72,13 @@ run "services_keep_iam_and_background_cpu" {
     condition     = local.web_origin == "https://caregrid-demo-web-123456789012.asia-south1.run.app"
     error_message = "The configured origin must match Google's deterministic URL contract."
   }
+  assert {
+    condition = alltrue([
+      for service in concat(values(google_cloud_run_v2_service.server), google_cloud_run_v2_service.web) :
+      service.template[0].execution_environment != "EXECUTION_ENVIRONMENT_GEN2" || tonumber(trimsuffix(service.template[0].containers[0].resources[0].limits.memory, "Mi")) >= 512
+    ])
+    error_message = "Cloud Run gen2 services need at least 512Mi; the mocked provider does not enforce Google's limit."
+  }
 }
 
 run "mutable_server_tag_is_rejected" {

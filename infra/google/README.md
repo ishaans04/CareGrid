@@ -29,7 +29,7 @@ terraform validate
 terraform test
 ```
 
-The ten mocked plan runs check foundation/jobs/services boundaries, lack of direct SQL allowlists, absence of web SQL/secret access, private evidence, continuously allocated watchdog CPU, explicit public entry, immutable image inputs, migration attestation, disabled-by-default inference/evidence and scoped model/bucket permissions. They use no Google credentials and create nothing. GitHub Actions repeats these checks on Linux. Cloud Build YAML is prepared but has not run on Google.
+The ten mocked plan runs check foundation/jobs/services boundaries, lack of direct SQL allowlists, absence of web SQL/secret access, private evidence, continuously allocated watchdog CPU, explicit public entry, immutable image inputs, migration attestation, disabled-by-default inference/evidence and scoped model/bucket permissions. They use no Google credentials and create nothing. GitHub Actions repeats these checks on Linux. The mocked provider does not enforce every Google API limit, so a gen2 memory assertion now covers the one the first live apply hit. Cloud Build has run once on Google (`a2932f8a`, 20 November 2026); see the [live record](../../docs/buildathon/GOOGLE-PROVISIONING.md).
 
 ## First application rollout
 
