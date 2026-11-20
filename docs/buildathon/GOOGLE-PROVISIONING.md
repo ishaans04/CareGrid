@@ -1,10 +1,63 @@
 # Google hosting and provisioning record
 
-**Team Duality / CareGrid Staging. Verified 20 November 2026, approximately 14:37 IST (09:07 UTC).**
+**Team Duality / CareGrid Staging. Pre-deployment inventory verified 20 November 2026, approximately 14:37 IST (09:07 UTC). Live deployment recorded in section 0 (16:40 IST).**
 
-This is the operational starting point for another coding or deployment agent. The Google account, billing link, Firebase configuration, budget and Terraform state bucket exist. **The CareGrid application has not been deployed.** A successful authenticated Terraform plan is preparation, not a running MVP.
+This is the operational starting point for another coding or deployment agent. The Google account, billing link, Firebase configuration, budget and Terraform state bucket exist. At 14:37 IST the application had not been deployed; **it is now serving — see section 0.** Where sections 1–10 call a resource absent or planned, section 0 supersedes them.
 
 This record supplements the [deployment runbook](../../infra/google/README.md), which remains the source for staged rollout commands. Recheck live resources and current `main` before making changes; this is a dated inventory.
+
+## 0. Live deployment — 20 November 2026, 16:40 IST
+
+| Item | Live value |
+| --- | --- |
+| Web (public entry) | <https://caregrid-demo-web-959096744456.asia-south1.run.app> — revision `caregrid-demo-web-00001-zhb` |
+| API (private; only the web identity may invoke) | `caregrid-demo-api` — revision `caregrid-demo-api-00001-m5n`, min 0 / max 2 |
+| Watchdog (private; min 1, CPU always allocated) | `caregrid-demo-watchdog` — revision `caregrid-demo-watchdog-00001-l2d` |
+| Release commit | `a899540` (PR #7 merge). Application code is unchanged through `9a01b7f`; later commits touch docs, infrastructure and CI only |
+| Cloud Build | `a2932f8a-a73b-49ff-9bce-98fbcc16a757`, images tagged with the release commit |
+| Server image | `asia-south1-docker.pkg.dev/caregrid-staging/caregrid-demo-images/server@sha256:9f06dfa7684e2827d7775e4e5db00c452180551993e051edd77586426bab03ca` |
+| Web image | `asia-south1-docker.pkg.dev/caregrid-staging/caregrid-demo-images/web@sha256:a189db6601426ba6566c4da016c06ab1b43534c297471b0dd0fe51ee323f1efb` |
+| Database schema | `20261120081217125-multi-campus`. The database was empty, so Serverpod applied the latest complete definition in one step |
+| Terraform inputs | `rollout_stage="services"`, `migration_verified=true`, `public_web=true`, `enable_gemini=false`, `enable_evidence=false`, `secret_revision=1` |
+
+### Execution record
+
+| IST | Action | Result |
+| --- | --- | --- |
+| 15:12 | Migration `caregrid-demo-migrate-trzrf` | Failed: database host was the socket directory only. Fixed in `61e1de8` |
+| 16:25 | Terraform jobs plan/apply | 0 add / 2 change / 0 destroy: both jobs received the full socket filename |
+| 16:26 | Migration `caregrid-demo-migrate-fdb4l` | **Succeeded** |
+| 16:28 | Seed `caregrid-demo-bootstrap-pjkzq` | Failed before touching SQL. PowerShell joined `--args=bootstrap,seed-synthetic` into one argument, so the container took the server path and stopped on missing port configuration. Run job overrides from Bash or Cloud Shell |
+| 16:30 | Seed `caregrid-demo-bootstrap-lp6kr` | **Succeeded**: Meridian and NIET twins plus 19 unbound role handles (10 Meridian, 8 NIET, `network.ops`) |
+| 16:32 | Terraform services apply | API, watchdog and the web→API invoker created. Web rejected: Cloud Run gen2 needs at least 512 MiB and the module requested 256 MiB |
+| 16:34 | Web memory set to 512 MiB, re-plan/apply | 2 add / 0 change / 0 destroy: web service and `allUsers` invoker on web only |
+
+### Live checks passed
+
+- All three services are Ready and their URLs match the deterministic `web_origin`/`api_origin` outputs.
+- Web serves the console with the cloud CSP and HSTS. `/api/config` reports Firebase sign-in with demo PIN sign-in disabled.
+- API and watchdog return 403 to unauthenticated callers outside the gateway.
+- Web→API through Cloud Run IAM works: a malformed bearer token sent through `/api/session` reached the API and was rejected by the application ("Sign in first."), not by IAM.
+- The gateway refuses the `*.a.run.app` alias host and cross-site `Origin` headers (403).
+- Watchdog: started by min-instances, startup/liveness probes passed, zero `watchdog_pass_failed` errors since start. Each one-second pass takes the SQL advisory lock.
+- Firebase: the Google provider is enabled, the live hostname is an authorized domain, and "Continue with Google" opens Google's account chooser for this project with the live origin as its return URL.
+- Offline: 10/10 Terraform mocked tests, including a new assertion that gen2 services request at least 512 MiB.
+
+An external request to `/healthz` returns 404 because Google's front end reserves that path. The container probes use it internally and pass.
+
+### Not yet verified
+
+- **Real sign-in.** Zero Firebase users exist. The first Google sign-in on the web URL creates one; then bind it with `bootstrap bind HANDLE FIREBASE_UID` (runbook step 8). One Google account takes one handle, and a bound handle cannot move to another account.
+- Role and campus denial with real tokens, sign-out, reauthentication and membership disable.
+- Watchdog restart and overdue recovery with a live incident.
+- Alert delivery: the alert policies exist but have no notification channels.
+- Spend. The always-on SQL instance and watchdog run from 16:32 IST. The deploying operator has no billing-account role, so check Billing → Reports from the owner account before the 21 November credit expiry.
+
+### Second operator
+
+`sharmaishaaan04@gmail.com` holds the predefined `roles/admin` on the project (granted 20 November) and no billing role. The deployment ran from a separate Windows checkout with a globally installed gcloud and a portable, checksum-verified Terraform 1.17.2 under ignored `tmp/toolchains/terraform`. The ignored `backend.hcl` and `terraform.tfvars` were rebuilt from this record plus live reads; the first plan matched the applied state exactly. Secrets were read per process from Secret Manager (one version each) and cleared after every run. No secret value was written to disk, logs or chat.
+
+After the demo, follow section 8 for cleanup. Do not move `rollout_stage` backward; it would plan workload deletion.
 
 ## 1. Repository and working folders
 
@@ -128,7 +181,7 @@ firebase.googleapis.com
 
 The project also has automatically enabled Firebase/Google dependencies and APIs, including FCM, Firebase Hosting, BigQuery, Pub/Sub and tracing. API availability does not establish an FCM integration, Hosting release, analytics dataset or deployed product. Do not disable unrelated dependencies to make this inventory shorter. `aiplatform.googleapis.com` was not enabled; optional inference remains off.
 
-### Application inventory — verified absent
+### Application inventory — verified absent at 14:37 IST (superseded by section 0)
 
 Live listings returned no Cloud Run services/jobs in Mumbai, no Cloud SQL instances project-wide, no Artifact Registry repositories in Mumbai, no Secret Manager secrets, and no custom `caregrid-demo-*` service accounts. GCS lists only the state bucket.
 
@@ -257,7 +310,7 @@ Six planned accounts follow `caregrid-demo-ROLE@caregrid-staging.iam.gserviceacc
 
 The module prepares these boundaries:
 
-- **Web:** Cloud Run, 1 vCPU / 256 MiB, min 0 / max 2; only web invokes API through Cloud Run IAM. Browser Firebase identity and service identity use separate headers. Public web entry defaults off.
+- **Web:** Cloud Run, 1 vCPU / 512 MiB (the gen2 minimum; 256 MiB was rejected live), min 0 / max 2; only web invokes API through Cloud Run IAM. Browser Firebase identity and service identity use separate headers. Public web entry defaults off.
 - **API:** Cloud Run, 1 vCPU / 512 MiB, min 0 / max 2; SQL and scoped secret access. API does not receive a public invocation grant.
 - **Watchdog:** separate Cloud Run identity/process, 1 vCPU / 512 MiB, min 1 / max 1, continuously allocated CPU. SQL locking coordinates overlapping revisions. Scaling to zero would break background deadline processing.
 - **Database:** PostgreSQL 16 Enterprise, zonal `db-g1-small`, 10 GiB SSD with growth limit 30 GiB, backups/PITR and deletion protection. Staging uses public-IP managed connector transport without direct-IP authorized networks. API/worker/jobs share a staging SQL superuser role; split migration ownership from runtime grants before a pilot.

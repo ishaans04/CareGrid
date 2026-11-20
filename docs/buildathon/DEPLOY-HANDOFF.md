@@ -1,10 +1,12 @@
 # Google staging deploy — handoff
 
+> **Resolved 20 November 2026, 16:40 IST.** The socket fix was applied, migration `caregrid-demo-migrate-fdb4l` succeeded, synthetic data was seeded, and API, watchdog and web are serving at <https://caregrid-demo-web-959096744456.asia-south1.run.app>. The remaining step is a real Google sign-in followed by `bootstrap bind`. The current record is section 0 of [GOOGLE-PROVISIONING.md](GOOGLE-PROVISIONING.md); the note below is kept as the historical handoff.
+
 **Written for:** the next agent/engineer resuming the `caregrid-staging` deploy. Prior operator (Codex) ran out of usage limit mid-deploy on 20 Nov 2026 ~15:00 IST.
 
 ## TL;DR state
 
-- **Code is done and pushed.** Branch `duality/google-staging-deployment`, HEAD `61e1de8` ("Use the full PostgreSQL socket filename on Cloud Run") is on `origin`. Working tree clean. No uncommitted/dangling deploy code.
+- **Code is done and pushed.** `61e1de8` ("Use the full PostgreSQL socket filename on Cloud Run") is on `main`. Working tree clean. No uncommitted/dangling deploy code.
 - **Live cloud deploy is HALF-DONE.** Foundation infra applied; application services NOT yet serving; **first DB migration never completed.**
 - **One lost artifact (minor):** Codex intended to add a "Linux socket regression check" test (~+91 lines, the hidden 4th file in its last panel). It was never committed and is not recoverable. Re-add if you want the regression guard; the actual fix it protects is already in `61e1de8`.
 
