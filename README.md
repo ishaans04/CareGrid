@@ -1,366 +1,273 @@
 <div align="center">
 
-# CareGrid
+[![CareGrid — Every second, accounted for.](assets/pitch/launch/caregrid-cover.svg)](https://caregrid-demo-web-959096744456.asia-south1.run.app/)
 
-> **Startup Buildathon India 2026 · Team Duality (Hriday Vig + Ishaan Sharma).** Start with the [submission package](docs/buildathon/README.md), [Google solution architecture](docs/buildathon/SOLUTION-ARCHITECTURE.md), and [interactive web prototype](caregrid_web/README.md). [Pitch assets](assets/pitch/README.md) include the architecture graphic and product captures. The older Flutter/Serverpod documentation below describes the inherited prototype; Serverpod Cloud is a historical deployment path. The proposed event architecture uses Google Cloud. No live Google resources or campus pilot are claimed.
+**The response operating system for campuses.**
 
-> **20 November update:** the [connected web MVP](docs/buildathon/CONNECTED-MVP.md) now runs member SOS, command dispatch, responder proof, care handoff, readiness and analytics against the actual Serverpod/PostgreSQL backend. Start on Windows with `powershell -File scripts/start-local.ps1` from this repository. [Connected product screenshots](assets/pitch/connected/README.md). Verification: 73 backend tests, 26 Node checks and six Chrome tests (three real workflows, a delayed-draft UI race, a private-storage UI fixture and a Google-entry configuration preview); backend static analysis clean. [Google runtime and identity](docs/buildathon/GOOGLE-RUNTIME.md) are implemented for deployment verification once a project exists.
+[Explore the website ↗](https://caregrid-demo-web-959096744456.asia-south1.run.app/) · [Enter the console ↗](https://caregrid-demo-web-959096744456.asia-south1.run.app/console) · [Try the presentation ↗](https://caregrid-demo-web-959096744456.asia-south1.run.app/demo)
 
-**The AI emergency response operating system for campuses**
+[![Connected MVP checks](https://github.com/ishaans04/CareGrid/actions/workflows/web-prototype.yml/badge.svg?branch=main)](https://github.com/ishaans04/CareGrid/actions/workflows/web-prototype.yml)
+[![Google runtime checks](https://github.com/ishaans04/CareGrid/actions/workflows/google-runtime.yml/badge.svg?branch=main)](https://github.com/ishaans04/CareGrid/actions/workflows/google-runtime.yml)
+[![Google infrastructure checks](https://github.com/ishaans04/CareGrid/actions/workflows/google-infrastructure.yml/badge.svg?branch=main)](https://github.com/ishaans04/CareGrid/actions/workflows/google-infrastructure.yml)
 
-*No emergency should wait in a queue, and no response should be trusted merely because an alert was sent.*
+Built by **[Hriday Vig](https://github.com/vighriday) + [Ishaan Sharma](https://github.com/ishaans04)** · **Team Duality** · [Startup Buildathon](https://startupbuildathon.com/)
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.12.2-0175C2?logo=dart&logoColor=white)](https://dart.dev)
-[![Serverpod](https://img.shields.io/badge/Serverpod-4.0.4-6E4AFF)](https://serverpod.dev)
-[![Google Cloud target](https://img.shields.io/badge/Target-Google%20Cloud-4285F4)](docs/buildathon/SOLUTION-ARCHITECTURE.md)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%2B-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org)
-[![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS%20%7C%20Web-success)](#run-it-locally)
-[![Tests](https://img.shields.io/badge/backend%20tests-73%20passing-brightgreen)](#tests)
+[Product](#the-product) · [Response loop](#a-response-that-can-be-accounted-for) · [Google architecture](#built-on-google) · [Campus twin](#a-campus-you-can-rehearse) · [Run locally](#run-the-connected-mvp) · [Pitch assets](#take-it-into-the-deck)
 
 </div>
 
-CareGrid turns normalized campus signals (camera analytics fixtures, member SOS, IoT, vehicle and access events) into **owned, verified incidents**, applies **site-specific policy**, recommends **available human responders**, and records acknowledgement, departure, arrival, care start and human closure. Every stage is timed, so the campus measures **Mean Time To Care (MTTC)**. Current non-simulation arrival is an authenticated responder check-in; scenario travel is explicitly simulated.
-
-This repository is a local MVP with seeded fictional data: a **Flutter + Serverpod** application plus the connected editorial web workspace, deterministic incident policy, Proof-of-Response watchdog, compound-failure stress engine and simulation lab. The historical Serverpod Cloud deployment path is retained as manual reference; the buildathon target is Google Cloud.
-
-> Every component, screen, endpoint, model and seeded record is documented in **[docs/COMPONENTS.md](docs/COMPONENTS.md)**.
-
 ---
 
-## Contents
+A camera flags a person down. A student raises an SOS. A smoke sensor trips. The difficult part follows: deciding who owns the incident, who is actually responding, whether they arrived, and when care began.
 
-- [The problem](#the-problem)
-- [What CareGrid does](#what-caregrid-does)
-- [Architecture](#architecture)
-- [Incident lifecycle](#incident-lifecycle)
-- [The 02:17 hero scenario](#the-0217-hero-scenario)
-- [Data model](#data-model)
-- [Roles and consoles](#roles-and-consoles)
-- [Seeded demo](#seeded-demo)
-- [Run it locally](#run-it-locally)
-- [Deploy to Serverpod Cloud](#deploy-to-serverpod-cloud)
-- [Tests](#tests)
-- [Project structure](#project-structure)
-- [Privacy, safety and governance](#privacy-safety-and-governance)
-- [Roadmap](#roadmap)
-- [Keywords](#keywords)
+CareGrid keeps that response in one shared record. Command reviews the signal and approves dispatch. Responders record their milestones. The receiving team prepares for the handoff. A watchdog escalates missed deadlines. The readiness lab lets operators rehearse failures before the next incident.
 
-## The problem
+> **Working staging MVP · fictional campus data.** The Google deployment is live. Product screenshots use the finalized UI with a real local Serverpod/PostgreSQL backend. [Acceptance boundaries](#what-is-live-and-what-is-next) distinguish the implemented, deployed and still-unverified paths.
 
-On a large campus, an emergency becomes care only at the end of a manual relay: *event, someone notices, location is understood, the right responder is found, transport is available, the responder reaches the person, clinical handoff*. Each handoff loses minutes and context. Meanwhile, traditional monitoring puts benign activity and real emergencies in the same alarm queue, and "alert sent" is counted as success even when nobody arrives.
+## The product
 
-## What CareGrid does
+[![Finalized connected command centre](assets/pitch/launch/02-command-centre.png)](assets/pitch/launch/02-command-centre.png)
 
-| Loop stage | What happens | Where in the code |
+**One case. One next decision. A visible response chain.** Command brings the queue, campus context, recommended units, proof milestones and evidence into a focused flow. Click any product image to inspect the full export.
+
+| Command and care share the record | Operations rehearses the next failure |
+| :--- | :--- |
+| [![Care handoff workspace](assets/pitch/launch/08-care-handoff.png)](assets/pitch/launch/08-care-handoff.png) | [![Readiness lab](assets/pitch/launch/04-readiness-lab.png)](assets/pitch/launch/04-readiness-lab.png) |
+| Receiving-team readiness and the incoming response, with role-limited context. | Compound failures, predicted arrival against the SLA, findings and proposed changes to the twin. |
+
+<p align="center">
+  <a href="assets/pitch/launch/deck/02-ambulance-crew.png"><img src="assets/pitch/launch/deck/02-ambulance-crew.png" width="250" alt="Mobile ambulance crew: en route, recorded departure and confirm-arrival action" /></a>
+  &nbsp;&nbsp;&nbsp;
+  <a href="assets/pitch/launch/06-mobile-member.png"><img src="assets/pitch/launch/06-mobile-member.png" width="250" alt="Mobile member SOS: location, context and request form" /></a>
+</p>
+
+**The people closest to the response get the simplest screens.** A crew sees its assignment and next action; a member raises and follows their own request. These are responsive browser captures, rather than physical-device field trials.
+
+| Workspace | Its job | Its boundary |
 | --- | --- | --- |
-| **Sense** | Camera inference, SOS, IoT, access and vehicle signals enter one edge event bus. | `SignalEndpoint`, `SosEndpoint` |
-| **Understand** | The Incident Agent fuses signals, corroborates across adjacent cameras or sensors, looks for **negative evidence** and links multiple victims to one incident. | `IncidentAgent` |
-| **Decide** | Time-aware zone policies (SOPs) set severity, verification thresholds, required responders and SLAs. | `PolicyEngine`, `ZonePolicy` |
-| **Act** | The planner routes every available unit over the campus graph (closed gates, blocked roads) and recommends the fastest response; the operator confirms, or life-safety SOPs auto-dispatch. | `ResponsePlanner`, `CampusGraph`, `Orchestrator` |
-| **Verify** | **Proof-of-Response** tracks each unit against an expected trajectory: missed acknowledgement or a stall escalates and re-dispatches, never closes. | `ProofOfResponse` |
-| **Close** | Only a human resolves an incident, after arrival and care/action are recorded. Closure cannot create a care timestamp. | `IncidentEndpoint.resolve` |
-| **Learn** | Stage-by-stage MTTC, Response Completion Integrity (RCI), false escalations, blind spots; plus the **Stress-Test Engine** that rehearses compound failures and proposes fixes. | `MetricsService`, `StressTestEngine` |
+| **Command** | Review, own, dispatch, escalate and record an outcome | Campus-scoped operational access |
+| **Responder** | Acknowledge, depart, check in, start care and complete a task | Assigned unit and permitted incident context |
+| **Care** | Prepare the receiving team and coordinate handoff | Shared care cases; restricted operational details |
+| **Member** | Raise, follow and withdraw an SOS | The member's own reports |
+| **Administrator** | Maintain the twin and policies; rehearse and audit | Campus administration with server-side checks |
+| **Network operations** | Compare response health and readiness across campuses | De-identified aggregates; no incident drill-down |
 
-Two capabilities extend the loop beyond dispatch:
+The visual system matches the live landing page: white paper, blue, butter yellow, near-black type, Inter and Geist Mono. Self-hosted fonts, reduced-motion support and flat SVG campus illustrations carry through landing, console and presentation.
 
-- **Proof-of-Response**: `DISPATCHED > ACKNOWLEDGED > MOVING > ON SCENE > CARE > RESOLVED`, with recorded milestones and deadlines. Travel-time simulation is restricted to explicit scenario runs; genuine cases require authenticated responder check-in.
-- **Stress-Test Engine**: rehearses an emergency plus things going wrong at once (ambulance busy, gate closed, camera degraded) on a private copy of the digital twin, predicts every stage, and finds fixes such as *alternate route via a service gate* or *re-stage an alternate responder*. Fixes can be applied to the live twin with one click.
-
-## Architecture
+## A response that can be accounted for
 
 ```mermaid
 flowchart LR
-    subgraph Signals["Campus signals"]
-        CAM["CCTV analytics<br/>(anonymous tracks)"]
-        SOS["SOS app"]
-        IOT["IoT / smoke sensors"]
-        OPS["Operator reports"]
-    end
-
-    subgraph Server["Serverpod server (Dart)"]
-        BUS["SignalEndpoint<br/>edge event bus"]
-        AGENT["Incident Agent<br/>fusion, corroboration,<br/>negative evidence"]
-        POLICY["Policy engine<br/>time-aware SOPs"]
-        PLAN["Response planner<br/>Dijkstra on campus graph"]
-        ORCH["Orchestrator<br/>state machine + timeline"]
-        POR["Proof-of-Response<br/>watchdog (1 s tick)"]
-        STRESS["Stress-Test Engine"]
-        SIM["Simulation engine"]
-        METRICS["MTTC / RCI analytics"]
-        LIVE["LiveEndpoint<br/>WebSocket stream"]
-    end
-
-    DB[("PostgreSQL<br/>twin, incidents, audit")]
-
-    subgraph App["Flutter app (Android, iOS, Web)"]
-        CMD["Incident console"]
-        CARE["Care console"]
-        RESP["Responder view"]
-        ADMIN["Readiness lab + admin"]
-        MEMBER["SOS"]
-    end
-
-    CAM & SOS & IOT & OPS --> BUS --> AGENT --> POLICY --> PLAN --> ORCH
-    POR --> ORCH
-    SIM --> BUS
-    ORCH --> DB
-    STRESS --> DB
-    METRICS --> DB
-    ORCH --> LIVE
-    LIVE -. "push" .-> App
-    App -- "typed RPC" --> Server
+    S[Signal / SOS] --> V[Policy + corroboration]
+    V --> H[Human review + ownership]
+    H --> D[Approved dispatch]
+    D --> A[Acknowledged]
+    A --> R[En route]
+    R --> O[Recorded arrival]
+    O --> C[Recorded care]
+    C --> X[Human outcome + closure]
+    D -. missed deadline .-> E[Escalate / review replacement]
+    A -. missed deadline .-> E
+    R -. missed deadline .-> E
+    E --> H
+    classDef blue fill:#edf2ff,stroke:#2b58bf,color:#0a0a0a
+    classDef care fill:#edf8ef,stroke:#157a3d,color:#0a0a0a
+    classDef human fill:#fff5c9,stroke:#b59c42,color:#0a0a0a
+    class H,D,X human
+    class S,V,A,R blue
+    class O,C care
 ```
 
-### Stack and why
+- **Elapsed time cannot invent arrival.** A non-simulation assignment needs an authenticated responder check-in. Timed scenario arrivals are explicitly labelled simulation.
+- **Each required unit has its own proof.** A desk arrival does not stand in for an ambulance arrival. A successful dispatch request does not establish completed care.
+- **Missed deadlines stay visible.** The separate watchdog processes overdue work from durable SQL state and coordinates passes with an advisory lock.
+- **Closure needs care and an operator outcome.** The UI cannot close a response by manufacturing missing care timestamps.
+- **Rehearsal evaluates a copy of the twin.** Predicted arrival and proposed fixes are not measured patient outcomes.
+- **AI assistance is bounded.** Optional handoff prose cannot approve dispatch, change authoritative state or make a clinical decision.
 
-| Layer | Choice | Why it fits |
-| --- | --- | --- |
-| App | **Flutter 3.47** (Material 3) | One codebase for Android, iOS and the web console; responders and members are mobile-first. |
-| Backend | **Serverpod 4** (Dart) | Typed endpoints and models shared with the app, built-in WebSocket streaming, ORM and migrations, first-class Flutter client. |
-| Realtime | Serverpod streaming methods + message channels | Every state change pushes an event; clients refetch role-filtered data. |
-| Database | PostgreSQL embedded locally; **Cloud SQL target** | Google staging infrastructure is prepared. Migrations run in a private maintenance job before serving a revision. |
-| Hosting | **Google Cloud Run target** | Separate web gateway, API and watchdog; [phased deployment configuration](infra/google/README.md). The Serverpod Cloud section below is historical/manual. |
-| Map | Schematic digital twin drawn with `CustomPaint` | No tiles or API keys; positions come from the twin. |
+Explore the [response implementation](caregrid_server/lib/src/response/), [campus isolation checks](caregrid_server/test/integration/campus_isolation_test.dart) and [component reference](docs/COMPONENTS.md).
 
-## Incident lifecycle
+## Built on Google
+
+The deployed path is **Firebase Authentication → Cloud Run web gateway → private Cloud Run API → Cloud SQL PostgreSQL**. A separate Cloud Run watchdog keeps CPU available for deadline processing. Migrations, synthetic seeding and membership binding run as private jobs.
+
+[![Deployed Google architecture — editable SVG](assets/pitch/launch/google-architecture.svg)](assets/pitch/launch/google-architecture.svg)
+
+[Editable SVG](assets/pitch/launch/google-architecture.svg) · [Architecture PNG](assets/pitch/launch/google-architecture.png) · [Deployment runbook](infra/google/README.md) · [Live provisioning evidence](docs/buildathon/GOOGLE-PROVISIONING.md)
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Detected: signal
-    Detected --> Verified: confidence + corroboration meet SOP
-    Detected --> Review: low confidence or corroboration window expired
-    Detected --> Dismissed: negative evidence
-    Review --> Verified: operator confirms
-    Review --> Dismissed: operator rejects with reason
-    Verified --> Dispatched: operator confirms or SOP auto-dispatch
-    Dispatched --> Acknowledged: unit accepts
-    Dispatched --> Dispatched: missed ack, escalate and re-dispatch
-    Acknowledged --> EnRoute: unit moving
-    EnRoute --> OnScene: responder check-in / labelled simulation
-    EnRoute --> EnRoute: road blocked, reroute
-    OnScene --> Care: care / action started
-    Care --> Resolved: human closes with outcome
-    Dispatched --> Dismissed: operator recalls units
-    Resolved --> [*]
-    Dismissed --> [*]
+flowchart TB
+    U[Browser] -->|Google sign-in| F[Firebase Authentication]
+    U -->|HTTPS + Firebase bearer token| W[Cloud Run · Node web gateway]
+    W -->|Service identity + user token| API[Cloud Run · private Serverpod API]
+    F -. signature / project / expiry .-> API
+    API -->|SQL connector| DB[(Cloud SQL · PostgreSQL 16)]
+    WD[Cloud Run · watchdog<br/>min 1 / continuously allocated CPU] --> DB
+    J[Private Run jobs<br/>migrate / bootstrap / UID binding] --> DB
+    SM[Secret Manager + scoped IAM] --> API
+    SM --> WD
+    SM --> J
+    B[Cloud Build · dedicated identity] --> AR[Artifact Registry · immutable digests]
+    AR --> W
+    AR --> API
+    AR --> WD
+    API --> L[Cloud Logging + Monitoring]
+    WD --> L
+    L --> N[Team email alert channels]
+    TF[Terraform] --> ST[(Private versioned GCS state)]
+    API -. optional / disabled .-> G[Vertex AI · Gemini drafts]
+    API -. optional / disabled .-> E[(Private GCS evidence broker)]
+    classDef google fill:#edf2ff,stroke:#2b58bf,color:#0a0a0a
+    classDef optional fill:#f6f6f6,stroke:#999,color:#4d4d4d,stroke-dasharray:5 5
+    class W,API,WD,J,DB,F,SM,B,AR,L,N,TF,ST google
+    class G,E optional
 ```
 
-Every open incident always has a **next action** and a **next deadline**. When a deadline passes, Proof-of-Response escalates (and re-plans where it can). Nothing is closed because time passed.
-
-## The 02:17 hero scenario
-
-A resident collapses in a hostel corridor at night. Nobody is around to call for help.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant C1 as Camera B07
-    participant C2 as Camera B08
-    participant A as Incident Agent
-    participant O as Command operator
-    participant H as Hospital
-    participant D as Birch desk
-    participant AM as Ambulance A2
-    participant P as Proof-of-Response
-
-    C1->>A: person down, 86%, track T-41
-    Note over A: Night hostel SOP (P1) needs corroboration
-    C2->>A: same track, adjacent angle, 91%
-    A->>A: verified P1, plan desk (15 s) + A2 (1 m 25 s)
-    A->>H: pre-alert with location
-    A->>O: evidence, reasoning, recommended units
-    O->>D: confirm and dispatch
-    O->>AM: confirm and dispatch
-    D-->>P: acknowledged, moving
-    AM-->>P: acknowledged, moving
-    P->>P: explicit scenario simulates arrivals
-    D-->>P: care started (+28 s)
-    AM-->>P: care started (+1 m 19 s)
-    O->>O: resolve with outcome, MTTC recorded
-```
-
-The timings above are from a real autopilot run of this prototype. If Ambulance A2 never acknowledges (scenario `SC-MISSED-ACK`), Proof-of-Response marks it unreachable after the 30 s SLA, escalates and re-dispatches Ambulance A1.
-
-## Data model
-
-```mermaid
-erDiagram
-    ZONE ||--o{ CAMERA : covers
-    ZONE ||--o{ ROAD_SEGMENT : connects
-    ZONE ||--o{ RESPONDER : "stations"
-    ZONE_POLICY }o--|| ZONE : "applies to zone type"
-    INCIDENT ||--o{ SENSOR_EVENT : "evidence"
-    INCIDENT ||--o{ DISPATCH : "response"
-    INCIDENT ||--o{ TIMELINE_ENTRY : "memory"
-    INCIDENT ||--o{ INCIDENT : "victim records"
-    RESPONDER ||--o{ DISPATCH : "assigned"
-    STRESS_SCENARIO ||--o{ STRESS_TEST_RUN : "rehearsed by"
-    APP_USER ||--o{ AUTH_TOKEN : "signs in"
-    APP_USER ||--o{ AUDIT_RECORD : "acts"
-    SCENARIO_RUN ||--o{ INCIDENT : "simulates"
-```
-
-15 database tables, 22 transfer/view models, 16 enums and one typed exception. Full field lists: [docs/COMPONENTS.md](docs/COMPONENTS.md#5-data-models).
-
-## Roles and consoles
-
-| Role | Console | Can do |
-| --- | --- | --- |
-| **Security / Command** | Incidents, Live map, Twin, Simulation, Analytics | See every incident with evidence; confirm or override dispatch; escalate; dismiss with reason; resolve; run scenarios; manage units, gates and roads. |
-| **Medical team** | Care console, Live map | Incoming cases with location, ETA and handoff state; mark the hospital ready; care notes; resolve. No camera evidence. |
-| **Responder** | My task, Map | One task with minimum context, route and SOP steps; acknowledge, start moving, arrive, start care, complete or decline. |
-| **IT / Administration** | Readiness, Twin, Policies, Analytics, Audit | Stress tests and fixes; SOP thresholds and SLAs; camera health; audit log; demo reset. |
-| **Campus member** | SOS | Raise an SOS for self or others; follow its status and ETA; cancel. Sees nothing about anyone else. |
-
-## Seeded demo
-
-The fictional **Meridian Demo Campus** is seeded on first boot: 26 zones (4 hostels, hospital, labs, library, commons, sports, gates, junctions), 34 road segments, 19 cameras (one offline to create a blind spot), 11 response units, 11 SOPs, 4 stress rehearsals and 14 past incidents for analytics.
-
-**Accounts** (handle / PIN)
-
-| Role | Handle | PIN |
-| --- | --- | --- |
-| Command operator | `cmd.night` | `1111` |
-| Doctor on duty | `er.doctor` | `2222` |
-| Ambulance A2 crew | `amb.a2` | `3302` |
-| Birch Hostel desk | `desk.birch` | `3303` |
-| Ambulance A1 crew | `amb.a1` | `3301` |
-| Patrol Bike 1 | `patrol.one` | `3304` |
-| Fire & safety lead | `fire.one` | `3305` |
-| Operations admin | `ops.admin` | `9090` |
-| Student (member) | `student.aanya` | `5501` |
-| Library staff (member) | `staff.rohan` | `5502` |
-
-**Live scenarios** (Simulation tab, with or without autopilot)
-
-| Code | What it shows |
+| Google building block | Concrete responsibility |
 | --- | --- |
-| `SC-HOSTEL-0217` | Two-camera corroboration, night SOP, hospital pre-alert, full Proof-of-Response |
-| `SC-SPORTS-RECOVER` | Negative evidence dismisses a fall; nobody is dispatched |
-| `SC-LAB-SMOKE` | Camera + smoke detector fusion, P0 auto-dispatch |
-| `SC-SOS-LIBRARY` | SOS as a human witness |
-| `SC-EASTGATE-COLLISION` | Collision plus injured rider fused into one incident |
-| `SC-CROWD-VICTIMS` | Crowd surge with two victims linked to one parent incident |
-| `SC-MISSED-ACK` | Missed acknowledgement, escalation, re-dispatch |
-| `SC-CEDAR-BLIND` | SOS from a camera blind spot, reported transparently |
+| **Firebase Authentication** | Google user identity; the API verifies the token and resolves an enabled SQL membership |
+| **Cloud Run** | Public Node gateway; IAM-restricted API and watchdog; private one-task maintenance jobs |
+| **Cloud SQL** | PostgreSQL 16 response records, campus scope, policies, deadlines, audit and rehearsal history; staging backups/PITR |
+| **Secret Manager + IAM** | Separate runtime/build identities, pinned secret versions; the web identity has no database secret access |
+| **Cloud Build + Artifact Registry** | Linux builds under a dedicated identity; reviewed releases use digest-pinned images |
+| **Cloud Storage** | Private versioned Terraform state, private build sources and a provisioned evidence bucket; runtime evidence workflow disabled |
+| **Cloud Logging + Monitoring** | Runtime logs and API 5xx/watchdog-failure policies routed to both teammates |
+| **Cloud Billing budget** | $5 threshold alerts to the team; usage and credit expiry still require review |
+| **Vertex AI Gemini · optional** | Implemented bounded handoff-draft adapter, disabled pending live evaluation |
 
-**Stress rehearsals** (Readiness tab): the 02:17 compound failure predicts 6 m 41 s against a 5 m SLA (**FAIL**), and the engine finds two fixes that each pass on their own (alternate route through the North-West Service Gate: 4 m 12 s). Applying the lab and hostel fixes raises campus readiness from 50% to 100%.
+The [full Google component catalogue](docs/buildathon/GOOGLE-COMPONENTS.md) evaluates the wider pilot and expansion architecture. [Solution architecture](docs/buildathon/SOLUTION-ARCHITECTURE.md) records the rationale, data flow, resilience and delivery plan. Planned Maps, FCM and camera/IoT integrations remain distinct from the deployed MVP.
 
-> Demo tip: open two windows, sign in as `cmd.night` and `amb.a2`, turn autopilot off, run `SC-HOSTEL-0217`, and drive the incident by hand from both sides.
+**Two identities, two checks.** The gateway invokes the private API with its Google service identity and forwards the user's Firebase token separately. The API enforces membership, role, campus and assignment. Campus scope is enforced in backend lookups; the network role receives aggregate views.
 
-## Run it locally
+## A campus you can rehearse
 
-**Prerequisites:** Flutter 3.44.4 or newer (Dart 3.12.2+) and the Serverpod CLI:
+Two synthetic environments share the application: **Meridian**, for a controlled product story, and **NIET, Greater Noida**, for a geography-based routing demonstration. Records and roles remain campus-scoped.
 
-```bash
-dart install serverpod_cli
+The map below is interactive on GitHub. Pan and zoom to compare the two NIET site polygons; open the [complete GeoJSON](niet_campus.geojson) for roads and mapped features.
+
+```geojson
+{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"name":"NIET Old Campus · OSM reference","stroke":"#2b58bf","fill":"#2b58bf","fill-opacity":0.18},"geometry":{"type":"Polygon","coordinates":[[[77.4893315,28.4629646],[77.4909187,28.4640239],[77.4921835,28.4625616],[77.4906195,28.4614901],[77.4893315,28.4629646]]]}},{"type":"Feature","properties":{"name":"NIET New Campus · OSM reference","stroke":"#b59c42","fill":"#f6dd78","fill-opacity":0.4},"geometry":{"type":"Polygon","coordinates":[[[77.4927225,28.4608075],[77.4934997,28.4613661],[77.4942099,28.4605914],[77.4936152,28.4598262],[77.4927225,28.4608075]]]}}]}
 ```
 
-**1. Local secrets.** `caregrid_server/config/passwords.yaml` is git-ignored. Create it with any values:
+[![NIET campus reference map](niet_campus_map.png)](niet_campus_map.svg)
 
-```yaml
-development:
-  database: 'local-dev-db-password'
-  serviceSecret: 'local-dev-service-secret-min-20-chars'
-test:
-  database: 'local-test-db-password'
+[Editable campus SVG](niet_campus_map.svg) · [Full GeoJSON](niet_campus.geojson) · [Twin specification](assets/maps/niet/twin-spec.json) · [Compiled routing geometry](caregrid_server/lib/src/seed/niet_geometry.dart)
+
+Map data © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright), ODbL 1.0. Public mapped geography is distinct from synthetic responder availability, scenarios, route assumptions and policy. This demonstration is not affiliated with or endorsed by NIET and is not a surveyed emergency routing plan.
+
+**Rehearse the uncomfortable combinations:** a blocked gate, an unavailable ambulance, lost corroboration, a night-time hostel incident. The engine reports the slowest required unit against the SLA, explains the failure and proposes changes. Administrators can apply supported changes to the synthetic twin and rerun the suite. The website also includes an [interactive readiness model](https://caregrid-demo-web-959096744456.asia-south1.run.app/#readiness), with its illustrative assumptions visible.
+
+## Run the connected MVP
+
+Use **Node.js 22+**. The Windows launcher downloads and checks the pinned Dart 3.12.2 SDK; first launch also retrieves Serverpod dependencies and embedded PostgreSQL. The web workflow does not require Flutter or Google credentials.
+
+```powershell
+git clone https://github.com/ishaans04/CareGrid.git
+cd CareGrid
+npm --prefix caregrid_web ci
+npm --prefix caregrid_web run build
+powershell -File scripts/start-local.ps1
 ```
 
-**2. Start everything** from the repository root. Serverpod runs an embedded PostgreSQL (no Docker), applies migrations, seeds the campus and launches the app:
+Open **http://127.0.0.1:4173/** for the landing page and **http://127.0.0.1:4173/console** for the workspace. On macOS/Linux with Dart 3.12.2 installed, use `node scripts/dev.mjs` for the final command. The launcher preserves the synthetic database between runs. Set `CAREGRID_WORK_DIR` before launch to select a separate generated workspace, especially outside synced folders.
 
-```bash
-flutter pub get
-serverpod start
-```
+| Local synthetic account | PIN | Workspace |
+| --- | --- | --- |
+| `cmd.night` | `1111` | Meridian command |
+| `amb.a2` | `3302` | Meridian ambulance A2 |
+| `er.doctor` | `2222` | Meridian receiving team |
+| `ops.admin` | `9090` | Meridian administrator |
+| `student.aanya` | `5501` | Meridian member SOS |
+| `niet.command` | `1212` | NIET command |
+| `niet.admin` | `9191` | NIET administrator |
 
-Or run the pieces by hand:
+The local selector lists all seeded accounts. Use separate browser profiles/private windows for simultaneous local roles, because the gateway uses an HttpOnly session cookie. These PINs are public demo fixtures; **PIN entry, account listing and simulations are disabled on the cloud deployment**.
 
-```bash
-cd caregrid_server && dart run bin/main.dart --apply-migrations   # API :8080, web :8082
-cd caregrid_flutter && flutter run -d chrome                       # or an Android/iOS device
-```
+**A short connected demo:** raise an SOS at Birch Hostel as a member; review and approve it as command; sign in as the assigned ambulance; acknowledge, depart, record arrival and care; confirm receiving-team readiness; record the outcome as command. Run readiness separately to compare the twin's predictions.
 
-**3. Phones.** The Android emulator reaches your machine automatically. For a physical device pass your computer's LAN IP:
+See [web setup](caregrid_web/README.md), [connected implementation](docs/buildathon/CONNECTED-MVP.md) and [components](docs/COMPONENTS.md). The original Flutter application remains in [caregrid_flutter](caregrid_flutter/); its generated Dart client is [caregrid_client](caregrid_client/).
 
-```bash
-flutter run --dart-define=SERVER_URL=http://192.168.1.20:8080/
-```
+## What is live, and what is next
 
-To serve the web build from the server itself (as Serverpod Cloud does), run `serverpod run flutter_build` in `caregrid_server`, then open <http://localhost:8082>.
-
-## Deploy to Serverpod Cloud
-
-The server hosts both the API and the Flutter web app, and Cloud provisions PostgreSQL and runs migrations on every deploy.
-
-```bash
-serverpod cloud auth login     # once, opens the browser
-serverpod cloud launch         # first deploy: creates/links the project, writes scloud.yaml
-serverpod cloud deploy         # every later deploy
-```
-
-`launch` adds `serverpod generate` and `serverpod run flutter_build` as pre-deploy hooks, so each deploy ships the latest web build. The app is then live at `https://<project-id>.serverpod.space/` with the API at `https://<project-id>.api.serverpod.space/`. Mobile builds point at the cloud API with `--dart-define=SERVER_URL=https://<project-id>.api.serverpod.space/`.
-
-**Continuous deployment:** `.github/workflows/deploy.yml` deploys every push to `main` once the repository has a `SERVERPOD_CLOUD_TOKEN` secret (create one with `serverpod cloud auth create-token`) and `scloud.yaml` is committed.
-
-## Tests
-
-```bash
-cd caregrid_server && dart test
-```
-
-73 backend tests cover routing/policy/planning/rehearsal, the full response loop, closure/arrival guards, role/assignment/redaction boundaries, production demo denial, concurrent watchdog ownership, Firebase RSA validation and SQL membership/revocation. The web package adds 26 Node checks and six isolated Chrome tests (three real local workflows, a delayed-draft UI race, a private-storage UI fixture and a Google-entry configuration preview). Linux CI builds both images and verifies non-superuser migrations/bootstrap; Terraform schema validation and ten mocked rollout plans check the staging deployment. [Current validation and limits](docs/buildathon/VALIDATION.md). The [optional Gemini handoff adapter](docs/buildathon/GOOGLE-GEMINI.md) is implemented with synthetic response tests and remains disabled by default. No real Gemini/OAuth, Cloud Build or cloud deployment has run.
-
-## Project structure
-
-```text
-CareGrid/
-├── caregrid_server/            Serverpod backend
-│   ├── lib/server.dart         Boot: auth handler, seeding, ops ticker
-│   ├── lib/src/models/         .spy.yaml models (enums, twin, incidents, response, readiness, views)
-│   ├── lib/src/agent/          Incident Agent + policy engine
-│   ├── lib/src/response/       Planner, orchestrator, Proof-of-Response, role views
-│   ├── lib/src/readiness/      Stress-Test Engine
-│   ├── lib/src/simulation/     Scenario library + simulation engine
-│   ├── lib/src/twin/           Twin snapshot + campus graph (Dijkstra)
-│   ├── lib/src/endpoints/      12 API endpoints
-│   ├── lib/src/seed/           Seeded campus and history
-│   ├── migrations/             Database migrations
-│   └── test/                   Unit + integration tests
-├── caregrid_client/            Generated typed client (do not edit)
-├── caregrid_flutter/           Flutter app (Android, iOS, Web)
-│   └── lib/src/
-│       ├── core/               Session, live feed, formatting, actions
-│       ├── widgets/            Shared components (map, trackers, tiles...)
-│       └── features/           Screens per role
-└── docs/COMPONENTS.md          Single reference for every component
-```
-
-## Privacy, safety and governance
-
-- **No facial recognition.** Cameras emit anonymous track events; identity is never inferred.
-- **Least privilege on the server.** Each role receives a redacted view; the response lists what was hidden and why.
-- **Audit everything.** Sign-ins, incident views, dispatches, overrides, dismissals, fixes and resets are logged.
-- **Human override.** Operators can reject, choose different units, escalate or recall; every override is recorded.
-- **Clinical boundary.** CareGrid reports observable events and consequences ("potential medical emergency"), never a diagnosis.
-- **Autonomy boundary.** Triage and coordination can be automatic; closure is always human and requires verified arrival.
-- **Transparent uncertainty.** Degraded coverage and blind spots are shown, not hidden.
-
-## Roadmap
-
-| Phase | Scope |
+| Capability | Evidence / state |
 | --- | --- |
-| Now | Prototype on a seeded campus twin (this repository) |
-| Next | Real edge inference (person-down, fall, smoke) publishing to `SignalEndpoint` |
-| Then | Campus SSO, live hospital and ambulance integrations, push notifications |
-| Later | Multi-campus control plane, district hubs, rural PHC and telemedicine spokes |
+| **Finalized web UI** | Live revision `caregrid-demo-web-00002-pgb`, released from `aa9e40d`; landing, console and presentation served |
+| **Durable backend** | Private API/watchdog, Cloud SQL PostgreSQL 16, successful migration and synthetic bootstrap |
+| **Team membership** | Successful UID-binding jobs: Ishaan → `niet.command`; Hriday → `niet.admin`; browser acceptance after binding remains a two-person check |
+| **Authorization** | Role, campus and assignment checks implemented and exercised locally; live denial checks with both teammates' tokens remain a gate |
+| **Response workflow** | Real local SOS → dispatch → responder milestones → care → human closure verified in isolated Chrome tests |
+| **Watchdog** | Deployed with continuously allocated CPU; local deadline tests exist; live incident recovery through a restart remains unverified |
+| **Email alerts** | Both team channels attached to API/watchdog policies and budget; the team confirmed synthetic-alert receipt in both inboxes |
+| **Gemini drafts** | Optional adapter and boundary tests implemented; live configuration disabled; screenshots do not claim live model output |
+| **Private image evidence** | Optional broker and boundary tests implemented; live configuration disabled; earlier storage previews are labelled mocks |
+| **Real-world deployment** | Camera ingestion, mobile telemetry, FCM, institutional SOP approval, measured reliability and operational validation remain pilot work |
 
-Metrics shown in the app are measured on the prototype and seeded data. They are targets until measured in a pilot.
+Readiness percentages and ETA improvements are predictions or seeded examples. They are not customer traction, field performance or clinical results. Read [validation](docs/buildathon/VALIDATION.md) and [current operations](docs/buildathon/DEMO-OPERATIONS.md) before reusing a claim.
 
-## Keywords
+## Verify the behavior
 
-`emergency-response` `incident-management` `healthcare` `campus-safety` `flutter` `dart` `serverpod` `serverpod-cloud` `postgresql` `real-time` `websockets` `digital-twin` `dispatch` `computer-vision` `ai-agents` `mttc` `proof-of-response` `stress-testing` `sos` `telemedicine` `smart-campus` `public-safety` `mobile-app`
+Checks cover forbidden roles, cross-campus guessed IDs, stale response versions, provider failure, missed deadlines, restricted care/evidence views and connection loss.
 
-## Team
+```powershell
+# Fast domain, rendering and gateway checks
+npm --prefix caregrid_web test
 
-Team Duality: Ishaan Sharma, Hriday Vig. Older PDFs/design exports may retain previous event/team names as historical source material.
+# With the local backend running; Google Chrome must be installed
+npm --prefix caregrid_web run test:browser
+
+# Prepare the server-only workspace; stop the dev launcher before the suite
+# to keep test resources separate from an interactive rehearsal.
+node scripts/dev.mjs --prepare-only
+cd tmp/server-runtime/caregrid_server
+dart test --concurrency=1
+```
+
+With a custom `CAREGRID_WORK_DIR`, use its `server-runtime/caregrid_server` directory. The Windows launcher's portable Dart executable lives under that work directory's `toolchains/dart-sdk/bin/` if Dart is not on `PATH`.
+
+For this refresh, **107 backend tests, 34 Node checks and six Chrome tests passed**. The clean browser run covered the real multi-role backend workflow. Briefing-race, storage-UI and Google-entry checks include labelled provider fixtures; they do not establish live provider acceptance. [GitHub Actions](https://github.com/ishaans04/CareGrid/actions) carries backend, Flutter, image and Terraform checks. [Validation notes](docs/buildathon/VALIDATION.md) record context and limitations.
+
+## Take it into the deck
+
+Use the **20 November finalized UI** for the product slide. Earlier dark-presentation and pre-redesign connected captures remain historical references.
+
+| Asset | Format / use |
+| --- | --- |
+| [Command centre](assets/pitch/launch/deck/01-command-centre.png) | 2520 × 2202 PNG · landscape panel in the supplied slide |
+| [Ambulance crew](assets/pitch/launch/deck/02-ambulance-crew.png) | 1020 × 2202 PNG · narrow portrait panel |
+| [Readiness lab](assets/pitch/launch/deck/03-readiness-lab.png) | 1470 × 2202 PNG · wider portrait panel |
+| [Product gallery + provenance](assets/pitch/launch/README.md) | Landing, command, care, mobile, audit and rehearsal screens |
+| [Google architecture SVG](assets/pitch/launch/google-architecture.svg) / [PNG](assets/pitch/launch/google-architecture.png) | Current deployed architecture, with optional workflows separated |
+| [Cover SVG](assets/pitch/launch/caregrid-cover.svg) / [PNG](assets/pitch/launch/caregrid-cover.png) | Matching brand artwork for the opening slide |
+| [NIET campus SVG](niet_campus_map.svg) / [PNG](niet_campus_map.png) | Routing-twin story; retain OSM attribution |
+
+Suggested caption: **Working prototype · fictional campus data.** [Provenance and dimensions](assets/pitch/launch/deck/README.md) explain the three panel ratios. SVGs remain editable; PNGs insert directly into a deck. See [product and pitch notes](docs/buildathon/PRODUCT-AND-PITCH.md) for narrative and claim boundaries.
+
+## Navigate the repository
+
+| Path | Start here for |
+| --- | --- |
+| [caregrid_web/](caregrid_web/) | Finalized landing, console, presentation, Node gateway and browser checks |
+| [caregrid_server/](caregrid_server/) | Endpoints, response engine, campus twin, migrations and PostgreSQL tests |
+| [caregrid_client/](caregrid_client/) | Generated typed Dart client |
+| [caregrid_flutter/](caregrid_flutter/) | Flutter role-based application |
+| [infra/google/](infra/google/README.md) | Terraform, Linux builds, runtime identities, rollout and recovery |
+| [docs/buildathon/](docs/buildathon/README.md) | Architecture, Google catalogue, event research and validation |
+| [assets/pitch/launch/](assets/pitch/launch/README.md) | Current product imagery and editable architecture |
+| [assets/maps/niet/](assets/maps/niet/) | OSM-derived data, twin specification and route assumptions |
+| [scripts/](scripts/) | Local launcher, source checks, twin compilation and operator helpers |
+
+For submission research, start with [public rules and sources](docs/buildathon/RESEARCH-AND-RULES.md), [original-document review](docs/buildathon/DOCUMENT-REVIEW.md), [PDF page-coverage manifest](docs/buildathon/pdf-review-manifest.json) and [source-verification record](docs/buildathon/source-verification.json). Original documents are historical inputs; their old names, estimates and proposed technologies do not override the implementation.
+
+## Maintain the demo
+
+**Existing Google staging:** retain `rollout_stage="services"`, `migration_verified=true`, `public_web=true`, current image digests and stable secret inputs. Review the refreshed plan before applying. Moving the stage backward can delete live services. [Current operations](docs/buildathon/DEMO-OPERATIONS.md) records corrected local settings, roles, notification routing and credit expiry.
+
+Cloud SQL and the continuously allocated watchdog incur ongoing charges. Budget alerts do not stop services. Check spend and the **21 November 2026** credit expiry in the owner billing account; make an explicit cleanup decision after the demo. Use the [deployment runbook](infra/google/README.md), keeping fresh-environment examples separate from existing staging settings.
+
+To link another already signed-in Google user, use the tracked [binding helper](scripts/bind-google-user.ps1). Project IAM and application membership are separate. One Google identity holds one application role; the public website cannot self-select privileges.
+
+---
+
+**Team Duality · Hriday Vig & Ishaan Sharma.** Built for a campus response team that needs to know what happened after the alarm.
+
+Typography licenses remain with the [self-hosted fonts](caregrid_web/assets/fonts/README.md). Map attribution is documented above and in the assets. README interaction uses GitHub-native Mermaid and GeoJSON plus links to the running product; all sections stay open.

@@ -1,6 +1,25 @@
 # Validation record
 
-## Connected MVP verification · 20 November 2026
+## Finalized UI and team operations · 20 November 2026, late evening
+
+This section supersedes the older test counts and pre-deployment claims below. The application source remains the finalized UI release (`aa9e40d`, recorded on `main` in `3b84a33`). This refresh changes documentation, artwork, captures and operator tooling.
+
+| Check | Result and scope |
+| --- | --- |
+| Backend | **107 passed**, Dart 3.12.2 / Serverpod 4.0.4, real embedded PostgreSQL and labelled identity/provider fixtures. The serial Windows run used `dart test --concurrency=1`; it covers campus isolation, membership, deployment boundaries, response proof and readiness. |
+| Node | **34 passed**, covering domain/rendering and gateway boundaries. |
+| Browser | **Six passed** against a fresh local synthetic database. The connected SOS/dispatch/care workflow uses real backend calls. The briefing race, storage UI and Google-entry layout retain their explicitly mocked provider responses. |
+| Reused local state | The first browser run returned a different readiness score against an already modified rehearsal database. A fresh `CAREGRID_WORK_DIR` restored the baseline and all six passed. No assertion or application logic was changed to obtain the pass. |
+| Windows backend startup | The first parallel run hit four Serverpod startup timeouts. A serial run after closing the interactive launcher passed all 107. This records the observed resolution without claiming a proven root cause. |
+| Live team roles | Both existing Google identities were bound successfully: `niet.command` and `niet.admin`, through private bootstrap executions recorded in [demo operations](DEMO-OPERATIONS.md). No public role picker or PIN login was enabled. |
+| Terraform safety | Corrected stale local stage/image inputs; refreshed plan initially reported no changes. The reviewed notification update was **0 add / 2 change / 0 destroy**, touching only the two alert policies' channel lists. |
+| Notification delivery | A synthetic INFO-log policy opened alert `0.of8rcyxiiufv`; the team confirmed receipt in both inboxes. The temporary test policy was removed. Actual API/watchdog failure induction was not performed. |
+| Documentation visuals | Two Mermaid diagrams render; the embedded GeoJSON parses with two polygons. SVG cover/architecture exports and finalized UI captures were visually inspected. The [launch gallery](../../assets/pitch/launch/README.md) records provenance and the [deck exports](../../assets/pitch/launch/deck/README.md) match the requested panel proportions. |
+| CI | `main` at `b2524cd` passed Analyze, Format, Tests, Connected MVP checks and Google infrastructure checks. See [Actions](https://github.com/ishaans04/CareGrid/actions) for subsequent documentation commits. |
+
+Live browser sign-in after binding, two-person Google-token campus/role denial and watchdog restart during an incident remain explicit acceptance checks. Local test passes, UID binding and a notification canary do not establish those behaviors. Gemini and evidence remain disabled in live configuration.
+
+## Earlier connected MVP verification · 20 November 2026
 
 The local backend and connected web workspace are now implemented and exercised. The 12 November record below is preserved as the historical submission-package check.
 

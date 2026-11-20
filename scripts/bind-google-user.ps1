@@ -6,17 +6,31 @@ Bind an existing Google sign-in to an existing CareGrid membership.
 .EXAMPLE
 ./scripts/bind-google-user.ps1 -Email teammate@example.com -Handle niet.command -CheckOnly
 #>
-[CmdletBinding()]
+[CmdletBinding(DefaultParameterSetName='Bind')]
 param(
-  [Parameter(Mandatory=$true)][ValidatePattern('^[^\s@]+@[^\s@]+\.[^\s@]+$')][string]$Email,
-  [Parameter(Mandatory=$true)][ValidatePattern('^[a-z][a-z0-9.]{1,63}$')][string]$Handle,
+  [Parameter(Mandatory=$true,ParameterSetName='Bind')][ValidatePattern('^[^\s@]+@[^\s@]+\.[^\s@]+$')][string]$Email,
+  [Parameter(Mandatory=$true,ParameterSetName='Bind')][ValidatePattern('^[a-z][a-z0-9.]{1,63}$')][string]$Handle,
+  [Parameter(Mandatory=$true,ParameterSetName='List')][switch]$ListRoles,
   [ValidatePattern('^[a-z][a-z0-9-]+$')][string]$Project = 'caregrid-staging',
   [ValidatePattern('^[a-z]+-[a-z]+[0-9]+$')][string]$Region = 'asia-south1',
   [ValidatePattern('^[a-z][a-z0-9-]+$')][string]$Job = 'caregrid-demo-bootstrap',
   [string]$Gcloud = 'gcloud',
-  [switch]$CheckOnly
+  [Parameter(ParameterSetName='Bind')][switch]$CheckOnly
 )
 $ErrorActionPreference = 'Stop'
+if ($ListRoles) {
+  $seedPath = Join-Path $PSScriptRoot '../caregrid_server/lib/src/seed'
+  # Meridian uses Dart record literals; NIET/network use SeedUser constructors.
+  $pattern = "\(\s*'([^']+)',\s*'([^']+)',\s*UserRole\.(\w+)"
+  $members = foreach ($file in Get-ChildItem -LiteralPath $seedPath -Filter '*.dart' -File) {
+    foreach ($match in [regex]::Matches((Get-Content -LiteralPath $file.FullName -Raw), $pattern)) {
+      [pscustomobject]@{Handle=$match.Groups[1].Value;Role=$match.Groups[3].Value;Persona=$match.Groups[2].Value}
+    }
+  }
+  $members | Sort-Object Handle -Unique | Format-Table -AutoSize
+  Write-Output 'These are source-defined synthetic memberships, not a query of live bindings.'
+  return
+}
 $token = $null
 $headers = $null
 try {

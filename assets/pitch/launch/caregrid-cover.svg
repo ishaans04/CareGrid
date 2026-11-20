@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="560" viewBox="0 0 1600 560" role="img" aria-labelledby="title description">
+  <title id="title">CareGrid — Every second, accounted for.</title>
+  <desc id="description">Campus response operating system by Team Duality. A signal becomes a human decision, an owned response and a recorded care milestone.</desc>
+  <rect width="1600" height="560" fill="#2b58bf"/>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="64" y="52" width="52" height="52" rx="10" fill="white"/>
+    <g transform="translate(70 58)"><path d="M20 3 35 11.5 20 20 5 11.5Z" fill="#f6dd78"/><path d="M5 11.5 20 20v17L5 28.5Z" fill="#2b58bf"/><path d="M35 11.5v17L20 37V20Z" fill="#6f93e0"/></g>
+    <text x="136" y="91" font-size="39" font-weight="700" fill="white" letter-spacing="-1">CareGrid</text>
+    <text x="65" y="173" font-family="monospace" font-size="18" fill="#d5e1ff" letter-spacing="3">THE RESPONSE OPERATING SYSTEM FOR CAMPUSES</text>
+    <text x="60" y="277" font-size="88" font-weight="650" fill="white" letter-spacing="-4">Every second,</text>
+    <text x="60" y="372" font-size="88" font-weight="650" fill="#f6dd78" letter-spacing="-4">accounted for.</text>
+    <path d="M65 431H833" stroke="#7092dd"/>
+    <text x="65" y="479" font-size="23" fill="white">Team Duality</text>
+    <text x="65" y="514" font-family="monospace" font-size="17" fill="#d5e1ff">STARTUP BUILDATHON 2026 · GOOGLE CLOUD STAGING · SYNTHETIC DATA</text>
+    <path d="M1045 142V446" stroke="#9cb9ff" stroke-width="2" stroke-dasharray="6 9"/>
+    <g fill="white">
+      <rect x="1000" y="105" width="520" height="112" rx="12"/>
+      <rect x="1000" y="242" width="520" height="112" rx="12"/>
+      <rect x="1000" y="379" width="520" height="112" rx="12"/>
+    </g>
+    <circle cx="1045" cy="161" r="13" fill="#f6dd78" stroke="#b49a34"/>
+    <circle cx="1045" cy="298" r="13" fill="#2b58bf"/>
+    <circle cx="1045" cy="435" r="13" fill="#157a3d"/>
+    <g fill="#777" font-family="monospace" font-size="15" letter-spacing="2">
+      <text x="1085" y="143">01 / UNDERSTAND</text><text x="1085" y="280">02 / RESPOND</text><text x="1085" y="417">03 / ACCOUNT</text>
+    </g>
+    <g fill="#0a0a0a" font-size="27" font-weight="600" letter-spacing="-.6">
+      <text x="1085" y="181">A signal has an owner.</text><text x="1085" y="318">A response has a deadline.</text><text x="1085" y="455">Care has a recorded milestone.</text>
+    </g>
+  </g>
+</svg>

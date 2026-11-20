@@ -68,7 +68,7 @@ Both local Terraform configurations now retain the services stage and current we
 - **Browser sign-in after binding.** Both Google user records and successful membership-binding jobs are verified. Each teammate must still reload the console and exercise their own browser sign-in. One Google account takes one handle, and a bound handle cannot move to another account.
 - Role and campus denial with real tokens, sign-out, reauthentication and membership disable.
 - Watchdog restart and overdue recovery with a live incident.
-- Alert delivery: both team email channels are now attached to the API/watchdog policies and budget. Confirm actual receipt in both inboxes; channel configuration alone is not delivery evidence.
+- Alert delivery: both team channels are attached to the API/watchdog policies and budget. A separate synthetic log alert reached both inboxes, confirmed by the team at approximately 23:05 IST. Actual failure-condition induction remains separate; the test policy was removed afterward.
 - Spend. The always-on SQL instance and watchdog run from 16:32 IST. The owner has billing access; recheck Reports and Credits before the 21 November expiry because reporting lags incurred usage.
 
 ### Second operator
