@@ -77,6 +77,7 @@ import 'twin/zone.dart' as _i5d9qpt0;
 import 'twin/zone_policy.dart' as _i0bge9o7;
 import 'views/campus_twin.dart' as _iqt6besl;
 import 'views/care_case.dart' as _i2egsg9j;
+import 'views/incident_brief.dart' as _izalsqqh;
 import 'views/incident_detail.dart' as _iv8abos3;
 import 'views/incident_summary.dart' as _i028ji74;
 import 'views/ops_board.dart' as _ifqwjb8e;
@@ -131,6 +132,7 @@ export 'twin/zone.dart';
 export 'twin/zone_policy.dart';
 export 'views/campus_twin.dart';
 export 'views/care_case.dart';
+export 'views/incident_brief.dart';
 export 'views/incident_detail.dart';
 export 'views/incident_summary.dart';
 export 'views/ops_board.dart';
@@ -1961,6 +1963,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     if (t == _i2egsg9j.CareCase) {
       return _i2egsg9j.CareCase.fromJson(data) as T;
     }
+    if (t == _izalsqqh.IncidentBrief) {
+      return _izalsqqh.IncidentBrief.fromJson(data) as T;
+    }
     if (t == _iv8abos3.IncidentDetail) {
       return _iv8abos3.IncidentDetail.fromJson(data) as T;
     }
@@ -2136,6 +2141,10 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (t == _is.getType<_i2egsg9j.CareCase?>()) {
       return (data != null ? _i2egsg9j.CareCase.fromJson(data) : null) as T;
+    }
+    if (t == _is.getType<_izalsqqh.IncidentBrief?>()) {
+      return (data != null ? _izalsqqh.IncidentBrief.fromJson(data) : null)
+          as T;
     }
     if (t == _is.getType<_iv8abos3.IncidentDetail?>()) {
       return (data != null ? _iv8abos3.IncidentDetail.fromJson(data) : null)
@@ -2391,6 +2400,7 @@ class Protocol extends _is.DatabaseSerializationManager {
       _i0bge9o7.ZonePolicy => 'ZonePolicy',
       _iqt6besl.CampusTwin => 'CampusTwin',
       _i2egsg9j.CareCase => 'CareCase',
+      _izalsqqh.IncidentBrief => 'IncidentBrief',
       _iv8abos3.IncidentDetail => 'IncidentDetail',
       _i028ji74.IncidentSummary => 'IncidentSummary',
       _ifqwjb8e.OpsBoard => 'OpsBoard',
@@ -2505,6 +2515,8 @@ class Protocol extends _is.DatabaseSerializationManager {
         return 'CampusTwin';
       case _i2egsg9j.CareCase():
         return 'CareCase';
+      case _izalsqqh.IncidentBrief():
+        return 'IncidentBrief';
       case _iv8abos3.IncidentDetail():
         return 'IncidentDetail';
       case _i028ji74.IncidentSummary():
@@ -2672,6 +2684,9 @@ class Protocol extends _is.DatabaseSerializationManager {
     }
     if (dataClassName == 'CareCase') {
       return deserialize<_i2egsg9j.CareCase>(data['data']);
+    }
+    if (dataClassName == 'IncidentBrief') {
+      return deserialize<_izalsqqh.IncidentBrief>(data['data']);
     }
     if (dataClassName == 'IncidentDetail') {
       return deserialize<_iv8abos3.IncidentDetail>(data['data']);

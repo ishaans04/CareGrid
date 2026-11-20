@@ -26,6 +26,7 @@ import 'package:serverpod/serverpod.dart' as _is;
 import '../endpoints/account_endpoint.dart' as _iaho7ul5;
 import '../endpoints/admin_endpoint.dart' as _i5t1w2d2;
 import '../endpoints/analytics_endpoint.dart' as _ibbhv9ku;
+import '../endpoints/briefing_endpoint.dart' as _iz0srkm9;
 import '../endpoints/campus_endpoint.dart' as _i70hkba8;
 import '../endpoints/care_endpoint.dart' as _iuxmpckp;
 import '../endpoints/incident_endpoint.dart' as _idvfe0v9;
@@ -56,6 +57,12 @@ class Endpoints extends _is.EndpointDispatch {
         ..initialize(
           server,
           'analytics',
+          null,
+        ),
+      'briefing': _iz0srkm9.BriefingEndpoint()
+        ..initialize(
+          server,
+          'briefing',
           null,
         ),
       'campus': _i70hkba8.CampusEndpoint()
@@ -375,6 +382,31 @@ class Endpoints extends _is.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async => (endpoints['analytics'] as _ibbhv9ku.AnalyticsEndpoint)
                   .metrics(session),
+        ),
+      },
+    );
+    connectors['briefing'] = _is.EndpointConnector(
+      name: 'briefing',
+      endpoint: endpoints['briefing']!,
+      methodConnectors: {
+        'generate': _is.MethodConnector(
+          name: 'generate',
+          params: {
+            'incidentId': _is.ParameterDescription(
+              name: 'incidentId',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['briefing'] as _iz0srkm9.BriefingEndpoint)
+                  .generate(
+                    session,
+                    params['incidentId'],
+                  ),
         ),
       },
     );

@@ -2,7 +2,7 @@ name: Connected MVP checks
 
 on:
   push:
-    branches: [main, duality/google-buildathon, duality/google-cloud-foundation]
+    branches: [main, duality/google-buildathon, duality/google-cloud-foundation, duality/google-ai-briefing]
     paths: ['caregrid_web/**', 'caregrid_server/**', 'scripts/**', 'pubspec.lock', '.github/workflows/web-prototype.yml']
   pull_request:
     paths: ['caregrid_web/**', 'caregrid_server/**', 'scripts/**', 'pubspec.lock', '.github/workflows/web-prototype.yml']

@@ -9,6 +9,8 @@ import {
   navigationFor,
 } from "./connected-domain.mjs";
 
+import { renderBriefing } from "./briefing-view.mjs";
+
 const app = document.querySelector("#app");
 const dialog = document.querySelector("#action-dialog");
 const state = {
@@ -27,6 +29,9 @@ const state = {
   readiness: null,
   runs: [],
   config: null,
+  brief: null,
+  briefBusy: false,
+  briefEpoch: 0,
 };
 let identity;
 let toastTimer;
@@ -139,7 +144,7 @@ function shell() {
       new FormData(form),
     ]),
   );
-  app.innerHTML = `<div class="shell" data-role="${e(state.user.role)}"><aside class="sidebar"><a class="wordmark" href="/"><img src="assets/mark.svg" alt=""/>CareGrid<span class="lime">.</span></a><div class="campus-label"><span class="eyebrow muted">Connected workspace</span><strong>${e(state.config?.campus || "Meridian Demo Campus")}</strong></div><nav aria-label="Workspace">${nav.map(([key, title], index) => `<button class="nav-button ${state.view === key ? "active" : ""}" data-action="navigate" data-id="${key}" ${state.view === key ? 'aria-current="page"' : ""}><span>0${index + 1}</span>${e(title)}</button>`).join("")}</nav><div class="sidebar-foot"><p class="muted small">A signal is the beginning.<br />Care is the measure.</p><div class="identity"><strong>${e(state.user.displayName)}</strong><span class="muted small">${e(state.user.title)}</span></div>${button("Sign out", "logout")}</div></aside><div class="workspace"><header class="topbar"><span class="eyebrow">Campus response / <span class="lime">${e(label(state.user.role))}</span></span><div class="topbar-status" id="connection-status"></div></header><main id="main" class="main"><div id="connection-error" style="margin-bottom:${state.error ? 24 : 0}px">${banner()}</div>${state.lastSync ? view() : empty("Loading your workspace", "Reading the campus state from CareGrid…")}<footer class="context-note">${state.config?.authentication === "firebase" ? "Team Duality · Google staging MVP · Synthetic campus data. Camera analysis, live telemetry and notification delivery remain separate integrations." : "Team Duality · Synthetic local MVP · The server enforces each account’s permissions. Camera analysis, mobile telemetry and Google Cloud delivery remain planned integrations."}</footer></main></div></div>`;
+  app.innerHTML = `<div class="shell" data-role="${e(state.user.role)}"><aside class="sidebar"><a class="wordmark" href="/"><img src="assets/mark.svg" alt=""/>CareGrid<span class="lime">.</span></a><div class="campus-label"><span class="eyebrow muted">Connected workspace</span><strong>${e(state.config?.campus || "Meridian Demo Campus")}</strong></div><nav aria-label="Workspace">${nav.map(([key, title], index) => `<button class="nav-button ${state.view === key ? "active" : ""}" data-action="navigate" data-id="${key}" ${state.view === key ? 'aria-current="page"' : ""}><span>0${index + 1}</span>${e(title)}</button>`).join("")}</nav><div class="sidebar-foot"><p class="muted small">A signal is the beginning.<br />Care is the measure.</p><div class="identity"><strong>${e(state.user.displayName)}</strong><span class="muted small">${e(state.user.title)}</span></div>${button("Sign out", "logout")}</div></aside><div class="workspace"><header class="topbar"><span class="eyebrow">Campus response / <span class="lime">${e(label(state.user.role))}</span></span><div class="topbar-status" id="connection-status"></div></header><main id="main" class="main"><div id="connection-error" style="margin-bottom:${state.error ? 24 : 0}px">${banner()}</div>${state.lastSync ? view() : empty("Loading your workspace", "Reading the campus state from CareGrid…")}<footer class="context-note">${state.config?.authentication === "firebase" ? "Team Duality · Google staging MVP · Synthetic campus data. Camera analysis, live telemetry and notification delivery remain separate integrations." : "Team Duality · Synthetic local MVP · The server enforces each account’s permissions. Camera analysis, mobile telemetry and real notifications remain planned integrations."}</footer></main></div></div>`;
   updateConnection();
   for (const [id, values] of drafts) {
     const form = document.getElementById(id);
@@ -246,7 +251,7 @@ function incidentDetail() {
   const allowed = detail.allowedActions;
   const can = (key) => allowed.includes(key);
   const route = detail.plan?.options[0];
-  return `<section class="panel"><header class="detail-heading"><div class="row between"><span class="eyebrow cyan">${e(incident.code)}</span><div class="row">${pill(label(incident.state), openIncident(incident) ? "warn" : "good")}${incident.scenarioRunId ? pill("SIMULATION") : ""}</div></div><h2>${e(incident.title)}</h2><p class="muted">${e(detail.zoneName)}${incident.locationDetail ? ` · ${e(incident.locationDetail)}` : ""}</p><p class="small muted" style="margin-top:12px">Owner: ${e(incident.ownerName || "Unclaimed")} · ${e(incident.policyCode || "Policy review")}</p></header>${incident.nextAction ? `<div class="detail-section"><h3>Next decision</h3><p class="decision">${e(incident.nextAction)}</p>${incident.nextDeadline ? `<p class="muted" style="margin-top:10px">${e(incident.nextDeadlineLabel)} · due ${clock(incident.nextDeadline)}</p>` : ""}</div>` : ""}${incident.reasoning?.length ? `<div class="detail-section"><h3>Evidence &amp; policy</h3><ul class="reasoning">${incident.reasoning.map((reason) => `<li>${e(reason)}</li>`).join("")}</ul><p class="muted" style="margin-top:14px">${Math.round(incident.confidence * 100)}% signal score (uncalibrated) · ${e(label(incident.observability))} observability · ${detail.signals.length} visible signals. Deterministic policy evaluation; no live Gemini call.</p></div>` : ""}${!detail.dispatches.length && detail.plan ? `<div class="detail-section"><h3>Recommended response</h3>${detail.plan.options.map((option) => `<div class="unit"><div class="row between"><strong>${e(option.responderName)}</strong>${pill(duration(option.etaSeconds), option.withinSla ? "good" : "warn")}</div><p>${e(option.role)} · ${option.distanceMeters}m · ${e(option.routeNames.join(" / "))}</p></div>`).join("")}${detail.plan.warnings.map((warning) => `<p class="orange" style="margin-top:12px">${e(warning)}</p>`).join("")}</div>` : ""}${
+  return `<section class="panel"><header class="detail-heading"><div class="row between"><span class="eyebrow cyan">${e(incident.code)}</span><div class="row">${pill(label(incident.state), openIncident(incident) ? "warn" : "good")}${incident.scenarioRunId ? pill("SIMULATION") : ""}</div></div><h2>${e(incident.title)}</h2><p class="muted">${e(detail.zoneName)}${incident.locationDetail ? ` · ${e(incident.locationDetail)}` : ""}</p><p class="small muted" style="margin-top:12px">Owner: ${e(incident.ownerName || "Unclaimed")} · ${e(incident.policyCode || "Policy review")}</p></header>${incident.nextAction ? `<div class="detail-section"><h3>Next decision</h3><p class="decision">${e(incident.nextAction)}</p>${incident.nextDeadline ? `<p class="muted" style="margin-top:10px">${e(incident.nextDeadlineLabel)} · due ${clock(incident.nextDeadline)}</p>` : ""}</div>` : ""}${incident.reasoning?.length ? `<div class="detail-section"><h3>Evidence &amp; policy</h3><ul class="reasoning">${incident.reasoning.map((reason) => `<li>${e(reason)}</li>`).join("")}</ul><p class="muted" style="margin-top:14px">${Math.round(incident.confidence * 100)}% signal score (uncalibrated) · ${e(label(incident.observability))} observability · ${detail.signals.length} visible signals. Deterministic policy evaluation. Optional handoff drafts do not control this decision.</p></div>` : ""}${!detail.dispatches.length && detail.plan ? `<div class="detail-section"><h3>Recommended response</h3>${detail.plan.options.map((option) => `<div class="unit"><div class="row between"><strong>${e(option.responderName)}</strong>${pill(duration(option.etaSeconds), option.withinSla ? "good" : "warn")}</div><p>${e(option.role)} · ${option.distanceMeters}m · ${e(option.routeNames.join(" / "))}</p></div>`).join("")}${detail.plan.warnings.map((warning) => `<p class="orange" style="margin-top:12px">${e(warning)}</p>`).join("")}</div>` : ""}${
     detail.dispatches.length
       ? `<div class="detail-section"><h3>Proof of response · per unit</h3><p class="muted" style="margin-bottom:18px">The incident stage reflects the furthest unit. Check each assignment separately.</p>${detail.dispatches
           .map(
@@ -261,7 +266,7 @@ function incidentDetail() {
           )
           .join("")}</div>`
       : ""
-  }${allowed.length ? `<div class="detail-section"><h3>Operator actions</h3><div class="actions">${can("claim") ? button("Take ownership", "claim", { id: incident.id }) : ""}${can("confirmDispatch") && !incident.dispatchedAt ? button("Approve recommended dispatch", "dispatch", { primary: true, id: incident.id, disabled: !route }) : ""}${can("note") ? button("Add a note", "incident-note", { id: incident.id }) : ""}${can("escalate") ? button("Escalate", "escalate", { id: incident.id }) : ""}${can("resolve") ? button("Record outcome & close", "resolve", { primary: true, id: incident.id }) : ""}${can("dismiss") ? button("Stand down with reason", "dismiss", { danger: true, id: incident.id }) : ""}</div></div>` : ""}<div class="detail-section"><h3>Response timeline</h3><div class="timeline">${detail.timeline.map((entry) => `<article class="timeline-entry"><time datetime="${e(entry.at)}">${clock(entry.at)}</time><div><strong>${e(entry.actor)}</strong><p>${e(entry.message)}</p></div></article>`).join("")}</div></div>${detail.redactions.length ? `<div class="detail-section"><p class="muted">Restricted for this role: ${e(detail.redactions.join("; "))}</p></div>` : ""}${incident.closureNote ? `<div class="detail-section"><h3>Recorded outcome</h3><p>${e(incident.closureNote)}</p></div>` : ""}</section>`;
+  }${state.user.role === "command" ? renderBriefing({ incidentId: incident.id, brief: state.brief, busy: state.briefBusy, offline: Boolean(state.error) }) : ""}${allowed.length ? `<div class="detail-section"><h3>Operator actions</h3><div class="actions">${can("claim") ? button("Take ownership", "claim", { id: incident.id }) : ""}${can("confirmDispatch") && !incident.dispatchedAt ? button("Approve recommended dispatch", "dispatch", { primary: true, id: incident.id, disabled: !route }) : ""}${can("note") ? button("Add a note", "incident-note", { id: incident.id }) : ""}${can("escalate") ? button("Escalate", "escalate", { id: incident.id }) : ""}${can("resolve") ? button("Record outcome & close", "resolve", { primary: true, id: incident.id }) : ""}${can("dismiss") ? button("Stand down with reason", "dismiss", { danger: true, id: incident.id }) : ""}</div></div>` : ""}<div class="detail-section"><h3>Response timeline</h3><div class="timeline">${detail.timeline.map((entry) => `<article class="timeline-entry"><time datetime="${e(entry.at)}">${clock(entry.at)}</time><div><strong>${e(entry.actor)}</strong><p>${e(entry.message)}</p></div></article>`).join("")}</div></div>${detail.redactions.length ? `<div class="detail-section"><p class="muted">Restricted for this role: ${e(detail.redactions.join("; "))}</p></div>` : ""}${incident.closureNote ? `<div class="detail-section"><h3>Recorded outcome</h3><p>${e(incident.closureNote)}</p></div>` : ""}</section>`;
 }
 function scenarioPanel() {
   const simulation = state.data.simulation;
@@ -400,6 +405,11 @@ async function sync({ force = false } = {}) {
           state.selected !== incident.id
         )
           return;
+        if (
+          state.detail?.incident.id !== detail.incident.id ||
+          state.detail?.incident.updatedAt !== detail.incident.updatedAt
+        )
+          clearBriefing();
         state.detail = detail;
         state.detailKey = key;
       }
@@ -430,7 +440,48 @@ async function sync({ force = false } = {}) {
   }
   shell();
 }
+function clearBriefing() {
+  state.briefEpoch++;
+  state.brief = null;
+  state.briefBusy = false;
+}
+async function draftBrief(incidentId) {
+  if (
+    state.briefBusy ||
+    state.user?.role !== "command" ||
+    state.selected !== incidentId
+  )
+    return;
+  const epoch = ++state.briefEpoch;
+  const userId = state.user.id;
+  const source = state.detail?.incident.updatedAt;
+  state.briefBusy = true;
+  shell();
+  try {
+    const brief = await rpc("briefing", "generate", { incidentId });
+    if (
+      epoch === state.briefEpoch &&
+      state.user?.id === userId &&
+      state.selected === incidentId &&
+      state.detail?.incident.updatedAt === source
+    )
+      state.brief = brief;
+  } catch {
+    if (epoch === state.briefEpoch)
+      state.brief = {
+        status: "unavailable",
+        notice:
+          "The draft could not be loaded. Continue using the response record and timeline.",
+      };
+  } finally {
+    if (epoch === state.briefEpoch) {
+      state.briefBusy = false;
+      shell();
+    }
+  }
+}
 async function resetSession() {
+  clearBriefing();
   state.epoch++;
   state.user = null;
   state.view = "";
@@ -446,6 +497,7 @@ async function resetSession() {
 }
 async function mutate(task, success) {
   if (state.busy) return;
+  clearBriefing();
   state.epoch++; // Discard any read started before this action.
   state.busy = true;
   document
@@ -523,6 +575,7 @@ document.addEventListener("click", async (event) => {
     return;
   }
   if (action === "navigate") {
+    clearBriefing();
     state.view = id;
     state.epoch++;
     state.error = "";
@@ -531,6 +584,7 @@ document.addEventListener("click", async (event) => {
     return;
   }
   if (action === "select-incident") {
+    clearBriefing();
     state.selected = numericId;
     state.detailKey = null;
     await sync({ force: true });
@@ -559,6 +613,7 @@ document.addEventListener("click", async (event) => {
     return note(
       "Reconnect and check the recorded state before taking another action.",
     );
+  if (action === "draft-brief") return draftBrief(numericId);
   if (action === "claim")
     return mutate(
       () => rpc("incident", "claim", { incidentId: numericId }),

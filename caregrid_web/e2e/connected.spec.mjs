@@ -10,8 +10,8 @@ async function capture(page, name) {
     page.getByRole("button", { name: "Sign out", exact: true }),
   ).toBeEnabled();
   await page.evaluate(() => document.fonts.ready);
-  if (name === "02-mobile-responder")
-    await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => new Promise(requestAnimationFrame));
   await page.screenshot({
     path: path.join(directory, `${name}.png`),
     fullPage: name !== "02-mobile-responder",
@@ -89,6 +89,21 @@ test("member SOS crosses authenticated command, responder and care sessions", as
       .filter({ hasText: incident.code })
       .click();
     await expect(command.page.locator(".detail-heading")).toContainText(marker);
+    await command.page
+      .getByRole("button", { name: "Draft handoff brief", exact: true })
+      .click();
+    await expect(command.page.locator("#handoff-brief")).toContainText(
+      "Gemini is not enabled",
+    );
+    await expect(
+      command.page.getByRole("button", {
+        name: "Approve recommended dispatch",
+        exact: true,
+      }),
+    ).toBeEnabled();
+    await expect(
+      member.page.getByRole("button", { name: "Draft handoff brief" }),
+    ).toHaveCount(0);
     await capture(command.page, "01-command-centre");
     await command.page
       .getByRole("button", { name: "Take ownership", exact: true })

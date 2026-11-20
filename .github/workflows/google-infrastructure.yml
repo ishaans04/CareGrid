@@ -1,7 +1,7 @@
 name: Google infrastructure checks
 on:
   push:
-    branches: [main, duality/google-infrastructure]
+    branches: [main, duality/google-infrastructure, duality/google-ai-briefing]
     paths:
       [
         "infra/google/**",

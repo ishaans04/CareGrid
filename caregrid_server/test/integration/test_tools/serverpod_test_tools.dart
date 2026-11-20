@@ -54,6 +54,8 @@ import 'package:caregrid_server/src/generated/views/campus_twin.dart'
     as _ii4ij66i;
 import 'package:caregrid_server/src/generated/views/care_case.dart'
     as _i3dtfzqd;
+import 'package:caregrid_server/src/generated/views/incident_brief.dart'
+    as _i62f2tz2;
 import 'package:caregrid_server/src/generated/views/incident_detail.dart'
     as _irrnkslk;
 import 'package:caregrid_server/src/generated/views/incident_summary.dart'
@@ -209,6 +211,8 @@ class TestEndpoints {
 
   late final _AnalyticsEndpoint analytics;
 
+  late final _BriefingEndpoint briefing;
+
   late final _CampusEndpoint campus;
 
   late final _CareEndpoint care;
@@ -244,6 +248,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     analytics = _AnalyticsEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    briefing = _BriefingEndpoint(
       endpoints,
       serializationManager,
     );
@@ -758,6 +766,48 @@ class _AnalyticsEndpoint {
                   _localCallContext.arguments,
                 )
                 as _ida.Future<_ime6fgi7.OpsMetrics>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _BriefingEndpoint {
+  _BriefingEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_i62f2tz2.IncidentBrief> generate(
+    _ist.TestSessionBuilder sessionBuilder,
+    int incidentId,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'briefing',
+            method: 'generate',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'briefing',
+          methodName: 'generate',
+          parameters: _ist.testObjectToJson({'incidentId': incidentId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_i62f2tz2.IncidentBrief>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

@@ -28,6 +28,10 @@ run "foundation_does_not_start_workloads" {
     condition     = !contains(keys(google_project_iam_member.sql_connect), "web") && !contains(keys(google_secret_manager_secret_iam_member.database), "web")
     error_message = "Web identity must not receive database or secret access."
   }
+  assert {
+    condition     = length(google_project_iam_member.briefing) == 0 && length(google_project_service.gemini) == 0
+    error_message = "Optional model access must remain disabled by default."
+  }
 }
 
 run "jobs_before_services" {
@@ -106,4 +110,23 @@ run "serving_requires_migration_attestation" {
     firebase_web_app_id  = "public-test-app"
   }
   expect_failures = [var.rollout_stage]
+}
+
+run "model_access_has_no_deployment_authority" {
+  command = plan
+  variables {
+    enable_gemini   = true
+    gemini_model    = "gemini-test-fixture"
+    gemini_location = "asia-south1"
+  }
+  assert {
+    condition     = length(google_project_iam_member.briefing) == 1 && toset(google_project_iam_custom_role.briefing[0].permissions) == toset(["aiplatform.endpoints.predict", "serviceusage.services.use"])
+    error_message = "Only a single runtime identity may get inference access without admin/deployment permissions."
+  }
+}
+
+run "model_enablement_requires_explicit_model_and_location" {
+  command = plan
+  variables { enable_gemini = true }
+  expect_failures = [var.gemini_model, var.gemini_location]
 }

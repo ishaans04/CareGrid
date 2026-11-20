@@ -65,6 +65,9 @@ resource "google_cloud_run_v2_service" "server" {
         for_each = merge(local.database_environment, {
           CAREGRID_PROCESS_ROLE                   = each.key
           SERVERPOD_DATABASE_MAX_CONNECTION_COUNT = each.value.pool
+          CAREGRID_GEMINI_ENABLED                 = tostring(var.enable_gemini && each.key == "api")
+          CAREGRID_GEMINI_MODEL                   = each.key == "api" ? var.gemini_model : ""
+          CAREGRID_GEMINI_LOCATION                = each.key == "api" ? var.gemini_location : ""
         })
         content {
           name  = env.key
@@ -100,7 +103,8 @@ resource "google_cloud_run_v2_service" "server" {
   depends_on = [
     google_secret_manager_secret_iam_member.database,
     google_secret_manager_secret_iam_member.service,
-    google_project_iam_member.sql_connect
+    google_project_iam_member.sql_connect,
+    google_project_iam_member.briefing
   ]
 }
 
