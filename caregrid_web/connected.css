@@ -145,6 +145,65 @@ small,
   padding: 12px;
   z-index: 100;
 }
+.evidence-panel {
+  display: grid;
+  gap: 14px;
+}
+.evidence-panel h3,
+.evidence-panel p {
+  margin: 0;
+}
+.evidence-files {
+  display: grid;
+  gap: 12px;
+}
+.evidence-file {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #ece9e120;
+  border-radius: 6px;
+}
+.evidence-file code {
+  font-size: 11px;
+  color: #9299a7;
+  overflow-wrap: anywhere;
+}
+.evidence-upload {
+  position: relative;
+  cursor: pointer;
+  margin: 0;
+}
+.evidence-upload input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.evidence-upload:focus-within {
+  outline: 2px solid #c6ff3d;
+  outline-offset: 3px;
+}
+.evidence-upload:has(input:disabled) {
+  opacity: 0.45;
+  cursor: default;
+}
+.evidence-preview {
+  margin: 0;
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #25d5ff60;
+  border-radius: 6px;
+}
+.evidence-preview img {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  background: #06080d;
+}
 .skip-link:focus {
   top: 16px;
 }

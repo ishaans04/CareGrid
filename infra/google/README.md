@@ -12,11 +12,11 @@
 | PostgreSQL | Cloud SQL PostgreSQL 16 Enterprise, zonal staging tier, encrypted connector transport, no authorized direct-IP networks, backups/PITR and deletion protection |
 | Secrets | Scoped Secret Manager grants; pinned secret versions; ephemeral Terraform inputs and write-only provider arguments keep secret values out of state/plan files |
 | Artifacts/build | Regional Artifact Registry, dedicated build identity, private source bucket with seven-day lifecycle; pipeline builds/pushes both images without deployment permission |
-| Evidence | Private, versioned bucket with public access prevention; no app upload grant/endpoint yet; synthetic objects have a 30-day deletion lifecycle |
+| Evidence | Private, versioned bucket with public access prevention; optional command broker and bucket-scoped API object grant; seven-day soft delete and a thirty-day staging lifecycle |
 | Operations | Structured watchdog failure metric and two monitoring policies; notification channels are explicit existing inputs; default creates console incidents only |
 | State | GCS backend requires a separately created private versioned bucket; no application resources own/delete their state bucket |
 
-This deliberately does not create a project, attach billing, configure OAuth consent, grant humans project ownership, create credentials or silently provision every service in the research catalogue. Firebase project/web registration and provider settings are operator steps. The [optional Gemini handoff adapter](../../docs/buildathon/GOOGLE-GEMINI.md) is implemented but disabled by default and unverified against a real model. FCM delivery, Maps and evidence access remain separate application increments. An empty evidence bucket does not establish a working evidence pipeline.
+This deliberately does not create a project, attach billing, configure OAuth consent, grant humans project ownership, create credentials or silently provision every service in the research catalogue. Firebase project/web registration and provider settings are operator steps. The [optional Gemini handoff adapter](../../docs/buildathon/GOOGLE-GEMINI.md) is implemented but disabled by default and unverified against a real model. The optional [private evidence broker](../../docs/buildathon/GOOGLE-EVIDENCE.md) is also implemented and disabled by default. FCM delivery and Maps remain separate increments; real evidence storage/IAM/retention checks are pending. An empty evidence bucket does not establish a working evidence pipeline.
 
 ## Offline checks
 
@@ -29,7 +29,7 @@ terraform validate
 terraform test
 ```
 
-The eight mocked plan runs check foundation/jobs/services boundaries, lack of direct SQL allowlists, absence of web SQL/secret access, private evidence, continuously allocated watchdog CPU, explicit public entry, immutable image inputs, migration attestation, disabled-by-default inference and scoped model permissions. They use no Google credentials and create nothing. GitHub Actions repeats these checks on Linux. Cloud Build YAML is prepared but has not run on Google.
+The ten mocked plan runs check foundation/jobs/services boundaries, lack of direct SQL allowlists, absence of web SQL/secret access, private evidence, continuously allocated watchdog CPU, explicit public entry, immutable image inputs, migration attestation, disabled-by-default inference/evidence and scoped model/bucket permissions. They use no Google credentials and create nothing. GitHub Actions repeats these checks on Linux. Cloud Build YAML is prepared but has not run on Google.
 
 ## First rollout once a project exists
 
@@ -77,6 +77,10 @@ gcloud run jobs execute "$PREFIX-bootstrap" --project="$PROJECT_ID" --region="$R
 ## Optional Google inference
 
 After selecting and evaluating a compatible Google model in the project, set `enable_gemini=true`, `gemini_model` and `gemini_location`. There is no default model/location or automatic fallback. This enables the AI API, grants a custom inference-only role to the API runtime and supplies server configuration. The web/worker/build/job identities receive no inference role. Request shape/reference validation does not validate factual correctness; complete the [live model and evaluation gates](../../docs/buildathon/GOOGLE-GEMINI.md) before claiming real integration. Leave disabled until then.
+
+## Optional private evidence
+
+Use `enable_evidence=true` only after the [evidence acceptance checks](../../docs/buildathon/GOOGLE-EVIDENCE.md). This binds object create/get/list/delete permissions on the evidence bucket to the API identity and supplies its bucket configuration. Other runtimes get no evidence permission. Versioning, seven-day soft delete and the thirty-day staging lifecycle can retain bytes after an operator removes an active attachment; removal is not permanent erasure.
 
 ## Subsequent release and recovery
 

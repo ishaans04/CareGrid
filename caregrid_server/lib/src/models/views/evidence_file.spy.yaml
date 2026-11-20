@@ -1,0 +1,10 @@
+### Private attachment metadata. Object names and bucket URLs stay on the server.
+class: EvidenceFile
+fields:
+  key: String
+  mediaType: String
+  byteLength: int
+  sha256: String
+  generation: String
+  metageneration: String
+  createdAt: DateTime

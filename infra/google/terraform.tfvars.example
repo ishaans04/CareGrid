@@ -7,6 +7,7 @@ public_web    = false
 
 # Optional inference stays off until real model/location validation.
 enable_gemini = false
+enable_evidence = false
 # gemini_model = "explicit-compatible-model-id"
 # gemini_location = "explicit-supported-location"
 

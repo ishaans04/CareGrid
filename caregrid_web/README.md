@@ -22,7 +22,9 @@ An optional command-only [Gemini handoff draft](../docs/buildathon/GOOGLE-GEMINI
 
 ## Checks and connected screenshots
 
-Browser tests create synthetic incidents and change responder availability. For repeatable captures, start the launcher with a separate initially empty absolute `SERVERPOD_DATABASE_DATA_PATH` under this repository's ignored `tmp/` directory. Stop another local instance first. This preserves your existing development database; CI starts from a fresh workspace.
+Command also has an optional [private evidence panel](../docs/buildathon/GOOGLE-EVIDENCE.md), disabled by default. It brokers bounded PNG/JPEG observations through the authenticated API. It cannot create arrival/care proof. Storage errors stay within the panel; previews close after sixty seconds and clear on context/connection loss. Real Google storage/IAM/retention validation remains pending.
+
+Browser tests create synthetic incidents and change responder availability. For repeatable captures, start the launcher with a separate initially empty absolute `SERVERPOD_DATABASE_DATA_PATH`, such as `E:\Projects\CareGrid-\tmp\capture-run\pgdata`. **Use a distinct parent directory for each embedded database:** Serverpod keeps its supervisor/socket/state files beside `pgdata`; sibling data directories with the same parent can collide. Stop another local instance first and do not overlap server preparation/generation/test runs. This preserves your existing development database; CI starts from a fresh workspace.
 
 ```powershell
 cd caregrid_web

@@ -23,6 +23,11 @@ campus:
 care:
   - cases:
   - markReady:
+evidence:
+  - list:
+  - upload:
+  - read:
+  - remove:
 incident:
   - board:
   - detail:

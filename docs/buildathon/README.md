@@ -19,6 +19,7 @@ Prepared 12 November 2026 (Asia/Kolkata). Founders: Hriday Vig and Ishaan Sharma
 | [Google runtime](GOOGLE-RUNTIME.md) | Separate API/watchdog images, private maintenance jobs and verified deployment boundaries |
 | [Google identity](GOOGLE-IDENTITY.md) | Firebase token validation, SQL membership, stateless gateway and operator setup |
 | [Gemini handoff drafts](GOOGLE-GEMINI.md) | Bounded optional inference adapter, command-only UI, validation and live-evaluation gates |
+| [Private evidence broker](GOOGLE-EVIDENCE.md) | Command-only image attachments, GCS generation/digest checks, optional bucket permissions and live acceptance gates |
 | [Google infrastructure](../../infra/google/README.md) | Validated Terraform, phased deployment, build pipeline and recovery runbook; not applied |
 | [Connected MVP](CONNECTED-MVP.md) | Working local architecture, response fixes, role boundaries and launch instructions |
 | [Visual assets](../../assets/pitch/README.md) | Architecture exports and product captures for the deck |
@@ -26,7 +27,7 @@ Prepared 12 November 2026 (Asia/Kolkata). Founders: Hriday Vig and Ishaan Sharma
 
 ## Status and claim boundary
 
-- **Existing implementation:** Flutter/Serverpod/Dart prototype, PostgreSQL models, deterministic fusion/policies, campus routing, simulation, response watchdog, rehearsal engine and role views. 60 backend tests cover the current implementation against real embedded PostgreSQL and RSA fixtures; Dart static analysis reports no issues. GitHub Actions verifies Flutter analysis/formatting/tests separately.
+- **Existing implementation:** Flutter/Serverpod/Dart prototype, PostgreSQL models, deterministic fusion/policies, campus routing, simulation, response watchdog, rehearsal engine and role views. 73 backend tests cover the current implementation against real embedded PostgreSQL and RSA fixtures; Dart static analysis reports no issues. GitHub Actions verifies Flutter analysis/formatting/tests separately.
 - **Submission experience:** the default web workspace now calls the Dart backend through a local authenticated gateway. The original `/index.html` presentation retains its fictional browser-local fixtures. The local demo does not call Gemini, Maps or Firebase by default. The optional Gemini handoff adapter is implemented with synthetic response tests; live model validation is pending. Cloud-mode Firebase identity code and its configuration preview are implemented; live OAuth remains unverified. [Validation and limits](VALIDATION.md).
 - **Proposed deployment:** Google Cloud Run + Cloud SQL for PostgreSQL, Gemini through Google's enterprise AI platform, Firebase identity/notifications, Google Cloud Storage and operational controls. No project or billable resources have been created.
 - **Pilot gates:** real telemetry, live identity validation, transactional deadline processing and dispatch, trained operators, model evaluation and approved institutional SOPs are required before operational use.

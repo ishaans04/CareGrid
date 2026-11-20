@@ -29,6 +29,7 @@ import '../endpoints/analytics_endpoint.dart' as _ibbhv9ku;
 import '../endpoints/briefing_endpoint.dart' as _iz0srkm9;
 import '../endpoints/campus_endpoint.dart' as _i70hkba8;
 import '../endpoints/care_endpoint.dart' as _iuxmpckp;
+import '../endpoints/evidence_endpoint.dart' as _i2cvsm7u;
 import '../endpoints/incident_endpoint.dart' as _idvfe0v9;
 import '../endpoints/live_endpoint.dart' as _ixgr9pqx;
 import '../endpoints/readiness_endpoint.dart' as _i0a0ux16;
@@ -75,6 +76,12 @@ class Endpoints extends _is.EndpointDispatch {
         ..initialize(
           server,
           'care',
+          null,
+        ),
+      'evidence': _i2cvsm7u.EvidenceEndpoint()
+        ..initialize(
+          server,
+          'evidence',
           null,
         ),
       'incident': _idvfe0v9.IncidentEndpoint()
@@ -483,6 +490,130 @@ class Endpoints extends _is.EndpointDispatch {
                   (endpoints['care'] as _iuxmpckp.CareEndpoint).markReady(
                     session,
                     params['incidentId'],
+                  ),
+        ),
+      },
+    );
+    connectors['evidence'] = _is.EndpointConnector(
+      name: 'evidence',
+      endpoint: endpoints['evidence']!,
+      methodConnectors: {
+        'list': _is.MethodConnector(
+          name: 'list',
+          params: {
+            'incidentId': _is.ParameterDescription(
+              name: 'incidentId',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'pageToken': _is.ParameterDescription(
+              name: 'pageToken',
+              type: _is.getType<String?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['evidence'] as _i2cvsm7u.EvidenceEndpoint).list(
+                    session,
+                    params['incidentId'],
+                    params['pageToken'],
+                  ),
+        ),
+        'upload': _is.MethodConnector(
+          name: 'upload',
+          params: {
+            'incidentId': _is.ParameterDescription(
+              name: 'incidentId',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'mediaType': _is.ParameterDescription(
+              name: 'mediaType',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'base64Data': _is.ParameterDescription(
+              name: 'base64Data',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['evidence'] as _i2cvsm7u.EvidenceEndpoint).upload(
+                    session,
+                    params['incidentId'],
+                    params['mediaType'],
+                    params['base64Data'],
+                  ),
+        ),
+        'read': _is.MethodConnector(
+          name: 'read',
+          params: {
+            'incidentId': _is.ParameterDescription(
+              name: 'incidentId',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'key': _is.ParameterDescription(
+              name: 'key',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'generation': _is.ParameterDescription(
+              name: 'generation',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['evidence'] as _i2cvsm7u.EvidenceEndpoint).read(
+                    session,
+                    params['incidentId'],
+                    params['key'],
+                    params['generation'],
+                  ),
+        ),
+        'remove': _is.MethodConnector(
+          name: 'remove',
+          params: {
+            'incidentId': _is.ParameterDescription(
+              name: 'incidentId',
+              type: _is.getType<int>(),
+              nullable: false,
+            ),
+            'key': _is.ParameterDescription(
+              name: 'key',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+            'generation': _is.ParameterDescription(
+              name: 'generation',
+              type: _is.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _is.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['evidence'] as _i2cvsm7u.EvidenceEndpoint).remove(
+                    session,
+                    params['incidentId'],
+                    params['key'],
+                    params['generation'],
                   ),
         ),
       },

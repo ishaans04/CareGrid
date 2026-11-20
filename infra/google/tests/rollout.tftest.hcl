@@ -130,3 +130,25 @@ run "model_enablement_requires_explicit_model_and_location" {
   variables { enable_gemini = true }
   expect_failures = [var.gemini_model, var.gemini_location]
 }
+
+run "evidence_access_is_disabled_by_default" {
+  command = plan
+  assert {
+    condition     = length(google_storage_bucket_iam_member.evidence_api) == 0 && length(google_project_iam_custom_role.evidence) == 0
+    error_message = "An empty evidence bucket must not silently grant runtime access."
+  }
+}
+
+run "evidence_access_is_bucket_scoped_and_api_only" {
+  command = plan
+  variables { enable_evidence = true }
+  override_resource {
+    target          = google_service_account.runtime["api"]
+    override_during = plan
+    values          = { email = "caregrid-api@caregrid-test-project.iam.gserviceaccount.com" }
+  }
+  assert {
+    condition     = length(google_storage_bucket_iam_member.evidence_api) == 1 && google_storage_bucket_iam_member.evidence_api[0].bucket == google_storage_bucket.evidence.name && google_storage_bucket_iam_member.evidence_api[0].member == "serviceAccount:${google_service_account.runtime["api"].email}" && toset(google_project_iam_custom_role.evidence[0].permissions) == toset(["storage.objects.create", "storage.objects.get", "storage.objects.list", "storage.objects.delete"])
+    error_message = "Only API object operations on the private evidence bucket are allowed."
+  }
+}

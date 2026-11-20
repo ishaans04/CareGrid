@@ -50,6 +50,12 @@ import 'package:caregrid_client/src/protocol/twin/zone_policy.dart'
 import 'package:caregrid_client/src/protocol/views/campus_twin.dart'
     as _igwqpf3x;
 import 'package:caregrid_client/src/protocol/views/care_case.dart' as _i3zkoq01;
+import 'package:caregrid_client/src/protocol/views/evidence_content.dart'
+    as _iiw8gzz6;
+import 'package:caregrid_client/src/protocol/views/evidence_file.dart'
+    as _ifcuo3bg;
+import 'package:caregrid_client/src/protocol/views/evidence_page.dart'
+    as _ir6o4nlw;
 import 'package:caregrid_client/src/protocol/views/incident_brief.dart'
     as _ic5ad2f9;
 import 'package:caregrid_client/src/protocol/views/incident_detail.dart'
@@ -298,6 +304,70 @@ class EndpointCare extends _isc.EndpointRef {
         'markReady',
         {'incidentId': incidentId},
       );
+}
+
+/// Every operation rechecks SQL membership and command role. Knowing an
+/// incident/key/generation grants no access. No bucket URL reaches a client.
+/// {@category Endpoint}
+class EndpointEvidence extends _isc.EndpointRef {
+  EndpointEvidence(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'evidence';
+
+  _ida.Future<_ir6o4nlw.EvidencePage> list(
+    int incidentId,
+    String? pageToken,
+  ) => caller.callServerEndpoint<_ir6o4nlw.EvidencePage>(
+    'evidence',
+    'list',
+    {
+      'incidentId': incidentId,
+      'pageToken': pageToken,
+    },
+  );
+
+  _ida.Future<_ifcuo3bg.EvidenceFile> upload(
+    int incidentId,
+    String mediaType,
+    String base64Data,
+  ) => caller.callServerEndpoint<_ifcuo3bg.EvidenceFile>(
+    'evidence',
+    'upload',
+    {
+      'incidentId': incidentId,
+      'mediaType': mediaType,
+      'base64Data': base64Data,
+    },
+  );
+
+  _ida.Future<_iiw8gzz6.EvidenceContent> read(
+    int incidentId,
+    String key,
+    String generation,
+  ) => caller.callServerEndpoint<_iiw8gzz6.EvidenceContent>(
+    'evidence',
+    'read',
+    {
+      'incidentId': incidentId,
+      'key': key,
+      'generation': generation,
+    },
+  );
+
+  _ida.Future<void> remove(
+    int incidentId,
+    String key,
+    String generation,
+  ) => caller.callServerEndpoint<void>(
+    'evidence',
+    'remove',
+    {
+      'incidentId': incidentId,
+      'key': key,
+      'generation': generation,
+    },
+  );
 }
 
 /// Incident Console API: one prioritized queue of owned incidents, the
@@ -698,6 +768,7 @@ class Client extends _isc.ServerpodClientShared {
     briefing = EndpointBriefing(this);
     campus = EndpointCampus(this);
     care = EndpointCare(this);
+    evidence = EndpointEvidence(this);
     incident = EndpointIncident(this);
     live = EndpointLive(this);
     readiness = EndpointReadiness(this);
@@ -718,6 +789,8 @@ class Client extends _isc.ServerpodClientShared {
   late final EndpointCampus campus;
 
   late final EndpointCare care;
+
+  late final EndpointEvidence evidence;
 
   late final EndpointIncident incident;
 
@@ -741,6 +814,7 @@ class Client extends _isc.ServerpodClientShared {
     'briefing': briefing,
     'campus': campus,
     'care': care,
+    'evidence': evidence,
     'incident': incident,
     'live': live,
     'readiness': readiness,

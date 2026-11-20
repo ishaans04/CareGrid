@@ -87,6 +87,48 @@ async function fixture(t, options = {}) {
     advance: (milliseconds) => (time += milliseconds),
   };
 }
+test("only evidence upload gets a larger bounded body and responses stay private", async (t) => {
+  const f = await fixture(t);
+  const { cookie } = await f.login();
+  const payload = {
+    incidentId: 17,
+    mediaType: "image/png",
+    base64Data: "a".repeat(40_000),
+  };
+  const result = await f.request("/api/rpc/evidence/upload", "POST", payload, {
+    cookie,
+  });
+  assert.equal(result.status, 200);
+  assert.equal(result.headers.get("cache-control"), "no-store");
+  assert.equal(f.calls.at(-1).path, "/evidence/upload");
+  assert.equal(
+    (await f.request("/api/rpc/incident/board", "POST", payload, { cookie }))
+      .status,
+    413,
+  );
+  assert.equal(
+    (
+      await f.request(
+        "/api/rpc/evidence/upload",
+        "POST",
+        { ...payload, base64Data: "a".repeat(710_000) },
+        { cookie },
+      )
+    ).status,
+    413,
+  );
+  assert.equal(
+    (
+      await f.request("/api/rpc/evidence/read", "POST", {
+        incidentId: 17,
+        key: "a",
+        generation: "1",
+      })
+    ).status,
+    401,
+  );
+});
+
 test("web session keeps the backend token and PIN out of browser JSON", async (t) => {
   const f = await fixture(t);
   const { response, cookie } = await f.login();

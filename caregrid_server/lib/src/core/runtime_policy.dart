@@ -59,6 +59,9 @@ class RuntimePolicy {
   }) {
     final policy = RuntimePolicy(config.runMode, environment: environment);
     policy.validate();
+    // A 512 KiB attachment expands in base64. Keep the internal API bounded;
+    // the web gateway still limits every other RPC to 32 KiB.
+    config = config.copyWith(maxRequestSize: 710000);
     if (!policy.isCloudRun ||
         policy.environment.containsKey('CLOUD_RUN_JOB') ||
         config.role == ServerpodRole.maintenance) {

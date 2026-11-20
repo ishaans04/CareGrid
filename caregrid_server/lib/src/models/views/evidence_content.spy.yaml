@@ -1,0 +1,5 @@
+### Transient authenticated response, never a public or signed object URL.
+class: EvidenceContent
+fields:
+  file: EvidenceFile
+  base64Data: String

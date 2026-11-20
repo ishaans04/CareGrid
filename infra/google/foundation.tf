@@ -157,6 +157,7 @@ resource "google_storage_bucket" "evidence" {
   force_destroy               = false
   labels                      = local.labels
   versioning { enabled = true }
+  soft_delete_policy { retention_duration_seconds = 604800 }
   # Staging fixtures only. Real evidence needs approved retention/legal holds.
   lifecycle_rule {
     condition { age = 30 }

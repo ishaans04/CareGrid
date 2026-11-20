@@ -28,6 +28,7 @@ const publicFiles = new Set([
   "domain.mjs",
   "connected-domain.mjs",
   "briefing-view.mjs",
+  "evidence-view.mjs",
 ]);
 // Explicit surface only. Serverpod enforces role and ownership checks.
 const methods = new Set([
@@ -40,6 +41,10 @@ const methods = new Set([
   "incident/dismiss",
   "incident/resolve",
   "briefing/generate",
+  "evidence/list",
+  "evidence/upload",
+  "evidence/read",
+  "evidence/remove",
   "campus/twin",
   "campus/route",
   "care/cases",
@@ -80,14 +85,14 @@ class ApiError extends Error {
     this.code = code;
   }
 }
-async function readJson(req) {
+async function readJson(req, limit = 32_768) {
   if (!/^application\/json(?:;|$)/i.test(req.headers["content-type"] || ""))
     throw new ApiError(415, "Use a JSON request.");
   let size = 0;
   const chunks = [];
   for await (const chunk of req) {
     size += chunk.length;
-    if (size > 32_768) throw new ApiError(413, "Request is too large.");
+    if (size > limit) throw new ApiError(413, "Request is too large.");
     chunks.push(chunk);
   }
   try {
@@ -169,9 +174,13 @@ export function createCareGridServer({
         const status =
           endpoint === "account" && method === "me"
             ? 401
-            : { forbidden: 403, notFound: 404, badRequest: 400 }[
-                exception.code
-              ] || 409;
+            : {
+                forbidden: 403,
+                notFound: 404,
+                badRequest: 400,
+                unavailable: 503,
+                busy: 429,
+              }[exception.code] || 409;
         throw new ApiError(
           status,
           String(exception.message).slice(0, 500),
@@ -376,7 +385,10 @@ export function createCareGridServer({
               "Demo simulations are disabled in deployment.",
             );
           const current = authenticated();
-          const args = await readJson(req);
+          const args = await readJson(
+            req,
+            match[1] === "evidence" && match[2] === "upload" ? 710_000 : 32_768,
+          );
           if ("method" in args) throw new ApiError(400, "Reserved argument.");
           return json(200, {
             data: await rpc(match[1], match[2], args, current.token),
