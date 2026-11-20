@@ -7,15 +7,14 @@ const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const range = (p, start, end) => clamp((p - start) / (end - start));
 const lerp = (a, b, t) => a + (b - a) * t;
 const easeOut = (t) => 1 - (1 - t) ** 3;
-const easeInOut = (t) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
 let vw = innerWidth;
 let vh = innerHeight;
 
-/* ───────── Glass bar and scroll-spy ───────── */
+/* ───────── Top bar, scroll-spy and tone ───────── */
 const bar = $("[data-gbar]");
-glassScroll(bar);
+glassScroll();
 const spy = $("[data-spy]");
 const placeThumb = glassThumb(spy);
 const spyLinks = $$("a", spy);
@@ -39,17 +38,21 @@ const spyObserver = new IntersectionObserver(
   { rootMargin: "-50% 0px -50% 0px" },
 );
 for (const section of $$("main > section")) spyObserver.observe(section);
-// The bar turns to light glass while a bone section sits beneath it.
+// Transparent white-on-blue bar while a blue band sits under it.
+const heroBands = new Set();
 const toneObserver = new IntersectionObserver(
   (entries) => {
     for (const entry of entries)
       entry.isIntersecting
-        ? bar.setAttribute("data-tone", "light")
-        : bar.removeAttribute("data-tone");
+        ? heroBands.add(entry.target)
+        : heroBands.delete(entry.target);
+    heroBands.size
+      ? bar.setAttribute("data-tone", "hero")
+      : bar.removeAttribute("data-tone");
   },
-  { rootMargin: "-4% 0px -95% 0px" },
+  { rootMargin: "0px 0px -92% 0px" },
 );
-for (const section of $$(".bone")) toneObserver.observe(section);
+for (const section of $$("[data-tone-hero]")) toneObserver.observe(section);
 
 /* ───────── Pinned, scroll-scrubbed sections ───────── */
 const pins = [];
@@ -96,71 +99,179 @@ addEventListener("resize", () => {
   resizeTimer = setTimeout(measure, 80);
 });
 
-/* 01 · Exploded campus: flat isometric layers separated in 2D */
+/* ───────── Hero campus model: extruded isometric blocks, drawn once ───────── */
+const ISO = {
+  scale: 0.74,
+  cos: Math.cos(Math.PI / 6),
+  sin: 0.5,
+  ox: 0,
+  oy: -150,
+};
+// Plan (x, y) in a 600 × 600 campus; z is height. Returns viewBox coordinates.
+const iso = (x, y, z = 0) => [
+  (x - y) * ISO.cos * ISO.scale + ISO.ox,
+  (x + y) * ISO.sin * ISO.scale - z * ISO.scale + ISO.oy + 160,
+];
+const pts = (list) =>
+  list.map((p) => p.map((n) => n.toFixed(1)).join(",")).join(" ");
 {
-  const section = $("[data-pin='reveal']");
-  const copy = $("[data-hero-copy]");
-  const rig = $("[data-rig]");
-  const layers = $$(".layer", rig);
-  const pulse = $(".pulse", rig);
-  const chapters = $("[data-chapters]");
-  const chapterItems = $$("li", chapters);
-  const coda = $("[data-coda]");
-  const cue = $(".scroll-cue");
-  const scene = $(".scene");
-  let H = 540;
-  let chapter = -1;
+  const svg = $("[data-model-svg]");
+  const palettes = {
+    blue: ["url(#g-blue-top)", "url(#g-blue-right)", "url(#g-blue-front)"],
+    yellow: ["url(#g-yel-top)", "url(#g-yel-right)", "url(#g-yel-front)"],
+    frost: ["url(#g-fro-top)", "url(#g-fro-right)", "url(#g-fro-front)"],
+    plate: ["#f3f6fd", "#c3d2ee", "#b0c3e8"],
+  };
+  const box = (x0, y0, x1, y1, h, kind = "blue", z0 = 0) => {
+    const [top, right, front] = palettes[kind];
+    const edge =
+      kind === "plate"
+        ? ""
+        : ` stroke="#ffffff" stroke-opacity=".7" stroke-width=".9" stroke-linejoin="round"`;
+    return `<g><polygon points="${pts([iso(x1, y0, z0), iso(x1, y1, z0), iso(x1, y1, h), iso(x1, y0, h)])}" fill="${right}"${edge}/><polygon points="${pts([iso(x0, y1, z0), iso(x1, y1, z0), iso(x1, y1, h), iso(x0, y1, h)])}" fill="${front}"${edge}/><polygon points="${pts([iso(x0, y0, h), iso(x1, y0, h), iso(x1, y1, h), iso(x0, y1, h)])}" fill="${top}"${edge}/></g>`;
+  };
+  const flat = (x0, y0, x1, y1, fill, z = 0.4) =>
+    `<polygon points="${pts([iso(x0, y0, z), iso(x1, y0, z), iso(x1, y1, z), iso(x0, y1, z)])}" fill="${fill}"/>`;
+  const gradient = (id, a, b) =>
+    `<linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`;
+  // Buildings as [x0, y0, x1, y1, height, kind].
+  const blocks = [
+    [54, 58, 112, 106, 26],
+    [152, 58, 214, 106, 34],
+    [230, 58, 296, 106, 34],
+    [338, 58, 442, 106, 44],
+    [482, 58, 544, 106, 30],
+    [54, 150, 112, 296, 54],
+    [152, 150, 296, 188, 62, "yellow"],
+    [152, 188, 194, 296, 62, "yellow"],
+    [254, 188, 296, 296, 62, "yellow"],
+    [338, 150, 442, 174, 72],
+    [338, 174, 360, 272, 72],
+    [420, 174, 442, 272, 72],
+    [338, 272, 442, 296, 72],
+    [54, 340, 112, 402, 30],
+    [54, 416, 112, 472, 30],
+    [338, 340, 442, 398, 50],
+    [338, 414, 442, 472, 58],
+    [482, 340, 544, 472, 66, "frost"],
+  ].sort((a, b) => a[0] + a[1] + a[2] + a[3] - (b[0] + b[1] + b[2] + b[3]));
+  const roads = [
+    [30, 117, 570, 139],
+    [30, 307, 570, 329],
+    [30, 481, 570, 503],
+    [121, 30, 143, 570],
+    [307, 30, 329, 570],
+    [451, 30, 473, 570],
+  ];
+  const route = [
+    [512, 406],
+    [462, 406],
+    [462, 318],
+    [318, 318],
+    [318, 214],
+    [296, 214],
+  ];
+  const routePath = route
+    .map(
+      ([x, y], i) =>
+        `${i ? "L" : "M"}${iso(x, y, 1)
+          .map((n) => n.toFixed(1))
+          .join(" ")}`,
+    )
+    .join("");
+  const [ax, ay] = iso(390, 318, 1);
+  const cross = [
+    iso(507, 400, 66.5),
+    iso(519, 400, 66.5),
+    iso(519, 412, 66.5),
+    iso(507, 412, 66.5),
+  ];
+  const crossH = [
+    iso(497, 404, 66.5),
+    iso(529, 404, 66.5),
+    iso(529, 408, 66.5),
+    iso(497, 408, 66.5),
+  ];
+  svg.innerHTML = `<defs>${gradient("g-blue-top", "#e2edff", "#a9c6f6")}${gradient("g-blue-right", "#5f8de3", "#2f5bbc")}${gradient("g-blue-front", "#4a78d6", "#2a50aa")}${gradient("g-yel-top", "#fff5c8", "#f6dd78")}${gradient("g-yel-right", "#f3d465", "#e0b842")}${gradient("g-yel-front", "#ebc957", "#cfa63a")}${gradient("g-fro-top", "#ffffff", "#eef3fc")}${gradient("g-fro-right", "#e3ebf8", "#c7d5ef")}${gradient("g-fro-front", "#d6e1f4", "#b9cae8")}<radialGradient id="g-shadow"><stop offset="0" stop-color="#1e3c8a" stop-opacity=".16"/><stop offset="1" stop-color="#1e3c8a" stop-opacity="0"/></radialGradient></defs><ellipse cx="0" cy="${iso(300, 300)[1] + 40}" rx="470" ry="150" fill="url(#g-shadow)"/>${box(0, 0, 600, 600, 0, "plate", -16)}${roads.map((r) => flat(...r, "#ffffff")).join("")}${flat(150, 338, 300, 474, "#dcefdc")}${flat(480, 146, 546, 300, "#dcefdc")}<path d="${routePath}" fill="none" stroke="#2b58bf" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><path d="${routePath}" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-dasharray="2 7" stroke-linecap="round"/>${blocks.map(([x0, y0, x1, y1, h, kind]) => box(x0, y0, x1, y1, h, kind)).join("")}<polygon points="${pts(cross)}" fill="#1f8a4c"/><polygon points="${pts(crossH)}" fill="#1f8a4c"/><g transform="translate(${ax.toFixed(1)} ${ay.toFixed(1)})"><ellipse rx="14" ry="8" fill="#2b58bf" stroke="#fff" stroke-width="2.5"/><path d="M-5 2 0-4 5 2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>`;
+  // Place chips and the incident ring at their projected points.
+  const [vx, vy, vw0, vh0] = svg
+    .getAttribute("viewBox")
+    .split(/\s+/)
+    .map(Number);
+  for (const element of $$("[data-chip]")) {
+    const [x, y, z] = element.dataset.chip.split(",").map(Number);
+    const [px, py] = iso(x, y, z);
+    element.style.left = `${(((px - vx) / vw0) * 100).toFixed(2)}%`;
+    element.style.top = `${(((py - vy) / vh0) * 100).toFixed(2)}%`;
+  }
+  // Gentle lift as the hero scrolls away (transform only).
+  const stage = $("[data-model-stage]");
+  const hero = $(".hero");
+  pin(hero, (p) => {
+    if (reduceMotion.matches) return;
+    stage.style.transform = `translateY(${(-easeOut(p) * 70).toFixed(1)}px)`;
+  });
+}
+
+/* ───────── Statements: words resolve from grey to ink ───────── */
+for (const section of $$("[data-pin='statement']")) {
+  const say = $("[data-say]", section);
+  const words = say.textContent.trim().split(/\s+/);
+  say.innerHTML = words
+    .map((word) => `<span class="w">${word}</span> `)
+    .join("");
+  const spans = $$(".w", say);
+  const cards = $$(".card", section);
+  const threads = $$(".threads i", section);
+  let lit = -1;
+  let shown = -1;
+  pin(section, (p) => {
+    const nextLit = Math.round(range(p, 0.08, 0.7) * spans.length);
+    if (nextLit !== lit) {
+      lit = nextLit;
+      spans.forEach((span, index) => span.classList.toggle("on", index < lit));
+    }
+    const nextShown = Math.floor(range(p, 0.15, 0.85) * (cards.length + 0.999));
+    if (nextShown !== shown) {
+      shown = nextShown;
+      cards.forEach((card, index) =>
+        card.classList.toggle("on", index < shown),
+      );
+    }
+    const draw = easeOut(range(p, 0, 0.35)).toFixed(3);
+    threads.forEach((thread, index) => {
+      thread.style.setProperty("--draw", draw);
+      thread.style.setProperty(
+        "--run",
+        `${(((p * 1.6 + index * 0.23) % 1) * 90).toFixed(1)}%`,
+      );
+    });
+  });
+}
+
+/* ───────── Introducing: the split title closes, the preview rises ───────── */
+{
+  const section = $("[data-pin='intro']");
+  const left = $("[data-left]", section);
+  const right = $("[data-right]", section);
+  const preview = $("[data-preview]", section);
+  let gap = 0;
   pin(
     section,
     (p) => {
-      const wide = vw > 960;
-      const arrive = easeInOut(range(p, 0.02, 0.19));
-      const open = easeOut(range(p, 0.18, 0.32));
-      const close = easeInOut(range(p, 0.84, 0.96));
-      const explode = open * (1 - close);
-
-      copy.style.opacity = String(1 - range(p, 0.015, 0.13));
-      copy.style.transform = `translate(-50%, ${(-arrive * vh * 0.14).toFixed(1)}px)`;
-      copy.style.visibility = p > 0.15 ? "hidden" : "";
-      cue.style.opacity = String(1 - range(p, 0, 0.03));
-
-      const scale = lerp(0.94, wide ? 0.8 : 0.86, arrive);
-      const gap = H * (wide ? 0.24 : 0.2) * explode;
-      const x = wide ? lerp(0, vw * 0.19, arrive) : 0;
-      const y =
-        lerp(vh * (wide ? 0.47 : 0.37), wide ? vh * 0.04 : -vh * 0.12, arrive) +
-        1.5 * gap * scale;
-      rig.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${scale.toFixed(4)})`;
-
-      const next =
-        p < 0.3 ? 0 : Math.min(3, Math.floor((p - 0.3) / ((0.84 - 0.3) / 4)));
-      const focus = range(p, 0.28, 0.32) * (1 - range(p, 0.82, 0.86));
-      layers.forEach((layer, index) => {
-        layer.style.transform = `translate(0, ${(-index * gap).toFixed(1)}px)`;
-        const dim = index === next ? 0 : index === 0 ? 0.45 : 0.6;
-        layer.style.opacity = String(1 - focus * dim);
-      });
-      // The decision layer carries the incident pulse.
-      pulse.style.translate = `0 ${(-2 * gap).toFixed(1)}px`;
-
-      chapters.style.opacity = String(
-        range(p, 0.19, 0.26) * (1 - range(p, 0.83, 0.87)),
-      );
-      chapters.style.setProperty("--fill", range(p, 0.3, 0.84).toFixed(3));
-      if (next !== chapter) {
-        chapter = next;
-        chapterItems.forEach((item, index) =>
-          item.classList.toggle("on", index === next),
-        );
-      }
-      const outro = range(p, 0.88, 0.96);
-      coda.style.opacity = String(outro);
-      coda.style.transform = wide
-        ? `translateY(calc(-50% + ${((1 - outro) * 24).toFixed(1)}px))`
-        : `translateY(${((1 - outro) * 24).toFixed(1)}px)`;
+      const close = easeOut(range(p, 0.05, 0.55));
+      const shift = (gap / 2) * close;
+      left.style.transform = `translateX(${shift.toFixed(1)}px)`;
+      right.style.transform = `translateX(${(-shift).toFixed(1)}px)`;
+      const rise = easeOut(range(p, 0.25, 0.7));
+      preview.style.opacity = String(rise);
+      preview.style.transform = `translateY(${((1 - rise) * 40).toFixed(1)}px)`;
     },
     () => {
-      H = scene.offsetHeight;
+      left.style.transform = "";
+      right.style.transform = "";
+      const box = left.parentElement.getBoundingClientRect();
+      gap = Math.max(0, box.width - left.offsetWidth - right.offsetWidth - 24);
     },
   );
 }

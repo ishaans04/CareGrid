@@ -19,23 +19,19 @@ body {
   --mustard: var(--amber);
   --mustard-deep: var(--amber);
   --mustard-wash: var(--amber-wash);
-  --espresso: #121419;
-  --espresso-2: #181b21;
-  --espresso-rule: var(--line-2);
-  --on-dark: var(--text);
-  --on-dark-2: var(--text-2);
-  --on-dark-3: var(--text-3);
+  --espresso: #2b58bf;
+  --espresso-2: #3263c9;
+  --espresso-rule: #ffffff2e;
+  --on-dark: #ffffff;
+  --on-dark-2: #ffffffd9;
+  --on-dark-3: #ffffffa6;
   --lift-1: 0 0 0 1px var(--line);
-  --lift-2: 0 20px 40px -24px #000;
-  --lift-3: 0 30px 60px -30px #000;
+  --lift-2: 0 14px 24px -14px #0a0d141f;
+  --lift-3: 0 40px 70px -40px #0a1e5040;
 }
 .page-heading h1 {
-  font-family: var(--display);
-  font-stretch: 72%;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -0.005em;
-  word-spacing: 0.08em;
+  font-weight: 400;
+  letter-spacing: -0.05em;
 }
 .skip {
   position: fixed;
@@ -447,7 +443,7 @@ button.gbar-avatar:hover {
   gap: 9px;
   padding: 7px 12px;
   border-radius: 999px;
-  background: #0f1115e6;
+  background: #ffffffeb;
   border: 1px solid #2a2f37;
   box-shadow: 0 6px 18px -10px #2b211b59;
   font-family: var(--mono);
@@ -467,7 +463,7 @@ button.gbar-avatar:hover {
   gap: 14px;
   padding: 6px 12px;
   border-radius: 999px;
-  background: #0f1115e6;
+  background: #ffffffeb;
   border: 1px solid #2a2f37;
   font-size: 11.5px;
   color: var(--ink-2);

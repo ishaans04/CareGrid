@@ -87,17 +87,18 @@
     color 0.15s linear;
 }
 .button:hover:not(:disabled) {
-  border-color: #4a515c;
+  border-color: #b5b5b5;
   background: var(--surface-3);
 }
 .button.primary {
-  border-color: var(--text);
-  background: var(--text);
-  color: var(--bg);
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+  box-shadow: inset 0 -1.5px 0 #1e3f8f;
 }
 .button.primary:hover:not(:disabled) {
-  border-color: #fff;
-  background: #fff;
+  border-color: #2550b0;
+  background: #2550b0;
 }
 .button.danger {
   border-color: var(--flare-line);
@@ -361,12 +362,10 @@ textarea::placeholder {
   color: var(--text-3);
 }
 .stat strong {
-  font-family: var(--display);
-  font-stretch: 78%;
-  font-weight: 700;
+  font-weight: 400;
   font-size: 34px;
   line-height: 1.05;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.045em;
   font-variant-numeric: tabular-nums;
 }
 .stat.flare strong {
@@ -676,15 +675,15 @@ textarea::placeholder {
   flex-direction: column;
   padding: 22px 24px;
   border-radius: var(--r-xl);
-  border: 1px solid var(--flare-line);
+  border: 1px solid var(--blue-line);
   background:
-    radial-gradient(120% 90% at 0% 0%, #ff5a1f24, transparent 60%),
+    radial-gradient(120% 90% at 0% 0%, #2b58bf14, transparent 60%),
     var(--surface);
 }
 .decide.settled {
   border-color: var(--mint-line);
   background:
-    radial-gradient(120% 90% at 0% 0%, #3fe0a11c, transparent 60%),
+    radial-gradient(120% 90% at 0% 0%, #157a3d12, transparent 60%),
     var(--surface);
 }
 .now-text {
@@ -735,10 +734,7 @@ textarea::placeholder {
   overflow: hidden;
   border-radius: var(--r-xl);
   border: 1px solid var(--line);
-  background:
-    linear-gradient(#ffffff06 1px, transparent 1px) 0 0 / 32px 32px,
-    linear-gradient(90deg, #ffffff06 1px, transparent 1px) 0 0 / 32px 32px,
-    var(--bg-2);
+  background: var(--bg-2);
 }
 .schematic {
   display: block;
@@ -752,7 +748,7 @@ textarea::placeholder {
   max-height: 230px;
 }
 .schematic .road {
-  stroke: #262b33;
+  stroke: #dfe5ef;
   stroke-width: 4;
   stroke-linecap: round;
 }
@@ -765,7 +761,7 @@ textarea::placeholder {
   stroke-dasharray: 10 10;
 }
 .schematic .node circle {
-  fill: #2e343d;
+  fill: #c9d3e3;
   stroke: var(--bg-2);
   stroke-width: 3;
 }
@@ -1090,7 +1086,7 @@ textarea::placeholder {
   max-height: 300px;
   object-fit: contain;
   border-radius: 8px;
-  background: #000;
+  background: var(--surface-2);
 }
 .timeline {
   padding: 0;
@@ -1135,16 +1131,14 @@ textarea::placeholder {
 }
 .task-hero {
   padding: clamp(22px, 3vw, 34px);
-  background: radial-gradient(90% 120% at 100% 0%, #ff5a1f2e, transparent 60%);
+  background: linear-gradient(160deg, #2b58bf14, transparent 55%);
 }
 .task-hero h2 {
   margin: 16px 0 6px;
-  font-family: var(--display);
-  font-stretch: 72%;
-  font-weight: 800;
+  font-weight: 400;
   font-size: clamp(42px, 6vw, 72px);
-  line-height: 0.95;
-  letter-spacing: -0.015em;
+  line-height: 1;
+  letter-spacing: -0.05em;
 }
 .task-where {
   font-size: 16px;
@@ -1320,10 +1314,9 @@ textarea::placeholder {
 }
 .closed-row {
   display: grid;
-  grid-template-columns: 92px minmax(120px, 0.8fr) minmax(0, 1.2fr) minmax(
-      0,
-      1.4fr
-    ) 52px;
+  grid-template-columns:
+    92px minmax(120px, 0.8fr) minmax(0, 1.2fr) minmax(0, 1.4fr)
+    52px;
   gap: 16px;
   align-items: baseline;
   padding: 11px 0;
@@ -1600,7 +1593,7 @@ textarea::placeholder {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: #59616c;
+  background: #9aa3b2;
 }
 .bar.peak b {
   background: var(--flare);
@@ -1720,23 +1713,34 @@ textarea::placeholder {
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(60% 50% at 85% 10%, #ff5a1f1f, transparent 70%),
-    radial-gradient(50% 40% at 0% 100%, #3fe0a10f, transparent 70%),
-    linear-gradient(#ffffff05 1px, transparent 1px) 0 0 / 56px 56px,
-    linear-gradient(90deg, #ffffff05 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(
+      180deg,
+      #2a54b6 0%,
+      #3d69c8 40%,
+      #7d9fe3 62%,
+      #dde7f8 82%,
+      #ffffff 96%
+    ),
     var(--bg);
   pointer-events: none;
 }
 .login-title {
   margin-top: 18px;
-  font-family: var(--display);
-  font-stretch: 70%;
-  font-weight: 800;
-  font-size: clamp(54px, 7.2vw, 112px);
-  line-height: 0.9;
-  letter-spacing: -0.015em;
-  text-transform: uppercase;
-  word-spacing: 0.06em;
+  color: #fff;
+  font-weight: 400;
+  font-size: clamp(48px, 5.6vw, 84px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+.login-title em {
+  color: #cddcff;
+}
+.login-story > .eyebrow,
+.login-lead {
+  color: #ffffffd9 !important;
+}
+.login-story .eyebrow b {
+  color: var(--butter);
 }
 .login-title,
 .login-lead,
@@ -1789,7 +1793,7 @@ textarea::placeholder {
   border-radius: 24px;
   border: 1px solid var(--line-2);
   background: linear-gradient(180deg, var(--surface-2), var(--surface));
-  box-shadow: 0 30px 60px -36px #000;
+  box-shadow: 0 40px 70px -40px #0a1e5040;
   animation: rise 0.8s var(--ease-expo) 0.1s both;
 }
 .login-card h2 {
@@ -1848,13 +1852,13 @@ dialog {
   border: 1px solid var(--line-2);
   background: var(--surface);
   color: var(--text);
-  box-shadow: 0 40px 80px -30px #000;
+  box-shadow: 0 40px 80px -30px #0a1e504d;
 }
 dialog[open] {
   animation: rise 0.3s var(--ease-expo);
 }
 dialog::backdrop {
-  background: #000000a6;
+  background: #0a0a0a59;
 }
 .dialog-body {
   display: grid;
@@ -1893,7 +1897,7 @@ dialog::backdrop {
   background: var(--surface-3);
   color: var(--text);
   font-size: 14px;
-  box-shadow: 0 20px 40px -20px #000;
+  box-shadow: 0 20px 40px -20px #0a1e5040;
   opacity: 0;
   pointer-events: none;
   transform: translate(-50%, 12px);
@@ -2132,4 +2136,32 @@ dialog::backdrop {
   .sos-compose {
     padding: 20px;
   }
+}
+
+/* Sign-in story: a self-contained blue panel (no page-wide layer to hide). */
+.login::before {
+  display: none;
+}
+.login-story {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(28px, 4vw, 56px);
+  border-radius: 16px;
+  background: linear-gradient(165deg, #2a54b6 0%, #3563c6 45%, #6f93e0 100%);
+  color: #fff;
+}
+.login-story .role-legend {
+  border-top-color: #ffffff33;
+}
+.login-story .role-legend li {
+  border-bottom-color: #ffffff26;
+}
+.login-story .role-legend span {
+  border-color: #ffffff59;
+  color: #fff;
+}
+.login-story .role-legend small {
+  color: #ffffffbf;
 }
