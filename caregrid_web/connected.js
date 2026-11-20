@@ -12,6 +12,7 @@ import {
 
 import { renderBriefing } from "./briefing-view.mjs";
 import { EvidenceController, renderEvidence } from "./evidence-view.mjs";
+import { glassThumb, glassScroll } from "./glass.mjs";
 
 const app = document.querySelector("#app");
 const dialog = document.querySelector("#action-dialog");
@@ -39,6 +40,11 @@ let identity;
 let toastTimer;
 let modalAction;
 let pendingSync = Promise.resolve();
+// Render cache: the shell skeleton, the bar markup and the last workspace HTML.
+let shellKey = "";
+let barKey = "";
+let mainHtml = "";
+let placeThumb = () => {};
 async function api(path, { method = "GET", body, signal } = {}) {
   let response;
   try {
@@ -101,22 +107,40 @@ const banner = () =>
     ? `<div class="error-banner" role="alert"><div><p>${e(state.error)}</p><small>Last successful sync: ${state.lastSync ? clock(state.lastSync) : "not yet connected"}. Refresh before repeating an action.</small></div>${button("Reconnect", "refresh")}</div>`
     : "";
 
+const brand = `<a class="gbar-brand" href="/" aria-label="CareGrid home"><img src="assets/mark.svg" alt="" width="26" height="26"/><span>CareGrid</span><small>Console</small></a>`;
+const roleLegend = [
+  ["CMD", "Command", "Owns each incident and approves dispatch."],
+  ["RSP", "Responder", "One assignment and the next step."],
+  ["MED", "Medical", "Prepares the receiving team."],
+  ["ADM", "Administrator", "Readiness, analytics and audit."],
+  ["MBR", "Member", "Requests help and follows it."],
+];
+function accountOptions() {
+  const campuses = new Map();
+  for (const account of state.accounts) {
+    const campus = account.campusName || state.config?.campus || "Campus";
+    if (!campuses.has(campus)) campuses.set(campus, []);
+    campuses.get(campus).push(account);
+  }
+  const option = (account) =>
+    `<option value="${e(account.handle)}">${e(account.displayName)} · ${e(label(account.role))}</option>`;
+  return campuses.size > 1
+    ? [...campuses]
+        .map(
+          ([campus, accounts]) =>
+            `<optgroup label="${e(campus)}">${accounts.map(option).join("")}</optgroup>`,
+        )
+        .join("")
+    : state.accounts.map(option).join("");
+}
 function login() {
-  const googleSignIn = `<div style="margin-top:32px">${button(state.busy ? "Signing in…" : "Continue with Google", "google-signin", { primary: true })}<p class="muted small" style="margin-top:16px">Use the account assigned by your campus administrator. Access follows your CareGrid role.</p></div>`;
-  app.innerHTML = `<main id="main" class="login"><section class="login-story"><a class="wordmark" href="/"><img src="assets/mark.svg" alt="" />CareGrid<span class="lime">.</span></a><div><p class="eyebrow lime">Team Duality / campus response</p><h1 style="margin-top:22px">Every signal.<br />An owner.<br /><em>A response.</em></h1><p>One shared workspace for the command desk, the people responding, and the team ready to receive them.</p><div class="orbit" aria-hidden="true"><svg viewBox="0 0 600 180"><path d="M0 90H130L190 45H340L400 130H600M80 180V90M260 0V45M490 0V130" fill="none" stroke="#ece9e13a" stroke-width="2"/><path d="M130 90L190 45H340L400 130H490" fill="none" stroke="#c6ff3d" stroke-width="3"/>${[
-    [130, 90],
-    [190, 45],
-    [340, 45],
-    [400, 130],
-    [490, 130],
-  ]
-    .map(
-      ([x, y]) =>
-        `<circle cx="${x}" cy="${y}" r="6" fill="#0a0c14" stroke="#c6ff3d" stroke-width="2"/>`,
-    )
-    .join(
-      "",
-    )}</svg></div></div><footer class="eyebrow muted">From first signal to accountable care.</footer></section><section class="login-form-wrap"><p class="eyebrow cyan">${e(state.config?.campus || "Meridian Demo Campus")}</p><h2>Take your place.</h2><p class="muted">Sign in to the workspace for your role.</p><div style="margin-top:24px">${banner()}</div>${state.config?.authentication === "firebase" ? googleSignIn : state.accounts.length ? `<form id="login-form"><label>Demo account<select name="handle" required>${state.accounts.map((account) => `<option value="${e(account.handle)}">${e(account.displayName)} · ${e(label(account.role))}</option>`).join("")}</select><small id="account-description"></small></label><label>Demo PIN<input name="pin" type="password" inputmode="numeric" maxlength="30" autocomplete="off" required aria-describedby="pin-hint"/><small id="pin-hint"></small></label><button class="button primary full" ${state.busy ? "disabled" : ""}>${state.busy ? "Signing in…" : "Enter workspace"}</button></form>` : `<div style="margin-top:24px">${empty("Service is not available", "Run node scripts/dev.mjs from the repository to start the backend and this console.")}</div>`}<div class="login-note">${state.config?.authentication === "firebase" ? "Google staging MVP · synthetic campus. Sign-in stays in memory and clears when this page reloads. For another role, use a separate tab." : "Connected local MVP · synthetic campus and seeded demo PINs. For a second role, open a separate browser profile or private window."} <a href="index.html">Open the pitch presentation</a>.</div></section></main>`;
+  shellKey = "";
+  mainHtml = "";
+  barKey = "";
+  const firebase = state.config?.authentication === "firebase";
+  const googleSignIn = `<div class="login-google">${button(state.busy ? "Signing in…" : "Continue with Google", "google-signin", { primary: true })}<p class="muted small">Use the account assigned by your campus administrator. Access follows your CareGrid role.</p></div>`;
+  app.innerHTML = `<header class="gbar" data-gbar><div class="gbar-inner">${brand}<div class="gbar-end"><a class="btn ghost hide-sm" href="/">Overview</a><a class="btn" href="index.html">Interactive demo</a></div></div></header><main id="main" class="login"><section class="login-story"><p class="eyebrow"><b>Response workspace</b> / Team Duality</p><h1>Every signal.<br />An owner.<br /><em>A response.</em></h1><p class="login-lead">One shared record for the command desk, the people responding and the team preparing to receive them. Each role sees what its part of the response requires.</p><ul class="role-legend">${roleLegend.map(([code, name, text]) => `<li><span>${code}</span><b>${name}</b><small>${text}</small></li>`).join("")}</ul></section><section class="login-card"><p class="eyebrow campus-line"><i class="dot"></i>${e(state.config?.campus || "Meridian Demo Campus")}</p><h2>Take your place.</h2><p class="muted">Sign in to the workspace for your role.</p>${banner()}${firebase ? googleSignIn : state.accounts.length ? `<form id="login-form"><label>Demo account<select name="handle" required>${accountOptions()}</select><small id="account-description"></small></label><label>Demo PIN<input name="pin" type="password" inputmode="numeric" maxlength="30" autocomplete="off" required aria-describedby="pin-hint"/><small id="pin-hint"></small></label><button class="button primary full" ${state.busy ? "disabled" : ""}>${state.busy ? "Signing in…" : "Enter workspace"}</button></form>` : empty("Service is not available", "Run node scripts/dev.mjs from the repository to start the backend and this console.")}<p class="login-note">${firebase ? "Google staging MVP · synthetic campus. Sign-in stays in memory and clears when this page reloads. For another role, use a separate tab." : "Connected local MVP · synthetic campus and seeded demo PINs. For a second role, open a separate browser profile or private window."} <a href="index.html">Open the pitch presentation</a>.</p></section></main>`;
+  glassScroll(app.querySelector("[data-gbar]"));
   accountHint();
 }
 function accountHint() {
@@ -146,6 +170,23 @@ function shell() {
   const view = { overview, response, care, readiness, analytics, audit, sos }[
     state.view
   ];
+  // The glass bar is built once per signed-in identity. Changing view only
+  // moves the active marker, so the thumb glides instead of being rebuilt.
+  const key = `${state.user.id}|${state.user.role}`;
+  if (key !== shellKey) {
+    shellKey = key;
+    mainHtml = "";
+    barKey = "";
+    app.innerHTML = `<div class="shell" data-role="${e(state.user.role)}"><header class="gbar console-bar" data-gbar id="console-bar"></header><main id="main" class="main" tabindex="-1"></main></div>`;
+    glassScroll();
+  }
+  renderBar(nav);
+  const next = `<div id="connection-error">${banner()}</div>${state.lastSync ? view() : empty("Loading your workspace", "Reading the campus state from CareGrid…")}<footer class="context-note">${state.config?.authentication === "firebase" ? "Team Duality · Google staging MVP · Synthetic campus data. Camera analysis, live telemetry and notification delivery remain separate integrations." : "Team Duality · Synthetic local MVP · The server enforces each account’s permissions. Camera analysis, mobile telemetry and real notifications remain planned integrations."}</footer>`;
+  updateConnection();
+  // Polling re-renders only when the workspace actually changed.
+  if (next === mainHtml) return;
+  mainHtml = next;
+  const main = document.querySelector("#main");
   const focus = document.activeElement;
   const focusKey = focus?.dataset?.focus;
   const activeField = focus?.name;
@@ -153,13 +194,12 @@ function shell() {
   const selection = [focus?.selectionStart, focus?.selectionEnd];
   // Retain drafts and keyboard position when polling replaces the workspace.
   const drafts = new Map(
-    [...app.querySelectorAll("form")].map((form) => [
+    [...main.querySelectorAll("form")].map((form) => [
       form.id,
       new FormData(form),
     ]),
   );
-  app.innerHTML = `<div class="shell" data-role="${e(state.user.role)}"><aside class="sidebar"><a class="wordmark" href="/"><img src="assets/mark.svg" alt=""/>CareGrid<span class="lime">.</span></a><div class="campus-label"><span class="eyebrow muted">Connected workspace</span><strong>${e(state.config?.campus || "Meridian Demo Campus")}</strong></div><nav aria-label="Workspace">${nav.map(([key, title], index) => `<button class="nav-button ${state.view === key ? "active" : ""}" data-action="navigate" data-id="${key}" ${state.view === key ? 'aria-current="page"' : ""}><span>0${index + 1}</span>${e(title)}</button>`).join("")}</nav><div class="sidebar-foot"><p class="muted small">A signal is the beginning.<br />Care is the measure.</p><div class="identity"><strong>${e(state.user.displayName)}</strong><span class="muted small">${e(state.user.title)}</span></div>${button("Sign out", "logout")}</div></aside><div class="workspace"><header class="topbar"><span class="eyebrow">Campus response / <span class="lime">${e(label(state.user.role))}</span></span><div class="topbar-status" id="connection-status"></div></header><main id="main" class="main"><div id="connection-error" style="margin-bottom:${state.error ? 24 : 0}px">${banner()}</div>${state.lastSync ? view() : empty("Loading your workspace", "Reading the campus state from CareGrid…")}<footer class="context-note">${state.config?.authentication === "firebase" ? "Team Duality · Google staging MVP · Synthetic campus data. Camera analysis, live telemetry and notification delivery remain separate integrations." : "Team Duality · Synthetic local MVP · The server enforces each account’s permissions. Camera analysis, mobile telemetry and real notifications remain planned integrations."}</footer></main></div></div>`;
-  updateConnection();
+  main.innerHTML = next;
   for (const [id, values] of drafts) {
     const form = document.getElementById(id);
     if (form)
@@ -184,10 +224,46 @@ function shell() {
       .querySelector(`[data-focus="${CSS.escape(focusKey)}"]`)
       ?.focus({ preventScroll: true });
 }
+function initials(name) {
+  return (
+    String(name || "")
+      .split(/\s+/)
+      .filter((word) => /^[A-Za-z]/.test(word) && !word.endsWith("."))
+      .map((word) => word[0].toUpperCase())
+      .slice(0, 2)
+      .join("") || "CG"
+  );
+}
+function renderBar(nav) {
+  const bar = document.querySelector("#console-bar");
+  const key = JSON.stringify([
+    nav,
+    state.user.displayName,
+    state.user.title,
+    state.config?.campus,
+  ]);
+  if (key !== barKey) {
+    barKey = key;
+    bar.innerHTML = `<div class="gbar-inner">${brand}<nav class="gbar-nav" aria-label="Workspace"><span class="gbar-thumb" aria-hidden="true"></span>${nav.map(([view, title], index) => `<button type="button" class="gbar-link" data-action="navigate" data-id="${view}" data-focus="nav-${view}"><small aria-hidden="true">0${index + 1}</small>${e(title)}</button>`).join("")}</nav><div class="gbar-end"><div class="topbar-status" id="connection-status"></div><div class="identity" title="${e(state.user.displayName)} · ${e(state.user.title)}"><span class="gbar-avatar" aria-hidden="true">${e(initials(state.user.displayName))}</span><span class="identity-text"><strong>${e(state.user.displayName)}</strong><small>${e(label(state.user.role))} · ${e(state.config?.campus || "Meridian Demo Campus")}</small></span></div><button type="button" class="btn ghost signout" data-action="logout">Sign out</button></div></div>`;
+    placeThumb = glassThumb(bar.querySelector(".gbar-nav"));
+  }
+  for (const item of bar.querySelectorAll('[data-action="navigate"]'))
+    item.dataset.id === state.view
+      ? item.setAttribute("aria-current", "page")
+      : item.removeAttribute("aria-current");
+  for (const control of bar.querySelectorAll("button"))
+    control.disabled = state.busy;
+  placeThumb();
+}
+let connectionHtml = "";
 function updateConnection() {
   const target = document.querySelector("#connection-status");
-  if (target)
-    target.innerHTML = `<span class="dot ${state.error ? "warn" : ""}"></span>${state.error ? "Connection needs attention" : `Synced ${clock(state.lastSync)}`} ${pill("SYNTHETIC DATA")}`;
+  if (!target) return;
+  const next = `<span class="dot ${state.error ? "warn" : ""}"></span><span class="sync-text">${state.error ? "Connection needs attention" : `Synced ${clock(state.lastSync)}`}</span> ${pill("SYNTHETIC DATA")}`;
+  if (next !== connectionHtml || !target.firstChild) {
+    connectionHtml = next;
+    target.innerHTML = next;
+  }
 }
 function map(twin = state.data.twin, highlightedRoute = []) {
   if (!twin)
@@ -207,7 +283,7 @@ function map(twin = state.data.twin, highlightedRoute = []) {
           [code, highlightedRoute[index - 1]].includes(a.code) &&
           [code, highlightedRoute[index - 1]].includes(b.code),
       );
-      return `<line x1="${Number(a.x)}" y1="${Number(a.y)}" x2="${Number(b.x)}" y2="${Number(b.y)}" stroke="${road.status === "blocked" ? "#ff9278" : selected ? "#c6ff3d" : "#ece9e129"}" stroke-width="${selected ? 5 : 3}" ${road.status === "blocked" ? 'stroke-dasharray="8 8"' : ""}/>`;
+      return `<line x1="${Number(a.x)}" y1="${Number(a.y)}" x2="${Number(b.x)}" y2="${Number(b.y)}" stroke="${road.status === "blocked" ? "#b4441b" : selected ? "#2b211b" : "#d6cbbd"}" stroke-width="${selected ? 7 : 4}" stroke-linecap="round" ${road.status === "blocked" ? 'stroke-dasharray="8 8"' : ""}/>`;
     })
     .join("");
   const landmarks = new Set([
@@ -224,10 +300,10 @@ function map(twin = state.data.twin, highlightedRoute = []) {
   const nodes = twin.zones
     .map(
       (zone) =>
-        `<g><title>${e(zone.name)}</title><circle cx="${Number(zone.x)}" cy="${Number(zone.y)}" r="${active.has(zone.code) ? 12 : 6}" fill="${active.has(zone.code) ? "#ff9278" : zone.type === "hospital" ? "#c6ff3d" : "#888f9a"}"/>${landmarks.has(zone.code) || active.has(zone.code) ? `<text x="${Number(zone.x) + 15}" y="${Number(zone.y) - 13}" fill="${active.has(zone.code) ? "#ece9e1" : "#a0a6b3"}" font-family="Archivo, sans-serif" font-size="26">${e(zone.name.replace("Sports Complex", "Sports").replace("Chemistry Labs", "Labs").replace("Security Control Room", "Command"))}</text>` : ""}</g>`,
+        `<g><title>${e(zone.name)}</title>${active.has(zone.code) ? `<circle cx="${Number(zone.x)}" cy="${Number(zone.y)}" r="28" fill="#b4441b" fill-opacity=".14"/>` : ""}<circle cx="${Number(zone.x)}" cy="${Number(zone.y)}" r="${active.has(zone.code) ? 12 : zone.type === "hospital" ? 9 : 6}" fill="${active.has(zone.code) ? "#b4441b" : zone.type === "hospital" ? "#2f6a43" : "#faf7f2"}" stroke="${active.has(zone.code) ? "#faf7f2" : zone.type === "hospital" ? "#faf7f2" : "#9c8e80"}" stroke-width="${active.has(zone.code) || zone.type === "hospital" ? 4 : 2.5}"/>${landmarks.has(zone.code) || active.has(zone.code) ? `<text x="${Number(zone.x) + 15}" y="${Number(zone.y) - 13}" fill="${active.has(zone.code) ? "#2b211b" : "#75675c"}" font-family="Instrument Sans, sans-serif" font-weight="${active.has(zone.code) ? 600 : 500}" font-size="25">${e(zone.name.replace("Sports Complex", "Sports").replace("Chemistry Labs", "Labs").replace("Security Control Room", "Command"))}</text>` : ""}</g>`,
     )
     .join("");
-  return `<svg class="schematic" viewBox="-25 -25 1120 770" role="img" aria-label="Schematic campus graph; orange marks active incident zones. Positions are campus nodes, not live GPS.">${paths}${nodes}</svg><div class="map-legend"><span><i class="dot warn"></i>Incident zone</span><span><i class="dot"></i>Hospital / selected route</span><span>Schematic · no live GPS</span></div>`;
+  return `<svg class="schematic" viewBox="-25 -25 1120 770" role="img" aria-label="Schematic campus graph; orange marks active incident zones. Positions are campus nodes, not live GPS.">${paths}${nodes}</svg><div class="map-legend"><span><i class="dot warn"></i>Incident zone</span><span><i class="dot"></i>Hospital</span><span><i class="route-key"></i>Selected route</span><span><i class="route-key blocked"></i>Blocked</span><span class="legend-note">Schematic · no live GPS</span></div>`;
 }
 function overview() {
   const board = state.data.board;
@@ -539,6 +615,8 @@ async function mutate(task, success) {
     } else note(error.message);
   } finally {
     state.busy = false;
+    // Buttons were disabled directly in the DOM; force a fresh render.
+    mainHtml = "";
   }
   await sync({ force: true });
   shell();

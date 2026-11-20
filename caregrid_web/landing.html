@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f3eee7" />
+    <meta
+      name="description"
+      content="CareGrid is the response operating system for campuses: from the first signal to verified care, every second accounted for."
+    />
+    <title>CareGrid · Every second, accounted for</title>
+    <link rel="icon" type="image/svg+xml" href="assets/mark.svg" />
+    <link
+      rel="preload"
+      href="assets/fonts/instrument-sans.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/plex-mono-500.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="brand.css" />
+    <link rel="stylesheet" href="landing.css" />
+    <script type="module" src="landing.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <!-- Shared campus drawing. Reused by the exploded hero and the replay. -->
+    <svg width="0" height="0" class="defs" aria-hidden="true" focusable="false">
+      <defs>
+        <pattern
+          id="survey"
+          width="30"
+          height="30"
+          patternUnits="userSpaceOnUse"
+        >
+          <path d="M30 0H0V30" fill="none" stroke="#ece5da" stroke-width="1" />
+        </pattern>
+        <pattern
+          id="hatch"
+          width="6"
+          height="6"
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(45)"
+        >
+          <path
+            d="M0 0V6"
+            stroke="#b4441b"
+            stroke-width="1.4"
+            stroke-opacity=".55"
+          />
+        </pattern>
+        <symbol id="plan" viewBox="0 0 600 600">
+          <rect x="6" y="6" width="588" height="588" rx="30" fill="#faf7f2" />
+          <rect
+            x="6"
+            y="6"
+            width="588"
+            height="588"
+            rx="30"
+            fill="url(#survey)"
+          />
+          <rect
+            x="6.5"
+            y="6.5"
+            width="587"
+            height="587"
+            rx="29.5"
+            fill="none"
+            stroke="#d8cec1"
+          />
+          <rect
+            x="150"
+            y="338"
+            width="150"
+            height="136"
+            rx="14"
+            fill="#e3ebd8"
+          />
+          <rect
+            x="480"
+            y="146"
+            width="66"
+            height="154"
+            rx="33"
+            fill="#e3ebd8"
+            stroke="#c9d6ba"
+          />
+          <rect
+            x="495"
+            y="166"
+            width="36"
+            height="114"
+            rx="18"
+            fill="none"
+            stroke="#c9d6ba"
+          />
+          <g fill="none" stroke-linecap="round">
+            <path
+              d="M42 128H558M42 318H558M42 492H558M132 42V558M318 42V558M462 42V558"
+              stroke="#e7dfd3"
+              stroke-width="22"
+            />
+            <path
+              d="M42 128H558M42 318H558M42 492H558M132 42V558M318 42V558M462 42V558"
+              stroke="#fffdf9"
+              stroke-width="1.2"
+              stroke-dasharray="6 7"
+            />
+          </g>
+          <g fill="#ece5db" stroke="#c4b6a6" stroke-width="1.2">
+            <path d="M152 150H296V296H254V188H194V296H152Z" />
+            <rect x="54" y="150" width="58" height="146" rx="4" />
+            <path
+              d="M338 150H442V296H338ZM360 174V272H420V174Z"
+              fill-rule="evenodd"
+            />
+            <rect x="338" y="58" width="104" height="48" rx="4" />
+            <rect x="152" y="58" width="62" height="48" rx="4" />
+            <rect x="230" y="58" width="66" height="48" rx="4" />
+            <rect x="482" y="58" width="62" height="48" rx="4" />
+            <rect x="54" y="58" width="58" height="48" rx="4" />
+            <rect x="338" y="340" width="104" height="58" rx="4" />
+            <rect x="338" y="414" width="104" height="58" rx="4" />
+            <rect x="482" y="340" width="62" height="132" rx="4" />
+            <rect x="54" y="340" width="58" height="62" rx="4" />
+            <rect x="54" y="416" width="58" height="56" rx="4" />
+          </g>
+          <rect x="360" y="174" width="60" height="98" fill="#e3ebd8" />
+          <g fill="none" stroke="#cfc3b5" stroke-dasharray="3 4">
+            <rect x="152" y="512" width="144" height="34" rx="4" />
+            <rect x="338" y="512" width="104" height="34" rx="4" />
+            <rect x="482" y="512" width="62" height="34" rx="4" />
+            <rect x="54" y="512" width="58" height="34" rx="4" />
+          </g>
+          <g fill="#b9c9a8">
+            <circle cx="176" cy="366" r="7" />
+            <circle cx="198" cy="378" r="5" />
+            <circle cx="272" cy="364" r="8" />
+            <circle cx="182" cy="446" r="6" />
+            <circle cx="262" cy="450" r="7" />
+            <circle cx="236" cy="372" r="4" />
+          </g>
+          <path
+            d="M507 390h12v10h10v12h-10v10h-12v-10h-10v-12h10z"
+            fill="#2f6a43"
+          />
+          <path
+            d="M304 46H332"
+            stroke="#b4441b"
+            stroke-width="4"
+            stroke-dasharray="4 3"
+          />
+          <g
+            font-family="IBM Plex Mono, monospace"
+            font-size="8.5"
+            font-weight="500"
+            letter-spacing="1.1"
+            fill="#75675c"
+          >
+            <text x="162" y="173">BIRCH HOSTEL</text>
+            <text x="64" y="226">ASTER</text>
+            <text x="346" y="166">ACADEMIC QUAD</text>
+            <text x="368" y="88">ADMIN</text>
+            <text x="490" y="86">N.POST</text>
+            <text x="61" y="86">GATE 1</text>
+            <text x="162" y="86">STAFF</text>
+            <text x="240" y="86">STAFF</text>
+            <text x="364" y="373">LIBRARY</text>
+            <text x="374" y="447">LABS</text>
+            <text x="489" y="446">HOSPITAL</text>
+            <text x="60" y="375">CONTROL</text>
+            <text x="66" y="448">CEDAR</text>
+            <text x="490" y="226" fill="#5d7a4f">FIELD</text>
+            <text x="186" y="414" fill="#5d7a4f">CENTRAL GREEN</text>
+            <text x="338" y="40" fill="#b4441b">N. GATE CLOSED</text>
+          </g>
+        </symbol>
+      </defs>
+    </svg>
+
+    <header class="gbar" data-gbar>
+      <div class="gbar-inner">
+        <a class="gbar-brand" href="/" aria-label="CareGrid home">
+          <img src="assets/mark.svg" alt="" width="26" height="26" />
+          <span>CareGrid</span>
+        </a>
+        <nav class="gbar-nav" aria-label="Sections" data-spy>
+          <span class="gbar-thumb" aria-hidden="true"></span>
+          <a class="gbar-link" href="#platform">Platform</a>
+          <a class="gbar-link" href="#response">Response</a>
+          <a class="gbar-link" href="#proof">Proof</a>
+          <a class="gbar-link" href="#readiness">Readiness</a>
+          <a class="gbar-link" href="#roles">Roles</a>
+        </nav>
+        <div class="gbar-end">
+          <a class="btn ghost hide-sm" href="index.html">Interactive demo</a>
+          <a class="btn primary" href="/console">Sign in</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- 01 · Opening reveal and exploded platform -->
+      <section
+        class="reveal"
+        id="platform"
+        data-pin="reveal"
+        aria-labelledby="hero-title"
+      >
+        <div class="pin">
+          <div class="hero-copy" data-hero-copy>
+            <p class="hero-eyebrow rise" style="--d: 0.05s">
+              <span class="beacon" aria-hidden="true"></span>
+              The response operating system for campuses
+            </p>
+            <h1 id="hero-title" class="display">
+              <span class="line"
+                ><span style="--d: 0.12s">Every second,</span></span
+              >
+              <span class="line"
+                ><span style="--d: 0.22s"><em>accounted for.</em></span></span
+              >
+            </h1>
+            <p class="hero-lead rise" style="--d: 0.38s">
+              CareGrid turns the first alarm on campus into an owned incident, a
+              dispatched unit into a recorded arrival, and a closed case into
+              proof that care was delivered.
+            </p>
+            <div class="hero-actions rise" style="--d: 0.48s">
+              <a class="btn primary lg" href="/console">
+                Enter the console
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14m-5-5 5 5-5 5" />
+                </svg>
+              </a>
+              <a class="btn lg" href="index.html"
+                >Explore the interactive demo</a
+              >
+            </div>
+            <p class="hero-meta rise" style="--d: 0.58s">
+              <span>Running on Google Cloud staging</span>
+              <span>Two campuses</span>
+              <span>Synthetic data only</span>
+            </p>
+          </div>
+
+          <ol
+            class="chapters"
+            data-chapters
+            aria-label="The four layers of CareGrid"
+          >
+            <li>
+              <span class="chapter-n">01</span>
+              <div>
+                <h2>Campus twin</h2>
+                <p>
+                  Every building, gate, road and response post, held as a living
+                  graph. A closure or coverage gap changes the plan the moment
+                  it is recorded.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span class="chapter-n">02</span>
+              <div>
+                <h2>Sensing</h2>
+                <p>
+                  Camera detections, SOS requests and staff reports enter one
+                  queue. Corroboration is explicit, and a blind spot is shown as
+                  a blind spot.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span class="chapter-n">03</span>
+              <div>
+                <h2>Decision</h2>
+                <p>
+                  Deterministic policy ranks the nearest capable units and
+                  states its reasoning. A named operator approves every
+                  dispatch.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span class="chapter-n">04</span>
+              <div>
+                <h2>Response</h2>
+                <p>
+                  Each unit acknowledges, departs, arrives and records care. The
+                  incident advances only on what responders confirm.
+                </p>
+              </div>
+            </li>
+          </ol>
+          <p class="reveal-coda" data-coda>
+            Four layers.<br /><em>One accountable record.</em>
+          </p>
+
+          <div class="scene" aria-hidden="true">
+            <div class="rig" data-rig>
+              <div class="shadow"></div>
+              <i class="edge"></i><i class="edge"></i><i class="edge"></i
+              ><i class="edge"></i>
+              <div class="layer l0">
+                <svg viewBox="0 0 600 600"><use href="#plan" /></svg>
+              </div>
+              <div class="layer l1">
+                <i class="plane"></i>
+                <svg viewBox="0 0 600 600">
+                  <g
+                    fill="#e2be5a"
+                    fill-opacity=".2"
+                    stroke="#d9b24a"
+                    stroke-opacity=".7"
+                    stroke-width="1"
+                  >
+                    <path d="M300 158 224 170 246 226Z" />
+                    <path d="M300 302 252 238 284 230Z" />
+                    <path d="M446 140 372 186 404 210Z" />
+                    <path d="M330 334 392 380 402 352Z" />
+                    <path d="M466 486 520 452 528 480Z" />
+                    <path d="M326 62 270 92 290 112Z" />
+                  </g>
+                  <g fill="#2b211b" stroke="#edd27e" stroke-width="2.4">
+                    <circle cx="300" cy="158" r="5.5" />
+                    <circle cx="300" cy="302" r="5.5" />
+                    <circle cx="446" cy="140" r="5.5" />
+                    <circle cx="330" cy="334" r="5.5" />
+                    <circle cx="466" cy="486" r="5.5" />
+                    <circle cx="326" cy="62" r="5.5" />
+                  </g>
+                  <circle
+                    cx="83"
+                    cy="444"
+                    r="24"
+                    fill="url(#hatch)"
+                    stroke="#b4441b"
+                    stroke-dasharray="4 3"
+                  />
+                  <g fill="#edd27e" stroke="#2b211b" stroke-width="1.6">
+                    <path d="M225 324l7 7-7 7-7-7Z" />
+                    <path d="M392 500l7 7-7 7-7-7Z" />
+                    <path d="M94 122l7 7-7 7-7-7Z" />
+                  </g>
+                  <g
+                    font-family="IBM Plex Mono, monospace"
+                    font-size="9"
+                    font-weight="500"
+                    letter-spacing=".8"
+                    fill="#2b211b"
+                  >
+                    <text x="306" y="150">CAM-B07</text>
+                    <text x="306" y="296">CAM-B08</text>
+                    <text x="236" y="342">SOS</text>
+                    <text x="58" y="486" fill="#b4441b">BLIND SPOT</text>
+                  </g>
+                </svg>
+              </div>
+              <div class="layer l2">
+                <i class="plane"></i>
+                <svg viewBox="0 0 600 600">
+                  <rect
+                    x="242"
+                    y="182"
+                    width="66"
+                    height="66"
+                    rx="12"
+                    fill="#b4441b"
+                    fill-opacity=".08"
+                    stroke="#b4441b"
+                    stroke-dasharray="5 4"
+                  />
+                  <g
+                    stroke="#b4441b"
+                    stroke-opacity=".55"
+                    stroke-dasharray="3 5"
+                    stroke-width="1.4"
+                    fill="none"
+                  >
+                    <path d="M275 214 512 392" />
+                    <path d="M275 214 512 84" />
+                    <path d="M275 214 176 168" />
+                  </g>
+                  <circle
+                    cx="275"
+                    cy="214"
+                    r="17"
+                    fill="none"
+                    stroke="#b4441b"
+                    stroke-opacity=".5"
+                  />
+                  <circle cx="275" cy="214" r="7" fill="#b4441b" />
+                  <g
+                    font-family="IBM Plex Mono, monospace"
+                    font-size="9"
+                    font-weight="500"
+                    letter-spacing=".6"
+                  >
+                    <g transform="translate(470 310)">
+                      <rect width="84" height="20" rx="10" fill="#2b211b" />
+                      <text x="11" y="13.5" fill="#f3eee7">A2 · 1M 25S</text>
+                    </g>
+                    <g transform="translate(470 118)">
+                      <rect
+                        width="84"
+                        height="20"
+                        rx="10"
+                        fill="#faf7f2"
+                        stroke="#b9ab9b"
+                      />
+                      <text x="11" y="13.5" fill="#5a4d43">A1 · 2M 42S</text>
+                    </g>
+                    <g transform="translate(140 204)">
+                      <rect
+                        width="78"
+                        height="20"
+                        rx="10"
+                        fill="#faf7f2"
+                        stroke="#b9ab9b"
+                      />
+                      <text x="10" y="13.5" fill="#5a4d43">DESK · 24S</text>
+                    </g>
+                    <text x="246" y="270" fill="#b4441b">
+                      SOP-HST-MED-NIGHT
+                    </text>
+                  </g>
+                </svg>
+                <span class="pulse" style="left: 45.83%; top: 35.67%"></span>
+              </div>
+              <div class="layer l3">
+                <i class="plane"></i>
+                <svg viewBox="0 0 600 600">
+                  <path
+                    d="M512 406H462V318H318V214H296"
+                    fill="none"
+                    stroke="#2b211b"
+                    stroke-width="7"
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M512 406H462V318H318V214H296"
+                    fill="none"
+                    stroke="#edd27e"
+                    stroke-width="2"
+                    stroke-dasharray="1 7"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M292 214V188l16 6-16 6"
+                    fill="#b4441b"
+                    stroke="#b4441b"
+                    stroke-width="2"
+                    stroke-linejoin="round"
+                  />
+                  <g transform="translate(390 318)">
+                    <circle
+                      r="13"
+                      fill="#2b211b"
+                      stroke="#faf7f2"
+                      stroke-width="3"
+                    />
+                    <path
+                      d="m-6 4 6-11 6 11-6-3Z"
+                      fill="#edd27e"
+                      transform="rotate(-90)"
+                    />
+                  </g>
+                  <g
+                    font-family="IBM Plex Mono, monospace"
+                    font-size="9"
+                    font-weight="500"
+                    letter-spacing=".8"
+                    fill="#2b211b"
+                  >
+                    <text x="364" y="300">AMB-A2 · EN ROUTE</text>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <a
+            class="scroll-cue rise"
+            style="--d: 0.9s"
+            href="#response"
+            aria-label="Scroll to the response replay"
+          >
+            <span>Scroll to take it apart</span><i></i>
+          </a>
+        </div>
+      </section>
+
+      <!-- 02 · Scroll-scrubbed replay of one response -->
+      <section
+        class="replay"
+        id="response"
+        data-pin="replay"
+        aria-labelledby="replay-title"
+      >
+        <div class="pin">
+          <div class="replay-copy">
+            <p class="eyebrow"><b>02</b> / One response, end to end</p>
+            <h2 id="replay-title" class="section-title">
+              One hundred seconds <em>at Birch Hostel.</em>
+            </h2>
+            <p class="clock tnum" data-clock aria-live="off">02:17:00</p>
+            <div class="event-stage" data-events>
+              <article>
+                <h3>Signal received</h3>
+                <p>
+                  Camera B07 reports a person down in the ground-floor corridor.
+                </p>
+              </article>
+              <article>
+                <h3>Corroborated</h3>
+                <p>
+                  The adjacent camera confirms the observation from a second
+                  angle.
+                </p>
+              </article>
+              <article>
+                <h3>Policy matched</h3>
+                <p>
+                  The night hostel procedure applies. Dispatch requires a human
+                  decision.
+                </p>
+              </article>
+              <article>
+                <h3>Dispatch approved</h3>
+                <p>
+                  The command operator approves the Birch desk and Ambulance A2.
+                </p>
+              </article>
+              <article>
+                <h3>Acknowledged</h3>
+                <p>
+                  Both units accept. Silence would have escalated within
+                  seconds.
+                </p>
+              </article>
+              <article>
+                <h3>En route</h3>
+                <p>Ambulance A2 confirms departure towards the hostel.</p>
+              </article>
+              <article>
+                <h3>On scene</h3>
+                <p>
+                  The crew records arrival. An ETA is never treated as arrival.
+                </p>
+              </article>
+              <article>
+                <h3>Care started</h3>
+                <p>
+                  The campus hospital sees care begin and prepares the receiving
+                  bay.
+                </p>
+              </article>
+              <article>
+                <h3>Closed with outcome</h3>
+                <p>
+                  Command records the outcome. Every required step is on the
+                  record.
+                </p>
+              </article>
+            </div>
+            <ol class="ledger" data-ledger aria-label="Recorded milestones">
+              <li><time>02:17:00</time>Signal</li>
+              <li><time>02:17:02</time>Corroborated</li>
+              <li><time>02:17:05</time>Policy</li>
+              <li><time>02:17:08</time>Dispatch</li>
+              <li><time>02:17:13</time>Acknowledged</li>
+              <li><time>02:17:18</time>En route</li>
+              <li><time>02:18:22</time>On scene</li>
+              <li><time>02:18:28</time>Care</li>
+              <li><time>02:18:40</time>Closed</li>
+            </ol>
+          </div>
+          <figure class="replay-map">
+            <div class="map-frame" data-map>
+              <svg viewBox="0 0 600 600" aria-hidden="true">
+                <use href="#plan" />
+              </svg>
+              <svg class="route-layer" viewBox="0 0 600 600" aria-hidden="true">
+                <path class="route-ghost" d="M512 406H462V318H318V214H296" />
+                <path
+                  class="route-live"
+                  data-route
+                  d="M512 406H462V318H318V214H296"
+                />
+              </svg>
+              <span class="cam" data-cam style="left: 50%; top: 26.33%"></span>
+              <span class="cam" data-cam style="left: 50%; top: 50.33%"></span>
+              <span
+                class="incident"
+                data-incident
+                style="left: 45.83%; top: 35.67%"
+                ><i></i
+              ></span>
+              <span class="unit" data-unit
+                ><svg viewBox="-14 -14 28 28">
+                  <circle r="12" />
+                  <path d="m-5 4 5-10 5 10-5-3Z" /></svg
+              ></span>
+              <span class="map-tag" data-tag>AMB-A2</span>
+            </div>
+            <div class="chain" data-chain aria-label="Proof of response">
+              <span>Dispatch</span><span>Acknowledge</span><span>Depart</span
+              ><span>Arrive</span><span>Care</span><span>Close</span>
+            </div>
+            <figcaption>
+              Illustrative scenario with synthetic data. No emergency service is
+              contacted.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- 03 · Proof of response -->
+      <section class="night" id="proof" aria-labelledby="proof-title">
+        <div class="wrap">
+          <p class="eyebrow on-dark" data-reveal>
+            <b>03</b> / Proof of response
+          </p>
+          <h2 id="proof-title" class="statement" data-reveal>
+            A notification is <em>not</em> a response.
+          </h2>
+          <p class="night-lead" data-reveal>
+            Most alerting tools stop at “sent”. CareGrid keeps every assignment
+            open until the people on the ground record each step, and an
+            incident cannot close until care is on the record.
+          </p>
+          <ol class="proof-steps" data-reveal-group>
+            <li>
+              <span>01</span>
+              <h3>Dispatch approved</h3>
+              <p>A named operator approves the recommended units.</p>
+            </li>
+            <li>
+              <span>02</span>
+              <h3>Acknowledged</h3>
+              <p>The unit accepts the task. Silence escalates automatically.</p>
+            </li>
+            <li>
+              <span>03</span>
+              <h3>Departed</h3>
+              <p>The crew confirms it is moving, not merely notified.</p>
+            </li>
+            <li>
+              <span>04</span>
+              <h3>Arrived</h3>
+              <p>
+                Recorded by the responder. An estimate never counts as arrival.
+              </p>
+            </li>
+            <li>
+              <span>05</span>
+              <h3>Care started</h3>
+              <p>The receiving team sees it the moment it happens.</p>
+            </li>
+            <li>
+              <span>06</span>
+              <h3>Closed with outcome</h3>
+              <p>Only once every required step is on the record.</p>
+            </li>
+          </ol>
+          <div class="principles">
+            <div data-reveal>
+              <strong>One owner</strong>
+              <p>
+                Every incident has a named operator from the moment it is
+                claimed.
+              </p>
+            </div>
+            <div data-reveal>
+              <strong>Escalation on silence</strong>
+              <p>
+                A missed acknowledgement raises a deadline, not a quiet gap in
+                the queue.
+              </p>
+            </div>
+            <div data-reveal>
+              <strong>No automatic closure</strong>
+              <p>
+                The server refuses to close a case while a required milestone is
+                missing.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 · Readiness lab, interactive -->
+      <section
+        class="readiness"
+        id="readiness"
+        aria-labelledby="readiness-title"
+      >
+        <div class="wrap split">
+          <div>
+            <p class="eyebrow" data-reveal><b>04</b> / Readiness lab</p>
+            <h2 id="readiness-title" class="section-title" data-reveal>
+              Rehearse the bad night <em>before it happens.</em>
+            </h2>
+            <p class="section-lead" data-reveal>
+              Failures rarely arrive alone. CareGrid replays them together
+              against the campus twin and shows where the response breaks,
+              without touching a real gate, unit or procedure.
+            </p>
+            <form class="toggles" data-lab>
+              <label class="toggle"
+                ><input type="checkbox" name="ambulanceBusy" checked /><i></i
+                ><span
+                  ><b>Ambulance A2 is committed elsewhere</b
+                  ><small
+                    >An alternate must travel from the north post.</small
+                  ></span
+                ></label
+              >
+              <label class="toggle"
+                ><input type="checkbox" name="gateClosed" checked /><i></i
+                ><span
+                  ><b>North Gate is closed</b
+                  ><small>The usual approach is unavailable.</small></span
+                ></label
+              >
+              <label class="toggle"
+                ><input type="checkbox" name="cameraDegraded" checked /><i></i
+                ><span
+                  ><b>Adjacent camera is degraded</b
+                  ><small>Corroboration takes longer.</small></span
+                ></label
+              >
+              <label class="toggle fix"
+                ><input type="checkbox" name="fix" /><i></i
+                ><span
+                  ><b>Pre-authorise the service-gate route</b
+                  ><small
+                    >The intervention CareGrid recommends for this
+                    failure.</small
+                  ></span
+                ></label
+              >
+            </form>
+          </div>
+          <div class="lab-result" data-reveal aria-live="polite">
+            <div class="lab-top">
+              <span class="eyebrow">Predicted arrival</span>
+              <span class="verdict" data-verdict>Objective missed</span>
+            </div>
+            <p class="lab-time tnum" data-time>6m 41s</p>
+            <p class="lab-objective">
+              against a <b>5m 00s</b> onset-to-arrival objective
+            </p>
+            <div class="lab-scale">
+              <div class="lab-track">
+                <i data-total></i><b class="lab-sla" aria-hidden="true"></b>
+              </div>
+              <div class="lab-ticks mono">
+                <span>0</span><span>5m objective</span><span>7m</span>
+              </div>
+            </div>
+            <dl class="lab-stages" data-stages></dl>
+            <p class="lab-note">
+              Illustrative model. A hypothesis for drills, never a measured
+              field result.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 · Roles -->
+      <section class="roles" id="roles" aria-labelledby="roles-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal><b>05</b> / Roles</p>
+          <h2 id="roles-title" class="section-title" data-reveal>
+            One record. <em>Five vantage points.</em>
+          </h2>
+          <p class="section-lead" data-reveal>
+            Each person sees what their part of the response requires, and
+            nothing more. The server enforces every boundary.
+          </p>
+          <div class="role-grid">
+            <article data-reveal>
+              <span class="role-code">CMD</span>
+              <h3>Command</h3>
+              <p class="role-line">Owns the incident.</p>
+              <ul>
+                <li>Queue, evidence and plan</li>
+                <li>Approves dispatch and escalates</li>
+                <li>Closes with a recorded outcome</li>
+              </ul>
+            </article>
+            <article data-reveal>
+              <span class="role-code">RSP</span>
+              <h3>Responder</h3>
+              <p class="role-line">One task. A clear next step.</p>
+              <ul>
+                <li>Location, route and instructions</li>
+                <li>Records each milestone</li>
+                <li class="withheld">Camera evidence withheld</li>
+              </ul>
+            </article>
+            <article data-reveal>
+              <span class="role-code">MED</span>
+              <h3>Medical</h3>
+              <p class="role-line">Ready before arrival.</p>
+              <ul>
+                <li>Incoming case and handoff state</li>
+                <li>Confirms team and bay readiness</li>
+                <li class="withheld">Footage and track IDs withheld</li>
+              </ul>
+            </article>
+            <article data-reveal>
+              <span class="role-code">ADM</span>
+              <h3>Administrator</h3>
+              <p class="role-line">Keeps the campus ready.</p>
+              <ul>
+                <li>Readiness suite and fixes</li>
+                <li>Measured after-action metrics</li>
+                <li>Complete audit trail</li>
+              </ul>
+            </article>
+            <article data-reveal>
+              <span class="role-code">MBR</span>
+              <h3>Member</h3>
+              <p class="role-line">Help starts with a signal.</p>
+              <ul>
+                <li>Sends an SOS with location</li>
+                <li>Follows the response live</li>
+                <li class="withheld">Sees only their own requests</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 · Infrastructure -->
+      <section class="stack" id="cloud" aria-labelledby="cloud-title">
+        <div class="wrap">
+          <p class="eyebrow" data-reveal><b>06</b> / Infrastructure</p>
+          <h2 id="cloud-title" class="section-title" data-reveal>
+            Built on Google Cloud. <em>Candid about its edges.</em>
+          </h2>
+          <div class="stack-grid">
+            <article data-reveal>
+              <span class="state live">Live · staging</span>
+              <h3>Cloud Run</h3>
+              <p>
+                Web gateway, API and a dedicated deadline watchdog in
+                asia-south1.
+              </p>
+            </article>
+            <article data-reveal>
+              <span class="state live">Live · staging</span>
+              <h3>Cloud SQL for PostgreSQL</h3>
+              <p>
+                Transactional response state, with campus isolation on every
+                query.
+              </p>
+            </article>
+            <article data-reveal>
+              <span class="state">Configured</span>
+              <h3>Firebase Authentication</h3>
+              <p>Google sign-in, bound to a campus role by an administrator.</p>
+            </article>
+            <article data-reveal>
+              <span class="state live">Live · staging</span>
+              <h3>Secret Manager</h3>
+              <p>Credentials read per process and never written to disk.</p>
+            </article>
+            <article data-reveal>
+              <span class="state gated">Built · gated off</span>
+              <h3>Gemini</h3>
+              <p>
+                Optional handoff drafts from recorded facts, with no dispatch
+                authority.
+              </p>
+            </article>
+            <article data-reveal>
+              <span class="state gated">Built · gated off</span>
+              <h3>Cloud Storage</h3>
+              <p>
+                Private evidence attachments with bounded, expiring previews.
+              </p>
+            </article>
+          </div>
+          <div class="campuses" data-reveal>
+            <div>
+              <span class="eyebrow">Campus 01</span
+              ><strong>Meridian Demo Campus</strong>
+              <p>Fictional and fully synthetic.</p>
+            </div>
+            <div>
+              <span class="eyebrow">Campus 02</span
+              ><strong>NIET Greater Noida</strong>
+              <p>Modelled from public OpenStreetMap data. Not affiliated.</p>
+            </div>
+            <div>
+              <span class="eyebrow">Principle</span
+              ><strong>Features earn their switch</strong>
+              <p>
+                Gated capabilities stay off until their acceptance checks pass.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Closing -->
+      <section class="closing" aria-labelledby="closing-title">
+        <div class="wrap">
+          <h2 id="closing-title" class="display-2" data-reveal>
+            See the response <em>for yourself.</em>
+          </h2>
+          <div class="hero-actions" data-reveal>
+            <a class="btn primary lg" href="/console">Enter the console</a>
+            <a class="btn lg" href="index.html">Explore the interactive demo</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="wrap foot-grid">
+        <a class="gbar-brand" href="/"
+          ><img src="assets/mark.svg" alt="" width="26" height="26" /><span
+            >CareGrid</span
+          ></a
+        >
+        <p>Built by <b>Team Duality</b> · Hriday Vig and Ishaan Sharma</p>
+        <p class="foot-note">
+          Synthetic data throughout. CareGrid does not contact emergency
+          services.
+        </p>
+        <nav aria-label="Footer">
+          <a href="/console">Console</a><a href="index.html">Interactive demo</a
+          ><a href="#platform">Back to top</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

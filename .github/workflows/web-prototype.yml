@@ -20,6 +20,8 @@ jobs:
           node-version: '22'
       - run: node --check caregrid_web/app.js
       - run: node --check caregrid_web/connected.js
+      - run: node --check caregrid_web/landing.js
+      - run: node --check caregrid_web/glass.mjs
       - run: node --check caregrid_web/server.mjs
       - run: node --check scripts/dev.mjs
       - run: node --test caregrid_web/tests/*.test.mjs

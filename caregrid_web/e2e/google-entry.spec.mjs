@@ -30,7 +30,7 @@ test("Google sign-in layout loads the bundled SDK without exposing seeded accoun
   );
   await page.route("https://*.googleapis.com/**", (route) => route.abort());
   await page.route("https://*.firebaseapp.com/**", (route) => route.abort());
-  await page.goto("/");
+  await page.goto("/console");
   await expect(
     page.getByRole("button", { name: "Continue with Google" }),
   ).toBeEnabled();

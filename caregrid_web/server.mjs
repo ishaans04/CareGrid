@@ -19,10 +19,15 @@ const types = {
   ".woff2": "font/woff2",
 };
 const publicFiles = new Set([
+  "landing.html",
   "index.html",
   "connected.html",
+  "brand.css",
+  "landing.css",
   "styles.css",
   "connected.css",
+  "landing.js",
+  "glass.mjs",
   "app.js",
   "connected.js",
   "domain.mjs",
@@ -87,7 +92,15 @@ const methods = new Set([
 ]);
 const safeUser = (user) =>
   Object.fromEntries(
-    ["id", "campusId", "handle", "displayName", "role", "title", "responderCode"]
+    [
+      "id",
+      "campusId",
+      "handle",
+      "displayName",
+      "role",
+      "title",
+      "responderCode",
+    ]
       .filter((key) => key in user)
       .map((key) => [key, user[key]]),
   );
@@ -412,10 +425,14 @@ export function createCareGridServer({
       if (!["GET", "HEAD"].includes(req.method))
         throw new ApiError(405, "Method not allowed.");
       const pathname = decodeURIComponent(url.pathname);
-      const target = path.resolve(
-        root,
-        "." + (pathname === "/" ? "/connected.html" : pathname),
-      );
+      // Friendly entry points: the landing page, the signed-in console and
+      // the browser-local pitch demo. File paths keep working as before.
+      const routes = {
+        "/": "/landing.html",
+        "/console": "/connected.html",
+        "/demo": "/index.html",
+      };
+      const target = path.resolve(root, "." + (routes[pathname] || pathname));
       const relative = path.relative(root, target).split(path.sep).join("/");
       if (
         !target.startsWith(root + path.sep) ||

@@ -25,7 +25,7 @@ async function login(browser, handle, pin, viewport) {
     viewport: viewport || { width: 1600, height: 1100 },
   });
   const page = await context.newPage();
-  await page.goto("http://127.0.0.1:4173/");
+  await page.goto("/console");
   await page.getByLabel("Demo account").selectOption(handle);
   await page.getByLabel("Demo PIN").fill(pin);
   await page

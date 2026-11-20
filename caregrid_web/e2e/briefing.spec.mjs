@@ -35,7 +35,7 @@ test("a slow optional draft leaves response actions usable and is discarded afte
     expect(raised.ok()).toBe(true);
     const incident = (await raised.json()).data;
     incidentId = incident.incidentId;
-    await page.goto("/");
+    await page.goto("/console");
     await page.getByLabel("Demo account").selectOption("cmd.night");
     await page.getByLabel("Demo PIN").fill("1111");
     await page

@@ -318,9 +318,17 @@ test("an unavailable backend reports failure without synthetic success", async (
   assert.ok(body.includes("backend_unavailable"));
   assert.ok(!body.includes("sensitive"));
 });
-test("the static surface serves the connected entry and hides gateway source", async (t) => {
+test("the static surface serves the landing, console and demo entries and hides gateway source", async (t) => {
   const f = await fixture(t);
-  const response = await f.request("/");
+  const landing = await f.request("/");
+  assert.equal(landing.status, 200);
+  assert.match(await landing.text(), /landing.js/);
+  const demo = await f.request("/demo");
+  assert.equal(demo.status, 200);
+  assert.match(await demo.text(), /app.js/);
+  for (const pathname of ["/brand.css", "/glass.mjs", "/landing.css"])
+    assert.equal((await f.request(pathname)).status, 200);
+  const response = await f.request("/console");
   assert.equal(response.status, 200);
   assert.match(await response.text(), /connected.js/);
   assert.match(

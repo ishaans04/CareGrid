@@ -12,7 +12,7 @@ WORKDIR /app
 COPY --from=build --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/assets/generated ./assets/generated
 COPY --chown=node:node caregrid_web/package.json caregrid_web/server.mjs caregrid_web/cloud-auth.mjs ./
-COPY --chown=node:node caregrid_web/index.html caregrid_web/connected.html caregrid_web/styles.css caregrid_web/connected.css caregrid_web/app.js caregrid_web/connected.js caregrid_web/domain.mjs caregrid_web/connected-domain.mjs ./
+COPY --chown=node:node caregrid_web/landing.html caregrid_web/index.html caregrid_web/connected.html caregrid_web/brand.css caregrid_web/landing.css caregrid_web/styles.css caregrid_web/connected.css caregrid_web/landing.js caregrid_web/glass.mjs caregrid_web/app.js caregrid_web/connected.js caregrid_web/domain.mjs caregrid_web/connected-domain.mjs ./
 COPY --chown=node:node caregrid_web/briefing-view.mjs ./
 COPY --chown=node:node caregrid_web/evidence-view.mjs ./
 COPY --chown=node:node caregrid_web/assets ./assets

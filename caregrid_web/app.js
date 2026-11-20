@@ -6,6 +6,7 @@ import {
   fmtSeconds,
   stages,
 } from "./domain.mjs";
+import { glassThumb, glassScroll } from "./glass.mjs";
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) =>
@@ -132,23 +133,23 @@ function proof(compact = false) {
 
 function campusMap(large = false) {
   return `<div class="map-wrap ${large ? "map-large" : ""}"><svg class="campus-map" viewBox="0 0 800 360" role="img" aria-label="Illustrated Meridian campus map. Birch Hostel incident, hospital, response route and closed north gate. No live Google Maps connection.">
-<defs><pattern id="dots" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".6" fill="#39413d"/></pattern><linearGradient id="park" x2="0" y2="1"><stop stop-color="#1c2926"/><stop offset="1" stop-color="#15201e"/></linearGradient></defs>
-<rect width="800" height="360" fill="#111b1b"/><rect width="800" height="360" fill="url(#dots)"/><path d="M0 280Q100 250 155 312T330 340L410 360H0Z" fill="#14262b"/>
-<path d="M10 45h780M10 185h780M10 312h780M120 0v360M360 0v360M610 0v360" stroke="#263735" stroke-width="17" fill="none"/><path d="M10 45h780M10 185h780M10 312h780M120 0v360M360 0v360M610 0v360" stroke="#46524b" stroke-width=".6" fill="none" stroke-dasharray="4 6"/>
-<path d="M440 72h120v74H440zM425 218h140v65H425zM660 70h110v85H660zM159 224h120v64H159zM165 66h120v73H165z" fill="url(#park)" stroke="#365149"/>
-<g fill="#9caaa1" font-family="Arial,sans-serif" font-size="10" letter-spacing="1"><text x="466" y="112">ACADEMIC QUAD</text><text x="457" y="254">CENTRAL GREEN</text><text x="678" y="112">SPORTS FIELD</text><text x="180" y="260">LIBRARY</text><text x="187" y="106">ASTER HOSTEL</text></g>
-<g stroke="#52625b" fill="#293832"><rect x="29" y="70" width="60" height="60" rx="3"/><rect x="29" y="222" width="60" height="58" rx="3"/><rect x="405" y="77" width="19" height="62"/><rect x="570" y="225" width="17" height="60"/><rect x="646" y="219" width="65" height="67" rx="3"/><rect x="725" y="219" width="50" height="67" rx="3"/></g>
-<g fill="#85978c"><circle cx="151" cy="161" r="4"/><circle cx="165" cy="160" r="3"/><circle cx="183" cy="161" r="4"/><circle cx="451" cy="160" r="4"/><circle cx="469" cy="160" r="3"/><circle cx="486" cy="160" r="4"/><circle cx="450" cy="295" r="4"/><circle cx="469" cy="295" r="3"/><circle cx="485" cy="295" r="4"/></g>
-<path d="M610 255V185H360V107" fill="none" stroke="#c6ff3d" stroke-opacity=".12" stroke-width="18"/><path class="route-line" d="M610 255V185H360V107" fill="none" stroke="#c6ff3d" stroke-width="3" stroke-dasharray="7 5"/>
-<rect x="316" y="68" width="88" height="73" rx="4" fill="#3c2723" stroke="#ff795a"/><path d="M330 80h59v48h-59z" fill="none" stroke="#80574a"/><circle class="incident-halo" cx="360" cy="108" r="27" fill="none" stroke="#ff795a" stroke-opacity=".5"/><circle cx="360" cy="108" r="8" fill="#ff795a"/><circle cx="360" cy="108" r="3" fill="#171a19"/>
-<g fill="#ebe9dd" font-family="Arial,sans-serif" font-size="11"><text x="316" y="58">BIRCH HOSTEL</text><text x="541" y="291">CAMPUS HOSPITAL</text><text x="28" y="302">CONTROL</text><text x="645" y="305">CEDAR · BLIND SPOT</text></g>
-<rect x="574" y="225" width="72" height="54" rx="3" fill="#254238" stroke="#75baa0"/><path d="M607 237h7v10h10v7h-10v10h-7v-10h-10v-7h10z" fill="#9cdbc1"/>
-<g transform="translate(${state.stage >= 3 ? "455 185" : "610 195"})"><circle r="15" fill="#c6ff3d"/><path d="m-6 4 6-10 6 10-6-2Z" fill="#132217"/><text x="20" y="4" fill="#c6ff3d" font-family="monospace" font-size="11">AMB-${unit()}</text></g>
-<circle cx="298" cy="159" r="6" fill="#3ddcff"/><text x="189" y="178" fill="#3ddcff" font-family="monospace" font-size="10">BIRCH DESK · 24s</text>
-<path d="M342 24h36" stroke="#ffad64" stroke-width="4" stroke-dasharray="5 3"/><text x="395" y="29" fill="#ffad64" font-family="monospace" font-size="10">NORTH GATE CLOSED</text>
-<g transform="translate(754 30)" stroke="#c3cebf" fill="none"><path d="M0 25V0m-5 8 5-8 5 8"/><text x="-4" y="-8" fill="#c3cebf" stroke="none" font-family="monospace" font-size="10">N</text></g>
-<path d="M32 334h75m-75-4v8m75-8v8" stroke="#7e9485"/><text x="119" y="338" fill="#7e9485" font-family="monospace" font-size="9">100m · SCHEMATIC</text>
-</svg><div class="map-overlay"><span class="live-dot"></span> MERIDIAN DEMO CAMPUS <span>26 ZONES / 11 UNITS</span></div><div class="map-key"><span><i class="lime-dot"></i> Response route</span><span><i class="orange-dot"></i> Active incident</span><span>Illustrative map</span></div></div>`;
+<defs><pattern id="dots" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".6" fill="#d4c9bb"/></pattern><linearGradient id="park" x2="0" y2="1"><stop stop-color="#e6eddb"/><stop offset="1" stop-color="#dce6cf"/></linearGradient></defs>
+<rect width="800" height="360" fill="#f7f2eb"/><rect width="800" height="360" fill="url(#dots)"/><path d="M0 280Q100 250 155 312T330 340L410 360H0Z" fill="#ece5da"/>
+<path d="M10 45h780M10 185h780M10 312h780M120 0v360M360 0v360M610 0v360" stroke="#e4dbcf" stroke-width="17" stroke-linecap="round" fill="none"/><path d="M10 45h780M10 185h780M10 312h780M120 0v360M360 0v360M610 0v360" stroke="#fffdf9" stroke-width="1" fill="none" stroke-dasharray="5 6"/>
+<path d="M440 72h120v74H440zM425 218h140v65H425zM660 70h110v85H660zM159 224h120v64H159zM165 66h120v73H165z" fill="url(#park)" stroke="#c9d6ba"/>
+<g fill="#5d7a4f" font-family="IBM Plex Mono,monospace" font-size="9.5" font-weight="500" letter-spacing="1"><text x="466" y="112">ACADEMIC QUAD</text><text x="457" y="254">CENTRAL GREEN</text><text x="678" y="112">SPORTS FIELD</text><text x="180" y="260">LIBRARY</text><text x="187" y="106">ASTER HOSTEL</text></g>
+<g stroke="#c4b6a6" fill="#ece5db"><rect x="29" y="70" width="60" height="60" rx="3"/><rect x="29" y="222" width="60" height="58" rx="3"/><rect x="405" y="77" width="19" height="62"/><rect x="570" y="225" width="17" height="60"/><rect x="646" y="219" width="65" height="67" rx="3"/><rect x="725" y="219" width="50" height="67" rx="3"/></g>
+<g fill="#b9c9a8"><circle cx="151" cy="161" r="4"/><circle cx="165" cy="160" r="3"/><circle cx="183" cy="161" r="4"/><circle cx="451" cy="160" r="4"/><circle cx="469" cy="160" r="3"/><circle cx="486" cy="160" r="4"/><circle cx="450" cy="295" r="4"/><circle cx="469" cy="295" r="3"/><circle cx="485" cy="295" r="4"/></g>
+<path d="M610 255V185H360V107" fill="none" stroke="#2b211b" stroke-opacity=".07" stroke-width="18"/><path class="route-line" d="M610 255V185H360V107" fill="none" stroke="#2b211b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="316" y="68" width="88" height="73" rx="4" fill="#f5e2d8" stroke="#b4441b"/><path d="M330 80h59v48h-59z" fill="none" stroke="#dcab95"/><circle cx="360" cy="108" r="22" fill="#b4441b" fill-opacity=".1"/><circle cx="360" cy="108" r="8" fill="#b4441b" stroke="#faf7f2" stroke-width="3"/>
+<g fill="#2b211b" font-family="IBM Plex Mono,monospace" font-size="10.5" font-weight="500" letter-spacing=".6"><text x="316" y="58">BIRCH HOSTEL</text><text x="541" y="291">CAMPUS HOSPITAL</text><text x="28" y="302">CONTROL</text><text x="645" y="305">CEDAR · BLIND SPOT</text></g>
+<rect x="574" y="225" width="72" height="54" rx="3" fill="#e3ebd8" stroke="#2f6a43"/><path d="M607 237h7v10h10v7h-10v10h-7v-10h-10v-7h10z" fill="#2f6a43"/>
+<g transform="translate(${state.stage >= 3 ? "455 185" : "610 195"})"><circle r="15" fill="#2b211b" stroke="#faf7f2" stroke-width="3"/><path d="m-6 4 6-10 6 10-6-2Z" fill="#edd27e"/><text x="22" y="4" fill="#2b211b" font-family="IBM Plex Mono,monospace" font-weight="500" font-size="11">AMB-${unit()}</text></g>
+<circle cx="298" cy="159" r="6" fill="#85580b" stroke="#faf7f2" stroke-width="2"/><text x="189" y="178" fill="#85580b" font-family="IBM Plex Mono,monospace" font-weight="500" font-size="10">BIRCH DESK · 24s</text>
+<path d="M342 24h36" stroke="#b4441b" stroke-width="4" stroke-dasharray="5 3"/><text x="395" y="29" fill="#b4441b" font-family="IBM Plex Mono,monospace" font-weight="500" font-size="10">NORTH GATE CLOSED</text>
+<g transform="translate(754 30)" stroke="#75675c" fill="none"><path d="M0 25V0m-5 8 5-8 5 8"/><text x="-4" y="-8" fill="#75675c" stroke="none" font-family="IBM Plex Mono,monospace" font-size="10">N</text></g>
+<path d="M32 334h75m-75-4v8m75-8v8" stroke="#75675c"/><text x="119" y="338" fill="#75675c" font-family="IBM Plex Mono,monospace" font-size="9">100m · SCHEMATIC</text>
+</svg><span class="map-pulse" aria-hidden="true"></span><div class="map-overlay"><span class="live-dot"></span> MERIDIAN DEMO CAMPUS <span>26 ZONES / 11 UNITS</span></div><div class="map-key"><span><i class="lime-dot"></i> Response route</span><span><i class="orange-dot"></i> Active incident</span><span>Illustrative map</span></div></div>`;
 }
 
 function evidence() {
@@ -234,7 +235,7 @@ function actionButtons() {
   return `<button class="btn primary" data-action="advance">${nextAction()} ${icon("arrow")}</button>`;
 }
 function briefing() {
-  return `<div class="briefing"><div class="section-label"><span>G</span> EVIDENCE BRIEF <i></i>${tag("FIXTURE", "cyan")}</div><h3>Two signals. One urgent case.</h3><div class="brief-line"><span>OBSERVED</span><p>Anonymous track T-41 remains on the floor. Adjacent camera B08 corroborates the event.</p></div><div class="brief-line"><span>CONTEXT</span><p>Hostel corridor · 02:17 · low foot traffic. SOP-HST-MED-NIGHT requires human dispatch confirmation.</p></div><div class="brief-line"><span>UNKNOWN</span><p>Clinical condition and cause. No responder arrival has been independently verified.</p></div><div class="ai-note">${icon("shield")} Gemini integration proposed. This brief is a synthetic fixture, not live model output.</div></div>`;
+  return `<div class="briefing"><div class="section-label"><span>G</span> EVIDENCE BRIEF <i></i>${tag("FIXTURE", "cyan")}</div><h3>Two signals. One urgent case.</h3><div class="brief-line"><span>OBSERVED</span><p>Anonymous track T-41 remains on the floor. Adjacent camera B08 corroborates the event.</p></div><div class="brief-line"><span>CONTEXT</span><p>Hostel corridor · 02:17 · low foot traffic. SOP-HST-MED-NIGHT requires human dispatch confirmation.</p></div><div class="brief-line"><span>UNKNOWN</span><p>Clinical condition and cause. No responder arrival has been independently verified.</p></div><div class="ai-note">${icon("shield")} Gemini drafting is built and gated off. This brief is a synthetic fixture, not live model output.</div></div>`;
 }
 function incident() {
   return `${header("An incident. <em>An owner.</em>", "Birch Hostel · Block B · Ground floor · Corridor 2", "INCIDENT WORKSPACE / CG-0217", `<button class="btn ghost" data-action="export">${icon("download")} Export timeline</button>${actionButtons()}`)}<div class="incident-meta">${tag("P1 · URGENT", "orange")}${tag(status(), state.stage === 6 ? "lime" : "cyan")}<span>OWNER <b>Command · night shift</b></span><span>POLICY <b>SOP-HST-MED-NIGHT</b></span>${state.escalated ? tag("ESCALATED · ALTERNATE OFFERED", "amber") : ""}</div><div class="detail-grid"><div class="detail-main"><section class="panel evidence-panel">${section("01", "THE EVIDENCE", "ANONYMOUS TRACK T-41")}${evidence()}<div class="evidence-stats"><span>${icon("camera")} 2 independent angles</span><span>${icon("clock")} Persistence observed: 8s</span><span class="lime">Corroborated</span></div></section><section class="panel">${section("03", "THE RESPONSE PLAN", "DETERMINISTIC RULES")}<div class="plan-row"><div class="unit-mark">S</div><div><strong>Birch security desk</strong><p>Local first response · assigned desk</p></div><span class="plan-eta">24s<small>PLANNED</small></span></div><div class="plan-row"><div class="unit-mark ambulance">+</div><div><strong>Ambulance ${unit()}</strong><p>Hospital → West Junction → Birch</p></div><span class="plan-eta">${state.alternate ? "2m 42s" : "1m 25s"}<small>PLANNED</small></span></div><div class="notice">${icon("shield")} ETA is an estimate. Arrival and care require explicit proof.</div></section></div><div class="detail-side">${briefing()}<section class="panel compact-panel">${section("02", "NEXT ACTION")}<h3>${state.stage === 6 ? "Human closure recorded" : nextAction()}</h3><p class="muted">${state.stage === 0 ? "Confirm available units. A notification alone never counts as an accepted task." : state.stage === 6 ? "Demo outcome: care handed over to campus medical team." : "Use the responder workflow to record the next milestone. All telemetry is simulated."}</p>${actionButtons()}<a href="#responder" class="text-link">Switch to responder view ${icon("arrow")}</a></section></div></div><section class="panel">${section("04", "PROOF-OF-RESPONSE", "PER-UNIT TRACKING IN PILOT")}${proof()}</section><section class="panel timeline-panel">${section("05", "THE INCIDENT MEMORY", "LATEST FIRST")}${state.audit
@@ -300,11 +301,34 @@ function analytics() {
     )}</div><p class="chart-note">Illustrative scheduled chain totals 88s. Actual field reports must retain source timestamps, missing stages and clock uncertainty.</p></section><div class="analytics-grid"><section class="panel integrity">${section("02", "RESPONSE COMPLETION INTEGRITY")}<h2>12 <span>/ 14</span></h2><p>Closed synthetic responses with acknowledgement, arrival and care recorded.</p><div class="integrity-blocks">${Array.from({ length: 14 }, (_, i) => `<i class="${i < 12 ? "complete" : "incomplete"}">${i < 12 ? "✓" : "!"}</i>`).join("")}</div><div class="notice">2 seeded closed responses have incomplete proof. Open cases must be reported separately.</div></section><section class="panel">${section("03", "WHAT THE TIMELINE REVEALS")}<div class="insight-row"><span class="insight-number">01</span><div><h3>Arrival is the long pole.</h3><p>Route and access rehearsals matter as much as detection latency.</p></div></div><div class="insight-row"><span class="insight-number">02</span><div><h3>Silence is a signal.</h3><p>A missed acceptance must create an escalation, not disappear from the queue.</p></div></div><div class="insight-row"><span class="insight-number">03</span><div><h3>Coverage is never assumed.</h3><p>Cedar’s offline camera remains a visible gap; SOS is an independent path.</p></div></div></section></div>`;
 }
 
+const navShort = {
+  overview: "Command",
+  incident: "Incident",
+  responder: "Responder",
+  care: "Care",
+  readiness: "Readiness",
+  analytics: "After-action",
+};
+let placeThumb = () => {};
+// The glass bar is rendered once; view changes move its marker and swap
+// only the workspace, so the bar never flickers or loses its blur.
+function chrome() {
+  $("#app").innerHTML =
+    `<header class="gbar demo-bar" data-gbar><div class="gbar-inner"><a href="#overview" class="gbar-brand" aria-label="CareGrid command centre"><img src="assets/mark.svg" alt="" width="26" height="26"><span>CareGrid</span><small>Demo</small></a><nav class="gbar-nav" aria-label="Product views"><span class="gbar-thumb" aria-hidden="true"></span>${nav.map(([id, title, n]) => `<a href="#${id}" class="gbar-link" data-view="${id}" title="${title}"><small aria-hidden="true">${n}</small>${navShort[id]}</a>`).join("")}</nav><div class="gbar-end"><span class="gbar-chip clock-chip"><span class="live-dot"></span>02:17 AM · Night shift</span><button class="gbar-icon" data-action="scenario" aria-label="Scenario controls" title="Scenario controls">${icon("pulse")}</button><button class="gbar-icon" data-action="reset" aria-label="Reset demo" title="Reset demo">${icon("clock")}</button><button class="gbar-icon" data-action="status" aria-label="View prototype connection status" title="Connection and provenance">${icon("bell")}</button><button class="gbar-avatar" data-action="about" aria-label="About Team Duality" title="About Team Duality">TD</button></div></div></header><main id="main" tabindex="-1"></main><dialog id="modal"><div id="modal-content"></div></dialog>`;
+  placeThumb = glassThumb($(".gbar-nav"));
+  glassScroll();
+}
 function render() {
   if (!nav.some((n) => n[0] === view)) view = "overview";
+  if (!$("#main")) chrome();
   const label = nav.find((n) => n[0] === view)[1];
-  $("#app").innerHTML =
-    `<header class="topbar"><a href="#overview" class="brand"><img src="assets/mark.svg" alt="">CareGrid<span> / OPERATIONS</span></a><div class="top-campus"><span class="live-dot"></span> MERIDIAN CAMPUS <span class="slash">/</span> NIGHT SHIFT</div><div class="top-right"><span class="demo-pill">INTERACTIVE PROTOTYPE</span><button class="icon-btn" data-action="status" aria-label="View prototype connection status">${icon("bell")}</button><button class="avatar" data-action="about" aria-label="About Team Duality">HV</button></div></header><aside class="sidebar"><div class="sidebar-top"><span class="eyebrow">CAMPUS RESPONSE OS</span><div class="shift-time">02:17 <em>AM</em></div><span class="sidebar-date">12 NOV 2026 · DEMO CLOCK</span></div><nav aria-label="Product views">${nav.map(([id, title, n, ic]) => `<a href="#${id}" class="nav-item ${view === id ? "active" : ""}" ${view === id ? 'aria-current="page"' : ""}>${icon(ic)}<span>${title}</span><small>${n}</small></a>`).join("")}</nav><div class="sidebar-bottom"><div class="system-health"><span class="lime-dot"></span> LOCAL DEMO READY <small>Google Cloud deployment proposed</small></div><button class="sidebar-link" data-action="scenario">${icon("pulse")} Scenario controls ${icon("up")}</button><button class="sidebar-link" data-action="reset">${icon("clock")} Reset demo</button><div class="team-signature">BUILT BY <b>TEAM DUALITY</b><span>Hriday Vig · Ishaan Sharma</span></div></div></aside><main id="main" tabindex="-1"><div class="breadcrumb">CAREGRID <span>/</span> ${label.toUpperCase()} <span>/</span> <b>SYNTHETIC DATA</b></div>${{ overview, incident, responder, care, readiness, analytics }[view]()}</main><dialog id="modal"><div id="modal-content"></div></dialog>`;
+  for (const link of document.querySelectorAll("[data-view]"))
+    link.dataset.view === view
+      ? link.setAttribute("aria-current", "page")
+      : link.removeAttribute("aria-current");
+  placeThumb();
+  $("#main").innerHTML =
+    `<div class="breadcrumb">CAREGRID <span>/</span> ${label.toUpperCase()} <span>/</span> <b>SYNTHETIC DATA</b><span class="crumb-date">12 NOV 2026 · DEMO CLOCK</span></div>${{ overview, incident, responder, care, readiness, analytics }[view]()}<footer class="demo-foot"><span><i class="lime-dot"></i> Browser-local presentation · fictional campus · synthetic data</span><span>Built by <b>Team Duality</b> · Hriday Vig · Ishaan Sharma</span></footer>`;
   bind();
 }
 function openModal(html) {
@@ -457,12 +481,12 @@ function handle(action) {
       }
       case "status":
         openModal(
-          `<span class="eyebrow">CONNECTION & PROVENANCE</span><h2>Transparent <em>by design.</em></h2><div class="status-list"><p><i class="lime-dot"></i> Browser-local demo state <b>Ready</b></p><p>Serverpod API <b>Not connected</b></p><p>Gemini / Google Cloud <b>Proposed</b></p><p>Camera / GPS / Google Maps <b>Illustrated</b></p></div><p>No emergency service is contacted. Notifications and all case data shown here are synthetic.</p>`,
+          `<span class="eyebrow">CONNECTION & PROVENANCE</span><h2>Transparent <em>by design.</em></h2><div class="status-list"><p><i class="lime-dot"></i> Browser-local demo state <b>Ready</b></p><p>Serverpod API <b>Not used by this presentation</b></p><p>Google Cloud staging <b>Connected console only</b></p><p>Gemini drafting <b>Built · gated off</b></p><p>Camera / GPS / Google Maps <b>Illustrated</b></p></div><p>No emergency service is contacted. Notifications and all case data shown here are synthetic.</p>`,
         );
         break;
       case "about":
         openModal(
-          `<span class="eyebrow">TEAM DUALITY / STARTUP BUILDATHON 2026</span><h2>From signal<br>to <em>verified care.</em></h2><p>Built by Hriday Vig and Ishaan Sharma. This submission prototype follows the supplied Claude Design direction.</p><p>Cloud Run, Cloud SQL, Gemini, Firebase and Google Cloud Storage form the proposed deployment. Live integration is a separate implementation phase.</p>`,
+          `<span class="eyebrow">TEAM DUALITY / STARTUP BUILDATHON 2026</span><h2>From signal<br>to <em>verified care.</em></h2><p>Built by Hriday Vig and Ishaan Sharma.</p><p>The connected console runs on Cloud Run with Cloud SQL and Firebase sign-in in a staging project. Gemini drafts and Cloud Storage evidence are built and stay gated off until validated. This presentation remains browser-local.</p><a class="btn primary" href="/console">Open the connected console ${icon("arrow")}</a>`,
         );
         break;
     }
@@ -487,16 +511,6 @@ window.addEventListener("storage", (e) => {
   }
 });
 render();
-if (new URLSearchParams(location.search).has("inspect"))
-  document.fonts.ready.then(() => {
-    document.documentElement.dataset.viewport = String(innerWidth);
-    document.documentElement.dataset.contentWidth = String(
-      document.documentElement.scrollWidth,
-    );
-    document.documentElement.dataset.layoutOverflow = String(
-      document.documentElement.scrollWidth > innerWidth,
-    );
-  });
 if (new URLSearchParams(location.search).has("inspect"))
   document.fonts.ready.then(() => {
     document.documentElement.dataset.viewport = String(innerWidth);

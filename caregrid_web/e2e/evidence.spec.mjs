@@ -52,7 +52,7 @@ test("private attachments stay optional, scoped to a case and separate from resp
       );
       expect(response.status()).toBe(403);
     }
-    await page.goto("/");
+    await page.goto("/console");
     await page.getByLabel("Demo account").selectOption("cmd.night");
     await page.getByLabel("Demo PIN").fill("1111");
     await page
@@ -151,13 +151,11 @@ test("private attachments stay optional, scoped to a case and separate from resp
     await panel
       .getByRole("button", { name: "Refresh attachments", exact: true })
       .click();
-    await panel
-      .getByLabel("Attach image", { exact: true })
-      .setInputFiles({
-        name: "synthetic-floor-plan.png",
-        mimeType: "image/png",
-        buffer: bytes,
-      });
+    await panel.getByLabel("Attach image", { exact: true }).setInputFiles({
+      name: "synthetic-floor-plan.png",
+      mimeType: "image/png",
+      buffer: bytes,
+    });
     await expect(panel.getByText("PNG image", { exact: true })).toBeVisible();
     await panel
       .getByRole("button", { name: "View privately", exact: true })

@@ -22,7 +22,9 @@ The single reference for every element of the CareGrid prototype: app screens an
 | Server | `caregrid_server/` | Serverpod 4 backend: endpoints, domain services, models, migrations, seed, tests. |
 | Client | `caregrid_client/` | Generated typed client. Never edited by hand; regenerate with `serverpod generate`. |
 | App | `caregrid_flutter/` | Flutter app for Android, iOS and web. One codebase, five role consoles. |
-| Connected web | `caregrid_web/connected.*`, `connected-domain.mjs` | Role-specific web workspace, shared backend state, per-unit proof, mobile actions, polling with draft retention and visible errors. |
+| Web brand layer | `caregrid_web/brand.css`, `glass.mjs`, `assets/mark.svg`, `assets/fonts/` | Shared tokens (warm paper, espresso ink, sienna, moss, mustard), Instrument Sans + IBM Plex Mono, the fixed glass navigation bar with a sliding active marker, buttons and reduced-motion rules for all three web surfaces. |
+| Landing page | `caregrid_web/landing.*` (served at `/`) | Product story: opening reveal, scroll-driven exploded campus (twin, sensing, decision, response layers), scroll-scrubbed 100-second response replay, proof of response, live readiness model (`domain.mjs`), roles and an infrastructure status grid. Transform/opacity-only motion; one batched scroll frame. |
+| Connected web | `caregrid_web/connected.*`, `connected-domain.mjs` (served at `/console`) | Role-specific web workspace under a glass top bar (no sidebar), shared backend state, per-unit proof, mobile actions, polling with draft retention and visible errors. Polls re-render only when the workspace HTML changes. |
 | Local web gateway | `caregrid_web/server.mjs` | Same-origin static/JSON service, opaque HttpOnly sessions, allowlisted Serverpod RPC, typed error handling and request limits; loopback demo mode. |
 | Local launcher | `scripts/start-local.ps1`, `scripts/dev.mjs` | Verified portable Dart setup on Windows; server-only workspace without Flutter; preserved synthetic DB; API readiness gate and owned process cleanup. |
 | Browser checks / assets | `caregrid_web/e2e/connected.spec.mjs`, `assets/pitch/connected/` | Real multi-role Chrome workflow, 390px browser checks, backend failure behavior and reproducible connected screenshots. |
@@ -505,8 +507,8 @@ Past incidents over the last two weeks so analytics have data on first launch: h
 
 | File / surface | Responsibility |
 | --- | --- |
-| `server.mjs` | Dependency-free loopback-only static server; path containment and MIME handling. |
-| `index.html`, `styles.css` | Responsive application shell, local Google Fonts, design tokens, focus/reduced-motion styles. |
+| `server.mjs` | Dependency-free loopback-only static server; path containment and MIME handling. Serves this presentation at `/demo` and `/index.html`. |
+| `index.html`, `styles.css` | Responsive application shell on the shared `brand.css`: glass top bar for the six views (no sidebar), clock, scenario, reset, status and about controls. |
 | `app.js` / Command | Synthetic queue/filter, campus SVG, resource/coverage fixtures, proof summary and scenario controls. |
 | `app.js` / Incident workspace | Illustrated evidence, fixture brief, deterministic plan, explicit response actions, audit timeline and JSON export. |
 | `app.js` / Responder | Minimal task context and next-step action; explicit demo check-in, no real GPS. |
