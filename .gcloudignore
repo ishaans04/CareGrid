@@ -8,8 +8,17 @@
 !/caregrid_web/
 !/caregrid_web/**
 !/infra/
+/infra/*
 !/infra/google/
+/infra/google/*
 !/infra/google/cloudbuild.yaml
+**/.terraform/**
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfplan
+**/*.tfvars
+**/*.tfvars.json
+**/backend.hcl
 **/node_modules/**
 **/.dart_tool/**
 **/.serverpod/**

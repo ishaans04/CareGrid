@@ -2,6 +2,13 @@
 .agents
 .codex
 tmp
+**/.terraform
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfplan
+**/*.tfvars
+**/*.tfvars.json
+**/backend.hcl
 12112026
 assets
 docs
