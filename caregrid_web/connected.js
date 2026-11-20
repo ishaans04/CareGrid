@@ -10,6 +10,7 @@ import {
 } from "./connected-domain.mjs";
 
 import { renderBriefing } from "./briefing-view.mjs";
+import { EvidenceController, renderEvidence } from "./evidence-view.mjs";
 
 const app = document.querySelector("#app");
 const dialog = document.querySelector("#action-dialog");
@@ -70,6 +71,7 @@ async function api(path, { method = "GET", body, signal } = {}) {
 }
 const rpc = (endpoint, method, body = {}) =>
   api(`rpc/${endpoint}/${method}`, { method: "POST", body });
+const evidence = new EvidenceController({ rpc, changed: () => shell() });
 const pill = (text, type = "") =>
   `<span class="pill ${type}">${e(text)}</span>`;
 const empty = (title, message) =>
@@ -126,6 +128,17 @@ function accountHint() {
     `Seeded demo PIN: ${account.pinHint}`;
 }
 function shell() {
+  evidence.context({
+    incidentId:
+      state.user?.role === "command" &&
+      state.view === "overview" &&
+      state.detail?.incident.id === state.selected
+        ? state.selected
+        : null,
+    userId: state.user?.id,
+    offline: Boolean(state.error),
+    blocked: state.busy,
+  });
   if (!state.user) return login();
   const nav = navigationFor(state.user.role);
   if (!nav.some(([key]) => key === state.view)) state.view = nav[0]?.[0];
@@ -270,7 +283,7 @@ function incidentDetail() {
           )
           .join("")}</div>`
       : ""
-  }${state.user.role === "command" ? renderBriefing({ incidentId: incident.id, brief: state.brief, busy: state.briefBusy, offline: Boolean(state.error) }) : ""}${allowed.length ? `<div class="detail-section"><h3>Operator actions</h3><div class="actions">${can("claim") ? button("Take ownership", "claim", { id: incident.id }) : ""}${can("confirmDispatch") && !incident.dispatchedAt ? button("Approve recommended dispatch", "dispatch", { primary: true, id: incident.id, disabled: !route }) : ""}${can("note") ? button("Add a note", "incident-note", { id: incident.id }) : ""}${can("escalate") ? button("Escalate", "escalate", { id: incident.id }) : ""}${can("resolve") ? button("Record outcome & close", "resolve", { primary: true, id: incident.id }) : ""}${can("dismiss") ? button("Stand down with reason", "dismiss", { danger: true, id: incident.id }) : ""}</div></div>` : ""}<div class="detail-section"><h3>Response timeline</h3><div class="timeline">${detail.timeline.map((entry) => `<article class="timeline-entry"><time datetime="${e(entry.at)}">${clock(entry.at)}</time><div><strong>${e(entry.actor)}</strong><p>${e(entry.message)}</p></div></article>`).join("")}</div></div>${detail.redactions.length ? `<div class="detail-section"><p class="muted">Restricted for this role: ${e(detail.redactions.join("; "))}</p></div>` : ""}${incident.closureNote ? `<div class="detail-section"><h3>Recorded outcome</h3><p>${e(incident.closureNote)}</p></div>` : ""}</section>`;
+  }${state.user.role === "command" ? renderBriefing({ incidentId: incident.id, brief: state.brief, busy: state.briefBusy, offline: Boolean(state.error) }) : ""}${allowed.length ? `<div class="detail-section"><h3>Operator actions</h3><div class="actions">${can("claim") ? button("Take ownership", "claim", { id: incident.id }) : ""}${can("confirmDispatch") && !incident.dispatchedAt ? button("Approve recommended dispatch", "dispatch", { primary: true, id: incident.id, disabled: !route }) : ""}${can("note") ? button("Add a note", "incident-note", { id: incident.id }) : ""}${can("escalate") ? button("Escalate", "escalate", { id: incident.id }) : ""}${can("resolve") ? button("Record outcome & close", "resolve", { primary: true, id: incident.id }) : ""}${can("dismiss") ? button("Stand down with reason", "dismiss", { danger: true, id: incident.id }) : ""}</div></div>` : ""}${state.user.role === "command" ? renderEvidence(evidence.snapshot) : ""}<div class="detail-section"><h3>Response timeline</h3><div class="timeline">${detail.timeline.map((entry) => `<article class="timeline-entry"><time datetime="${e(entry.at)}">${clock(entry.at)}</time><div><strong>${e(entry.actor)}</strong><p>${e(entry.message)}</p></div></article>`).join("")}</div></div>${detail.redactions.length ? `<div class="detail-section"><p class="muted">Restricted for this role: ${e(detail.redactions.join("; "))}</p></div>` : ""}${incident.closureNote ? `<div class="detail-section"><h3>Recorded outcome</h3><p>${e(incident.closureNote)}</p></div>` : ""}</section>`;
 }
 function scenarioPanel() {
   const simulation = state.data.simulation;
@@ -485,6 +498,7 @@ async function draftBrief(incidentId) {
   }
 }
 async function resetSession() {
+  evidence.clear();
   clearBriefing();
   state.epoch++;
   state.user = null;
@@ -501,6 +515,7 @@ async function resetSession() {
 }
 async function mutate(task, success) {
   if (state.busy) return;
+  evidence.clear();
   clearBriefing();
   state.epoch++; // Discard any read started before this action.
   state.busy = true;
@@ -542,6 +557,10 @@ function ask({
 }
 app.addEventListener("change", (event) => {
   if (event.target.name === "handle") accountHint();
+  if (event.target.name === "evidence-image") {
+    const file = event.target.files?.[0];
+    if (file) void evidence.upload(file);
+  }
 });
 document.addEventListener("click", async (event) => {
   const target = event.target.closest("[data-action]");
@@ -621,6 +640,21 @@ document.addEventListener("click", async (event) => {
       "Reconnect and check the recorded state before taking another action.",
     );
   if (action === "draft-brief") return draftBrief(numericId);
+  if (action === "evidence-load") return evidence.load();
+  if (action === "evidence-next")
+    return evidence.load(evidence.page?.nextPageToken);
+  if (action === "evidence-read") return evidence.read(id);
+  if (action === "evidence-close") {
+    evidence.hidePreview();
+    shell();
+    return;
+  }
+  if (action === "evidence-remove") {
+    modalAction = null;
+    dialog.innerHTML = `<form id="evidence-remove-form" class="dialog-body"><h2 id="dialog-title">Remove private attachment?</h2><p>This removes the active attachment from this case. Storage versioning and soft-delete retention may preserve its bytes.</p><input type="hidden" name="key" value="${e(id)}"/><div class="row">${button("Cancel", "close-dialog")}<button class="button danger">Remove attachment</button></div></form>`;
+    dialog.showModal();
+    return;
+  }
   if (action === "claim")
     return mutate(
       () => rpc("incident", "claim", { incidentId: numericId }),
@@ -742,6 +776,10 @@ document.addEventListener("submit", async (event) => {
   if (state.busy) return;
   const form = event.target;
   const values = Object.fromEntries(new FormData(form));
+  if (form.id === "evidence-remove-form") {
+    dialog.close();
+    return evidence.remove(values.key);
+  }
   if (form.id === "login-form") {
     state.busy = true;
     form.querySelector("button").disabled = true;
