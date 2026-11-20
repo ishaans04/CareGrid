@@ -12,6 +12,7 @@ import '../care/care_console_screen.dart';
 import '../command/incident_console_screen.dart';
 import '../map/live_map_screen.dart';
 import '../member/sos_screen.dart';
+import '../network/network_overview_screen.dart';
 import '../responder/responder_screen.dart';
 import '../simulation/simulation_lab_screen.dart';
 
@@ -38,6 +39,13 @@ class _HomeShellState extends State<HomeShell> {
   int _index = 0;
 
   List<_Destination> get _destinations => switch (widget.user.role) {
+    UserRole.network => [
+      _Destination(
+        'Network overview',
+        Icons.hub_outlined,
+        (_) => const NetworkOverviewScreen(),
+      ),
+    ],
     UserRole.command => [
       _Destination(
         'Incidents',

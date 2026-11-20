@@ -33,6 +33,7 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   IconData _icon(UserRole role) => switch (role) {
+    UserRole.network => Icons.hub_outlined,
     UserRole.command => Icons.space_dashboard_outlined,
     UserRole.medical => Icons.local_hospital_outlined,
     UserRole.responder => Icons.directions_run,
