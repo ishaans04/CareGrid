@@ -73,6 +73,9 @@ import 'twin/zone.dart' as _i5d9qpt0;
 import 'twin/zone_policy.dart' as _i0bge9o7;
 import 'views/campus_twin.dart' as _iqt6besl;
 import 'views/care_case.dart' as _i2egsg9j;
+import 'views/evidence_content.dart' as _i8js0qii;
+import 'views/evidence_file.dart' as _ijaoliqc;
+import 'views/evidence_page.dart' as _ig1wbv10;
 import 'views/incident_brief.dart' as _izalsqqh;
 import 'views/incident_detail.dart' as _iv8abos3;
 import 'views/incident_summary.dart' as _i028ji74;
@@ -127,6 +130,9 @@ export 'twin/zone.dart';
 export 'twin/zone_policy.dart';
 export 'views/campus_twin.dart';
 export 'views/care_case.dart';
+export 'views/evidence_content.dart';
+export 'views/evidence_file.dart';
+export 'views/evidence_page.dart';
 export 'views/incident_brief.dart';
 export 'views/incident_detail.dart';
 export 'views/incident_summary.dart';
@@ -307,6 +313,15 @@ class Protocol extends _isc.SerializationManager {
     if (t == _i2egsg9j.CareCase) {
       return _i2egsg9j.CareCase.fromJson(data) as T;
     }
+    if (t == _i8js0qii.EvidenceContent) {
+      return _i8js0qii.EvidenceContent.fromJson(data) as T;
+    }
+    if (t == _ijaoliqc.EvidenceFile) {
+      return _ijaoliqc.EvidenceFile.fromJson(data) as T;
+    }
+    if (t == _ig1wbv10.EvidencePage) {
+      return _ig1wbv10.EvidencePage.fromJson(data) as T;
+    }
     if (t == _izalsqqh.IncidentBrief) {
       return _izalsqqh.IncidentBrief.fromJson(data) as T;
     }
@@ -483,6 +498,16 @@ class Protocol extends _isc.SerializationManager {
     if (t == _isc.getType<_i2egsg9j.CareCase?>()) {
       return (data != null ? _i2egsg9j.CareCase.fromJson(data) : null) as T;
     }
+    if (t == _isc.getType<_i8js0qii.EvidenceContent?>()) {
+      return (data != null ? _i8js0qii.EvidenceContent.fromJson(data) : null)
+          as T;
+    }
+    if (t == _isc.getType<_ijaoliqc.EvidenceFile?>()) {
+      return (data != null ? _ijaoliqc.EvidenceFile.fromJson(data) : null) as T;
+    }
+    if (t == _isc.getType<_ig1wbv10.EvidencePage?>()) {
+      return (data != null ? _ig1wbv10.EvidencePage.fromJson(data) : null) as T;
+    }
     if (t == _isc.getType<_izalsqqh.IncidentBrief?>()) {
       return (data != null ? _izalsqqh.IncidentBrief.fromJson(data) : null)
           as T;
@@ -598,6 +623,12 @@ class Protocol extends _isc.SerializationManager {
       return (data as Map).map(
             (k, v) => MapEntry(deserialize<String>(k), deserialize<String>(v)),
           )
+          as T;
+    }
+    if (t == List<_ijaoliqc.EvidenceFile>) {
+      return (data as List)
+              .map((e) => deserialize<_ijaoliqc.EvidenceFile>(e))
+              .toList()
           as T;
     }
     if (t == List<_i97csrvw.TimelineEntry>) {
@@ -737,6 +768,9 @@ class Protocol extends _isc.SerializationManager {
       _i0bge9o7.ZonePolicy => 'ZonePolicy',
       _iqt6besl.CampusTwin => 'CampusTwin',
       _i2egsg9j.CareCase => 'CareCase',
+      _i8js0qii.EvidenceContent => 'EvidenceContent',
+      _ijaoliqc.EvidenceFile => 'EvidenceFile',
+      _ig1wbv10.EvidencePage => 'EvidencePage',
       _izalsqqh.IncidentBrief => 'IncidentBrief',
       _iv8abos3.IncidentDetail => 'IncidentDetail',
       _i028ji74.IncidentSummary => 'IncidentSummary',
@@ -850,6 +884,12 @@ class Protocol extends _isc.SerializationManager {
         return 'CampusTwin';
       case _i2egsg9j.CareCase():
         return 'CareCase';
+      case _i8js0qii.EvidenceContent():
+        return 'EvidenceContent';
+      case _ijaoliqc.EvidenceFile():
+        return 'EvidenceFile';
+      case _ig1wbv10.EvidencePage():
+        return 'EvidencePage';
       case _izalsqqh.IncidentBrief():
         return 'IncidentBrief';
       case _iv8abos3.IncidentDetail():
@@ -1012,6 +1052,15 @@ class Protocol extends _isc.SerializationManager {
     }
     if (dataClassName == 'CareCase') {
       return deserialize<_i2egsg9j.CareCase>(data['data']);
+    }
+    if (dataClassName == 'EvidenceContent') {
+      return deserialize<_i8js0qii.EvidenceContent>(data['data']);
+    }
+    if (dataClassName == 'EvidenceFile') {
+      return deserialize<_ijaoliqc.EvidenceFile>(data['data']);
+    }
+    if (dataClassName == 'EvidencePage') {
+      return deserialize<_ig1wbv10.EvidencePage>(data['data']);
     }
     if (dataClassName == 'IncidentBrief') {
       return deserialize<_izalsqqh.IncidentBrief>(data['data']);

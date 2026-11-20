@@ -68,6 +68,8 @@ resource "google_cloud_run_v2_service" "server" {
           CAREGRID_GEMINI_ENABLED                 = tostring(var.enable_gemini && each.key == "api")
           CAREGRID_GEMINI_MODEL                   = each.key == "api" ? var.gemini_model : ""
           CAREGRID_GEMINI_LOCATION                = each.key == "api" ? var.gemini_location : ""
+          CAREGRID_EVIDENCE_ENABLED               = tostring(var.enable_evidence && each.key == "api")
+          CAREGRID_EVIDENCE_BUCKET                = each.key == "api" && var.enable_evidence ? google_storage_bucket.evidence.name : ""
         })
         content {
           name  = env.key

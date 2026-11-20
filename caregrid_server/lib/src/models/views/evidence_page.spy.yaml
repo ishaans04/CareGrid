@@ -1,0 +1,6 @@
+class: EvidencePage
+fields:
+  status: String
+  files: List<EvidenceFile>
+  nextPageToken: String?
+  notice: String

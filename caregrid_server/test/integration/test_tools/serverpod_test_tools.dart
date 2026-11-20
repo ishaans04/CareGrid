@@ -54,6 +54,12 @@ import 'package:caregrid_server/src/generated/views/campus_twin.dart'
     as _ii4ij66i;
 import 'package:caregrid_server/src/generated/views/care_case.dart'
     as _i3dtfzqd;
+import 'package:caregrid_server/src/generated/views/evidence_content.dart'
+    as _igwktl65;
+import 'package:caregrid_server/src/generated/views/evidence_file.dart'
+    as _im7fym7h;
+import 'package:caregrid_server/src/generated/views/evidence_page.dart'
+    as _ie0o28l0;
 import 'package:caregrid_server/src/generated/views/incident_brief.dart'
     as _i62f2tz2;
 import 'package:caregrid_server/src/generated/views/incident_detail.dart'
@@ -217,6 +223,8 @@ class TestEndpoints {
 
   late final _CareEndpoint care;
 
+  late final _EvidenceEndpoint evidence;
+
   late final _IncidentEndpoint incident;
 
   late final _LiveEndpoint live;
@@ -260,6 +268,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     care = _CareEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    evidence = _EvidenceEndpoint(
       endpoints,
       serializationManager,
     );
@@ -948,6 +960,163 @@ class _CareEndpoint {
           endpointPath: 'care',
           methodName: 'markReady',
           parameters: _ist.testObjectToJson({'incidentId': incidentId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<void>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _EvidenceEndpoint {
+  _EvidenceEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _is.EndpointDispatch _endpointDispatch;
+
+  final _is.SerializationManager _serializationManager;
+
+  _ida.Future<_ie0o28l0.EvidencePage> list(
+    _ist.TestSessionBuilder sessionBuilder,
+    int incidentId,
+    String? pageToken,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'evidence',
+            method: 'list',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'evidence',
+          methodName: 'list',
+          parameters: _ist.testObjectToJson({
+            'incidentId': incidentId,
+            'pageToken': pageToken,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_ie0o28l0.EvidencePage>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<_im7fym7h.EvidenceFile> upload(
+    _ist.TestSessionBuilder sessionBuilder,
+    int incidentId,
+    String mediaType,
+    String base64Data,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'evidence',
+            method: 'upload',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'evidence',
+          methodName: 'upload',
+          parameters: _ist.testObjectToJson({
+            'incidentId': incidentId,
+            'mediaType': mediaType,
+            'base64Data': base64Data,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_im7fym7h.EvidenceFile>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<_igwktl65.EvidenceContent> read(
+    _ist.TestSessionBuilder sessionBuilder,
+    int incidentId,
+    String key,
+    String generation,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'evidence',
+            method: 'read',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'evidence',
+          methodName: 'read',
+          parameters: _ist.testObjectToJson({
+            'incidentId': incidentId,
+            'key': key,
+            'generation': generation,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _ida.Future<_igwktl65.EvidenceContent>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _ida.Future<void> remove(
+    _ist.TestSessionBuilder sessionBuilder,
+    int incidentId,
+    String key,
+    String generation,
+  ) async {
+    return _ist.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _ist.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'evidence',
+            method: 'remove',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'evidence',
+          methodName: 'remove',
+          parameters: _ist.testObjectToJson({
+            'incidentId': incidentId,
+            'key': key,
+            'generation': generation,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =

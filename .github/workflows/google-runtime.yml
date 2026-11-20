@@ -2,7 +2,7 @@ name: Google runtime checks
 
 on:
   push:
-    branches: [main, duality/google-cloud-foundation, duality/google-infrastructure, duality/google-ai-briefing]
+    branches: [main, duality/google-cloud-foundation, duality/google-infrastructure, duality/google-ai-briefing, duality/google-evidence-broker]
     paths: ['caregrid_server/**', 'caregrid_web/**', 'infra/google/sql/**', 'pubspec.lock', '.dockerignore', '.github/workflows/google-runtime.yml']
   pull_request:
     paths: ['caregrid_server/**', 'caregrid_web/**', 'infra/google/sql/**', 'pubspec.lock', '.dockerignore', '.github/workflows/google-runtime.yml']
