@@ -1,0 +1,13 @@
+# Copy to ignored terraform.tfvars and supply real project/public app values.
+project_id    = "replace-with-project-id"
+region        = "asia-south1"
+prefix        = "caregrid-demo"
+rollout_stage = "foundation"
+public_web    = false
+
+# Keep secrets OUT of this file. Use ephemeral TF_VAR_ inputs in your process.
+# Once images are built, pin their immutable Artifact Registry digests:
+# server_image = "asia-south1-docker.pkg.dev/PROJECT/REPOSITORY/server@sha256:..."
+# web_image = "asia-south1-docker.pkg.dev/PROJECT/REPOSITORY/web@sha256:..."
+# firebase_web_api_key = "public Firebase web configuration"
+# firebase_web_app_id = "public Firebase web configuration"

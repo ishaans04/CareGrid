@@ -1,0 +1,25 @@
+# Explicit build source. Never upload original documents, local auth or caches.
+*
+!/.gcloudignore
+!/.dockerignore
+!/pubspec.lock
+!/caregrid_server/
+!/caregrid_server/**
+!/caregrid_web/
+!/caregrid_web/**
+!/infra/
+!/infra/google/
+!/infra/google/cloudbuild.yaml
+**/node_modules/**
+**/.dart_tool/**
+**/.serverpod/**
+**/build/**
+**/test-results/**
+**/playwright-report/**
+**/assets/generated/**
+**/config/passwords.yaml
+**/.env
+**/.env.*
+**/*.log
+**/*.pem
+**/*service-account*.json

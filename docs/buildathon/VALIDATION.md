@@ -6,7 +6,7 @@ The local backend and connected web workspace are now implemented and exercised.
 
 | Area | Current result |
 | --- | --- |
-| Backend tests | **49 checks passed** using Dart 3.12.2 / Serverpod 4.0.4: the full 48-test suite, followed by the seven membership tests after adding a competing-binding regression. PostgreSQL integration tests use the real embedded database; JWT checks use generated RSA fixtures. |
+| Backend tests | **49 checks passed** using Dart 3.12.2 / Serverpod 4.0.4: the local 48-test suite plus the added competing-binding regression, followed by the full 49-test suite passing in PR #2 CI. PostgreSQL integration tests use the real embedded database; JWT checks use generated RSA fixtures. |
 | Response correctness | Regression checks prove elapsed time cannot create arrival outside an explicit scenario; overdue travel escalates once; authenticated check-in works; scenario arrivals are labelled; closure cannot manufacture a care milestone. |
 | Backend access boundaries | Role/assignment tests, unshared-case id guessing by medical accounts, evidence redaction and admin exact-location redaction passed. This does not establish tenant isolation or production security certification. |
 | Static analysis | `dart analyze` on the complete isolated server workspace: **No issues found**. Flutter checks run separately in GitHub Actions. |
@@ -15,6 +15,7 @@ The local backend and connected web workspace are now implemented and exercised.
 | Mobile | Browser viewports at **390 × 844 CSS pixels** tested for member/responder overflow. Form drafts survive polling. Responder actions remain in a mobile action tray. This is browser emulation, not a physical-device field trial. |
 | Assets | Eight connected product captures plus a separately labelled Google-entry preview, with local fonts and synthetic-data labels. Gallery and provenance in [connected assets](../../assets/pitch/connected/README.md). Original presentation captures remain separate. |
 | Launch | Windows portable SDK SHA-256 checked; server-only workspace and real PostgreSQL start successfully; Node gateway waits for backend seeding. No Flutter or Google credentials needed for the local workflow. |
+| Infrastructure | Google provider 8.12.0 schema validation and six mocked Terraform rollout plans passed. Both Linux images and private maintenance/bootstrap commands passed PR #2 CI. No cloud plan/apply or real OAuth/IAM/SQL network test has run. [Deployment module](../../infra/google/README.md). |
 | Cloud / external effects | No Google resources provisioned, real notifications sent, event submission made or cloud billing changed. Firebase verification, SQL membership, a Google-authenticated stateless gateway and coordinated watchdog runtime are implemented and tested locally/with synthetic fixtures. Live OAuth/IAM/SQL networking, AI, Storage and FCM remain unverified or unimplemented integrations. |
 
 Dependency audit: the pinned npm dependency tree returned **0 known vulnerabilities** on 20 November 2026. This is a point-in-time registry check, not a security certification.

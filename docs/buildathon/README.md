@@ -18,6 +18,7 @@ Prepared 12 November 2026 (Asia/Kolkata). Founders: Hriday Vig and Ishaan Sharma
 | [Implementation plan](IMPLEMENTATION-PLAN.md) | Exact changes required to connect the current prototype to Google Cloud |
 | [Google runtime](GOOGLE-RUNTIME.md) | Separate API/watchdog images, private maintenance jobs and verified deployment boundaries |
 | [Google identity](GOOGLE-IDENTITY.md) | Firebase token validation, SQL membership, stateless gateway and operator setup |
+| [Google infrastructure](../../infra/google/README.md) | Validated Terraform, phased deployment, build pipeline and recovery runbook; not applied |
 | [Connected MVP](CONNECTED-MVP.md) | Working local architecture, response fixes, role boundaries and launch instructions |
 | [Visual assets](../../assets/pitch/README.md) | Architecture exports and product captures for the deck |
 | [Interactive submission prototype](../../caregrid_web/README.md) | Locally runnable console matching the Claude Design visual direction |

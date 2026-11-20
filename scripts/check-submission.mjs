@@ -17,6 +17,7 @@ async function walk(dir) {
 const docs = [
   "README.md",
   "docs/COMPONENTS.md",
+  "infra/google/README.md",
   ...(await walk(path.join(root, "docs/buildathon"))).filter((p) =>
     p.endsWith(".md"),
   ),

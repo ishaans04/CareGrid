@@ -25,3 +25,12 @@ node_modules/
 test-results/
 playwright-report/
 caregrid_web/assets/generated/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.auto.tfvars
+*.auto.tfvars.json
+infra/google/terraform.tfvars
+infra/google/crash.log
+infra/google/backend.hcl
