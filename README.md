@@ -119,8 +119,8 @@ flowchart LR
 | App | **Flutter 3.47** (Material 3) | One codebase for Android, iOS and the web console; responders and members are mobile-first. |
 | Backend | **Serverpod 4** (Dart) | Typed endpoints and models shared with the app, built-in WebSocket streaming, ORM and migrations, first-class Flutter client. |
 | Realtime | Serverpod streaming methods + message channels | Every state change pushes an event; clients refetch role-filtered data. |
-| Database | PostgreSQL (embedded locally, managed on Serverpod Cloud) | Zero setup in development; migrations run on every cloud deploy. |
-| Hosting | **Serverpod Cloud** | Hosts the API and the Flutter web build together (`<project>.serverpod.space`). |
+| Database | PostgreSQL embedded locally; **Cloud SQL target** | Google staging infrastructure is prepared. Migrations run in a private maintenance job before serving a revision. |
+| Hosting | **Google Cloud Run target** | Separate web gateway, API and watchdog; [phased deployment configuration](infra/google/README.md). The Serverpod Cloud section below is historical/manual. |
 | Map | Schematic digital twin drawn with `CustomPaint` | No tiles or API keys; positions come from the twin. |
 
 ## Incident lifecycle
@@ -309,7 +309,7 @@ serverpod cloud deploy         # every later deploy
 cd caregrid_server && dart test
 ```
 
-29 backend tests: 13 unit tests (routing, policy selection, planning, every stress rehearsal) and 16 integration tests against real embedded PostgreSQL (full hero loop, closure guards, negative evidence, missed-ACK re-dispatch, simulation isolation, multi-victim linking, SOS, role/assignment access, care sharing, redaction, readiness fixes and analytics). The connected web package adds 10 Node tests and three Chrome workflow tests. [Current validation](docs/buildathon/VALIDATION.md). Connected MVP CI runs on `main`, `duality/google-buildathon` and relevant pull requests.
+49 backend tests cover routing/policy/planning/rehearsal, the full response loop, closure/arrival guards, role/assignment/redaction boundaries, production demo denial, concurrent watchdog ownership, Firebase RSA validation and SQL membership/revocation. The web package adds 15 Node tests and four isolated Chrome tests (three real local workflows plus a Google-entry configuration preview). Linux CI builds both images and verifies non-superuser migrations/bootstrap; Terraform schema validation and six mocked rollout plans check the staging deployment. [Current validation and limits](docs/buildathon/VALIDATION.md). No real Google OAuth, Cloud Build or cloud deployment has run.
 
 ## Project structure
 

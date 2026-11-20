@@ -2,10 +2,10 @@ name: Google runtime checks
 
 on:
   push:
-    branches: [main, duality/google-cloud-foundation]
-    paths: ['caregrid_server/**', 'caregrid_web/**', 'pubspec.lock', '.dockerignore', '.github/workflows/google-runtime.yml']
+    branches: [main, duality/google-cloud-foundation, duality/google-infrastructure]
+    paths: ['caregrid_server/**', 'caregrid_web/**', 'infra/google/sql/**', 'pubspec.lock', '.dockerignore', '.github/workflows/google-runtime.yml']
   pull_request:
-    paths: ['caregrid_server/**', 'caregrid_web/**', 'pubspec.lock', '.dockerignore', '.github/workflows/google-runtime.yml']
+    paths: ['caregrid_server/**', 'caregrid_web/**', 'infra/google/sql/**', 'pubspec.lock', '.dockerignore', '.github/workflows/google-runtime.yml']
 
 permissions:
   contents: read
@@ -24,12 +24,16 @@ jobs:
           set -euo pipefail
           docker network create caregrid-test
           docker run -d --name caregrid-db --network caregrid-test \
-            -e POSTGRES_DB=caregrid -e POSTGRES_USER=caregrid \
+            -e POSTGRES_DB=caregrid -e POSTGRES_USER=postgres \
             -e POSTGRES_PASSWORD=ephemeral-ci-only postgres:16-bookworm
           for attempt in $(seq 1 30); do
-            if docker exec caregrid-db pg_isready -U caregrid -d caregrid; then break; fi
+            if docker exec caregrid-db pg_isready -U postgres -d caregrid; then break; fi
             sleep 1
           done
+          docker exec caregrid-db psql -U postgres -d caregrid -v ON_ERROR_STOP=1 -c \
+            "CREATE ROLE caregrid LOGIN NOSUPERUSER CREATEDB CREATEROLE PASSWORD 'ephemeral-ci-only';"
+          docker exec -i caregrid-db psql -U postgres -d caregrid -v ON_ERROR_STOP=1 \
+            < infra/google/sql/staging-grants.sql
           common=(--network caregrid-test -e SERVERPOD_DATABASE_HOST=caregrid-db
             -e SERVERPOD_DATABASE_NAME=caregrid -e SERVERPOD_DATABASE_USER=caregrid
             -e SERVERPOD_DATABASE_PASSWORD=ephemeral-ci-only

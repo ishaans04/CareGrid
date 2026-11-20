@@ -2,7 +2,13 @@
 
 Checked 12 November 2026, India time. Public sources only; no registration, form submission, account access or organizer contact was performed.
 
-## Event findings
+## Public recheck · 20 November 2026
+
+The [official home page](https://startupbuildathon.com/) now shows **15 November** in its application timeline/header/footer, while its FAQ still says **13 November**. The public date inconsistency persists. It lists city builds for **20–21 November**, regional showcases for 23/25/27 November and the finale for 2 December. No authenticated submission state or team acceptance was accessed. The older crawl below is retained as a dated record; its planning deadline is historical. Rechecking portal API/script URLs through the web research tool did not return their contents, so their 12 November observations are not represented as freshly reverified.
+
+Google AI use and deployment on Google Cloud remain explicit public requirements; no broader exclusive-vendor wording was found on the current home page. CareGrid continues to follow the user’s stricter Google runtime architecture.
+
+## Event findings · 12 November record
 
 The [official Startup Buildathon site](https://startupbuildathon.com/) describes an AI startup program, Google AI use, Google Cloud deployment, and evaluation of founders, product potential, market viability, architecture and depth of Google use. Its application deadline is **13 November 2026**. City builds are 20–21 November; regional showcases are 23/25/27 November; finale is 2 December. These are different from the older WhyCode_4U rules in this repository.
 

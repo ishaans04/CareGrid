@@ -6,7 +6,7 @@ This is an implementation backlog with acceptance gates, not a claim that migrat
 
 Keep `caregrid_server`, `caregrid_client` and `caregrid_flutter`; do not hand-edit generated clients. `caregrid_web` now includes a connected Serverpod/PostgreSQL workspace and a separate browser-local presentation. The local RPC contract is verified against Serverpod 4.0.4 and the real backend. [Completed local slice](CONNECTED-MVP.md). Keep `12112026` as supplied design/source material.
 
-The existing Serverpod framework can run on Google-managed compute. Its present Dockerfile/config and Serverpod Cloud CI are **not** a complete Cloud Run deployment. Disable the old automatic external-cloud deploy path before using main for the Google event; keep it manual/historical if retained.
+The existing Serverpod framework can run on Google-managed compute. Its present Dockerfile/config and Serverpod Cloud CI are **not** a complete Cloud Run deployment. The old automatic external-cloud deploy path is already disabled and retained as a manual historical workflow. The current Google runtime/identity code is merged; infrastructure is prepared and tested offline. No Google project has been deployed.
 
 ## Phase A: submission package
 
@@ -21,15 +21,15 @@ The existing Serverpod framework can run on Google-managed compute. Its present 
 
 | Work | Existing location | Required change / acceptance |
 | --- | --- | --- |
-| Frontend transport | Connected Node gateway + web workspace; generated Dart client remains separate | Local adapter complete. Replace demo identity, configure HTTPS/origins and distributed session handling or direct verified identity before Cloud Run. Preserve explicit connection errors; no silent fixture fallback. |
-| API container | `caregrid_server/Dockerfile`, production config | Cloud Run ingress must bind `0.0.0.0:$PORT`. Serverpod has API :8080, Insights :8081, web :8082; expose only the intended API ingress and keep Insights private/disabled. Serve web separately via Firebase Hosting. Test streaming and TLS origins. |
-| Configuration | `caregrid_server/config/production.yaml` | Replace placeholder hosts, validate environment overrides against Serverpod 4 docs, define SQL host/SSL/connection limits, CORS and log output. Do not embed passwords into a build layer. |
-| Database | Existing migrations/models | Apply migration once as a controlled job before traffic; backups and rollback plan. Cloud SQL private networking or tested Auth Proxy/connector sidecar. Verify Dart socket/TCP compatibility. |
-| Identity | `server.dart`, `account_endpoint.dart`, `core/access.dart` | Replace public PIN login with Firebase ID token validation and SQL campus membership. Remove demo-account exposure in deployed mode. Role change/session revocation tests. |
-| AI adapter | New bounded internal service/module | Workload credentials, model/prompt/schema versions, input minimization, timeout/circuit breaker, actual Gemini output and validation. Synthetic fixtures are labeled fixtures. |
-| Evidence | Existing `ServerpodCloudProvider` registration | Replace provider-specific paths with Google Cloud Storage access broker or an actually supported adapter. Private bucket, constrained upload, authorized short-lived read, deletion/audit. |
-| Google build/deploy | Existing `.github/workflows/deploy.yml` | Cloud Build → Artifact Registry → Cloud Run. If GitHub trigger is retained, use reviewed keyless federation; the deployed service path stays on Google. |
-| Operations | New metrics/log config | JSON logs to stdout, heartbeat, model failures, DB capacity, stale state and uptime checks. Alerts reach a staffed owner. |
+| Frontend transport | Connected Node gateway + web workspace | Local flow complete; cloud-mode stateless Firebase bearer forwarding and Google service identity implemented. Exact-origin HTTPS and actual IAM/OAuth remain live gates. |
+| API container | Unprivileged Dart Linux image; separate web image | Custom Cloud Run port, maintenance job and deployed demo lockout pass Linux CI. Only API ingress is exposed; Insights/web listeners remain internal. The current BFF runs on Cloud Run; Firebase Hosting is optional future fronting, not an active runtime. |
+| Configuration | Production environment overrides and runtime policy | Google infrastructure supplies exact hosts, Unix socket, pool limits, pinned secrets and JSON logging. Cloud provider behavior remains unverified. |
+| Database | Additive membership migration and Cloud SQL module | Non-superuser maintenance/bootstrap checks pass in Linux CI. Complete live SQL grants, connector verification, backup/restore and phased rollout. Shared staging SQL role/private-IP/HA limits are explicit in the runbook. |
+| Identity | Firebase verifier, SQL membership and private bootstrap commands | RSA/project/time validation, role authority, disabling/revocation and competing binds are tested. Configure real Firebase provider/domains and prove live OAuth/IAM; campus tenancy remains a pilot gate. |
+| AI adapter | New bounded internal service/module still required | Workload credentials, model/prompt/schema versions, minimized input, timeout/circuit breaker, real Gemini output and evidence-reference validation. Current deterministic reasoning is not a Gemini integration. |
+| Evidence | Private bucket prepared; existing legacy storage registration remains | Implement a GCS access broker/supported adapter, constrained uploads, authorized short-lived reads, deletion/audit. No evidence endpoint/runtime bucket grant is claimed. |
+| Google build/deploy | Terraform and build-only Cloud Build configuration | Offline schema plus six mocked rollout plans pass. Run Cloud Build -> Artifact Registry -> maintenance job -> Cloud Run once a project exists. Pipeline identity has no deploy or SQL/secret rights. |
+| Operations | Coordinated SQL watchdog and structured failure monitoring | Worker passes serialize across revisions; continuous CPU/min instance configured. Live restart recovery, heartbeat/oldest-overdue alerts, transactional effects and staffed notification delivery remain gates. |
 
 Do not use a guessed Docker tag, SDK version or environment variable as a deployment guarantee. Verify current Dart/Flutter/Serverpod compatibility and pin the actual build toolchain when setting up CI.
 

@@ -16,7 +16,9 @@ The container uses Dart's supplied Linux runtime, an unprivileged numeric user a
 
 The runtime-foundation commit passed its Linux image build, custom ingress port, migration job, readiness probe, zero automatic users and deployed PIN lockout in GitHub Actions. The local suite then contained 37 passing tests, including real-PostgreSQL watchdog ownership/failure checks.
 
-The next increment adds [Firebase identity and SQL membership](GOOGLE-IDENTITY.md), a stateless Google-authenticated web gateway, private bootstrap commands and an additive database migration. CI now also builds the web image and exercises membership setup. Current checks are in [validation](VALIDATION.md); Google IAM, OAuth, SQL connectivity and provider-side shutdown behavior still require a real project.
+The identity increment adds [Firebase identity and SQL membership](GOOGLE-IDENTITY.md), a stateless Google-authenticated web gateway, private bootstrap commands and an additive database migration. Both Linux image checks, maintenance/bootstrap checks, backend analysis/tests, Flutter analysis/format/tests and connected browser checks passed before [PR #2](https://github.com/ishaans04/CareGrid-/pull/2) merged to main. Google IAM, OAuth, SQL connectivity and provider-side shutdown behavior still require a real project.
+
+The [Google infrastructure module and rollout runbook](../../infra/google/README.md) now prepare Cloud Run services/jobs, Cloud SQL, Artifact Registry, scoped identities/secrets, private build/evidence buckets, monitoring and a build-only Cloud Build pipeline. Terraform provider validation and six mocked rollout plans pass without Google credentials. No real cloud plan/apply or Cloud Build run has occurred.
 
 The connected MVP was merged through [PR #1](https://github.com/ishaans04/CareGrid-/pull/1). All analysis, formatting, backend and connected browser checks passed on main after that merge.
 
