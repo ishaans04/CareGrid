@@ -23,7 +23,9 @@ jobs:
         run: |
           set -euo pipefail
           docker network create caregrid-test
+          docker volume create caregrid-test-socket
           docker run -d --name caregrid-db --network caregrid-test \
+            --mount type=volume,source=caregrid-test-socket,target=/var/run/postgresql \
             -e POSTGRES_DB=caregrid -e POSTGRES_USER=postgres \
             -e POSTGRES_PASSWORD=ephemeral-ci-only postgres:16-bookworm
           for attempt in $(seq 1 30); do
@@ -41,6 +43,13 @@ jobs:
             -e FIREBASE_PROJECT_ID=caregrid-test-project
             -e SERVERPOD_SERVICE_SECRET=ephemeral-ci-service-secret)
           docker run --rm "${common[@]}" -e CLOUD_RUN_JOB=caregrid-migrate \
+            caregrid-runtime:test --mode=production --role=maintenance --apply-migrations
+          # The Dart driver expects the complete socket filename, unlike libpq.
+          # Exercise the same unprivileged image over a real Unix socket too.
+          docker run --rm "${common[@]}" -e CLOUD_RUN_JOB=caregrid-migrate \
+            --mount type=volume,source=caregrid-test-socket,target=/cloudsql \
+            -e SERVERPOD_DATABASE_IS_UNIX_SOCKET=true \
+            -e SERVERPOD_DATABASE_HOST=/cloudsql/.s.PGSQL.5432 \
             caregrid-runtime:test --mode=production --role=maintenance --apply-migrations
           docker run -d --name caregrid-api "${common[@]}" \
             -e K_SERVICE=caregrid-api -e PORT=9099 -p 127.0.0.1:18080:9099 \
@@ -75,6 +84,7 @@ jobs:
         run: |
           docker rm -f caregrid-api caregrid-db || true
           docker network rm caregrid-test || true
+          docker volume rm caregrid-test-socket || true
 
   web-container:
     runs-on: ubuntu-latest

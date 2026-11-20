@@ -34,6 +34,6 @@ The optional [private evidence broker](GOOGLE-EVIDENCE.md) is implemented and di
 
 - [Cloud Run container contract](https://docs.cloud.google.com/run/docs/container-contract): ingress must listen on the supplied port and all interfaces; shutdown signals reach the application.
 - [CPU allocation](https://docs.cloud.google.com/run/docs/configuring/services/cpu): a background watchdog requires the appropriate continuously allocated runtime, rather than assuming requests keep it alive.
-- [Cloud SQL connections from Cloud Run](https://docs.cloud.google.com/sql/docs/postgres/connect-run): the managed Unix socket uses `/cloudsql/PROJECT:REGION:INSTANCE`; the connector encrypts the connection. The Dart PostgreSQL driver supplies the PostgreSQL socket suffix.
+- [Cloud SQL connections from Cloud Run](https://docs.cloud.google.com/sql/docs/postgres/connect-run): the managed connector encrypts the connection. The pinned Dart PostgreSQL driver connects to its host path verbatim, so `SERVERPOD_DATABASE_HOST` must contain the full socket filename: `/cloudsql/PROJECT:REGION:INSTANCE/.s.PGSQL.5432`. Supplying only the directory failed in the first live migration.
 
 Pinned Serverpod 4.0.4 package source was inspected for environment names, configuration overrides, maintenance migrations, health endpoints and shutdown hooks. Cloud resources and provider-side behavior remain unverified until a project is available.

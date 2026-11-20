@@ -1,6 +1,7 @@
 locals {
   database_environment = {
-    SERVERPOD_DATABASE_HOST           = "/cloudsql/${google_sql_database_instance.primary.connection_name}"
+    # postgres 3.5.20 connects to this path verbatim; it does not append a filename.
+    SERVERPOD_DATABASE_HOST           = "/cloudsql/${google_sql_database_instance.primary.connection_name}/.s.PGSQL.5432"
     SERVERPOD_DATABASE_NAME           = google_sql_database.app.name
     SERVERPOD_DATABASE_USER           = google_sql_user.app.name
     SERVERPOD_DATABASE_PORT           = "5432"
