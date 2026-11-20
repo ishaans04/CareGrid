@@ -50,6 +50,8 @@ import 'package:caregrid_client/src/protocol/twin/zone_policy.dart'
 import 'package:caregrid_client/src/protocol/views/campus_twin.dart'
     as _igwqpf3x;
 import 'package:caregrid_client/src/protocol/views/care_case.dart' as _i3zkoq01;
+import 'package:caregrid_client/src/protocol/views/incident_brief.dart'
+    as _ic5ad2f9;
 import 'package:caregrid_client/src/protocol/views/incident_detail.dart'
     as _i0czyis8;
 import 'package:caregrid_client/src/protocol/views/incident_summary.dart'
@@ -223,6 +225,22 @@ class EndpointAnalytics extends _isc.EndpointRef {
         'analytics',
         'metrics',
         {},
+      );
+}
+
+/// Optional prose assistance. No model output enters the response state machine.
+/// {@category Endpoint}
+class EndpointBriefing extends _isc.EndpointRef {
+  EndpointBriefing(_isc.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'briefing';
+
+  _ida.Future<_ic5ad2f9.IncidentBrief> generate(int incidentId) =>
+      caller.callServerEndpoint<_ic5ad2f9.IncidentBrief>(
+        'briefing',
+        'generate',
+        {'incidentId': incidentId},
       );
 }
 
@@ -677,6 +695,7 @@ class Client extends _isc.ServerpodClientShared {
     account = EndpointAccount(this);
     admin = EndpointAdmin(this);
     analytics = EndpointAnalytics(this);
+    briefing = EndpointBriefing(this);
     campus = EndpointCampus(this);
     care = EndpointCare(this);
     incident = EndpointIncident(this);
@@ -693,6 +712,8 @@ class Client extends _isc.ServerpodClientShared {
   late final EndpointAdmin admin;
 
   late final EndpointAnalytics analytics;
+
+  late final EndpointBriefing briefing;
 
   late final EndpointCampus campus;
 
@@ -717,6 +738,7 @@ class Client extends _isc.ServerpodClientShared {
     'account': account,
     'admin': admin,
     'analytics': analytics,
+    'briefing': briefing,
     'campus': campus,
     'care': care,
     'incident': incident,

@@ -16,7 +16,7 @@
 | Operations | Structured watchdog failure metric and two monitoring policies; notification channels are explicit existing inputs; default creates console incidents only |
 | State | GCS backend requires a separately created private versioned bucket; no application resources own/delete their state bucket |
 
-This deliberately does not create a project, attach billing, configure OAuth consent, grant humans project ownership, create credentials or silently provision every service in the research catalogue. Firebase project/web registration and provider settings are operator steps. Gemini, FCM delivery, Maps and evidence access are separate application increments. An empty evidence bucket does not establish a working evidence pipeline.
+This deliberately does not create a project, attach billing, configure OAuth consent, grant humans project ownership, create credentials or silently provision every service in the research catalogue. Firebase project/web registration and provider settings are operator steps. The [optional Gemini handoff adapter](../../docs/buildathon/GOOGLE-GEMINI.md) is implemented but disabled by default and unverified against a real model. FCM delivery, Maps and evidence access remain separate application increments. An empty evidence bucket does not establish a working evidence pipeline.
 
 ## Offline checks
 
@@ -29,7 +29,7 @@ terraform validate
 terraform test
 ```
 
-The six mocked plan runs check foundation/jobs/services boundaries, lack of direct SQL allowlists, absence of web SQL/secret access, private evidence, continuously allocated watchdog CPU, explicit public entry, immutable image inputs and migration attestation. They use no Google credentials and create nothing. GitHub Actions repeats these checks on Linux. Cloud Build YAML is prepared but has not run on Google.
+The eight mocked plan runs check foundation/jobs/services boundaries, lack of direct SQL allowlists, absence of web SQL/secret access, private evidence, continuously allocated watchdog CPU, explicit public entry, immutable image inputs, migration attestation, disabled-by-default inference and scoped model permissions. They use no Google credentials and create nothing. GitHub Actions repeats these checks on Linux. Cloud Build YAML is prepared but has not run on Google.
 
 ## First rollout once a project exists
 
@@ -73,6 +73,10 @@ gcloud run jobs execute "$PREFIX-bootstrap" --project="$PROJECT_ID" --region="$R
 
 9. Add the `web_origin` output hostname to Firebase authorized domains. Set the two public Firebase web values. Record the successful migration execution ID, verify its digest matches this release, then set `migration_verified=true` and `rollout_stage="services"`. This is an **operator attestation**, not a Terraform check of database schema/execution history. Choose `public_web=true` only when intentionally exposing the browser entry. With it false, an ordinary browser cannot pass Cloud Run IAM using a Firebase token alone; this is the default private gate, not a completed user-facing deployment.
 10. Review/apply. Confirm actual service URLs match the configured deterministic `web_origin`/`api_origin`. Use that exact web origin; alternate aliases are rejected by the gateway's host/origin checks. Test the [identity acceptance gates](../../docs/buildathon/GOOGLE-IDENTITY.md), all roles, live SQL connector, API/worker restart and overdue recovery. Confirm the worker needs no request traffic to scan deadlines. Verify health probes, alert delivery and IAM denial from outside the gateway. Do not use real campus emergency data for this staging rollout.
+
+## Optional Google inference
+
+After selecting and evaluating a compatible Google model in the project, set `enable_gemini=true`, `gemini_model` and `gemini_location`. There is no default model/location or automatic fallback. This enables the AI API, grants a custom inference-only role to the API runtime and supplies server configuration. The web/worker/build/job identities receive no inference role. Request shape/reference validation does not validate factual correctness; complete the [live model and evaluation gates](../../docs/buildathon/GOOGLE-GEMINI.md) before claiming real integration. Leave disabled until then.
 
 ## Subsequent release and recovery
 

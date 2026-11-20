@@ -134,7 +134,8 @@ async function main() {
   backend.on("exit", (code) => stop(code || 0));
   // Wait for the API and seeding before exposing the connected workspace.
   let ready = false;
-  for (let attempt = 0; attempt < 120 && !stopping; attempt++) {
+  const startupDeadline = Date.now() + 180_000;
+  while (Date.now() < startupDeadline && !stopping) {
     try {
       const response = await fetch(
         "http://127.0.0.1:8080/account/demoAccounts",
@@ -157,7 +158,7 @@ async function main() {
   if (!ready) {
     if (!stopping)
       console.error(
-        "The backend did not become ready within two minutes. Check the API log above.",
+        "The backend did not become ready within three minutes. Check the API log above.",
       );
     stop(1);
     return;

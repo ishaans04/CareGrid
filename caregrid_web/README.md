@@ -18,7 +18,11 @@ To demonstrate arrival provenance, send an SOS from a member, approve its dispat
 
 This is loopback development authentication, not production identity. No camera, live GPS, emergency service, Gemini, Maps or Google Cloud deployment is connected. Local gateway sessions are held in memory and end on restart. Cloud mode instead uses bundled Firebase Google sign-in, stateless bearer forwarding and Cloud Run service identity; see [identity setup and limits](../docs/buildathon/GOOGLE-IDENTITY.md). Its real OAuth flow remains untested without a project. SQL deadlines and a coordinated separate watchdog runtime are implemented; transactional effects and pilot reliability gates remain open. [Cloud acceptance gates](../docs/buildathon/IMPLEMENTATION-PLAN.md) remain open.
 
+An optional command-only [Gemini handoff draft](../docs/buildathon/GOOGLE-GEMINI.md) is implemented and disabled by default. It receives minimized recorded facts, has no dispatch authority, and requires real Google model validation before enablement. Drafting does not block response actions. Switching cases clears old controls until the selected record loads.
+
 ## Checks and connected screenshots
+
+Browser tests create synthetic incidents and change responder availability. For repeatable captures, start the launcher with a separate initially empty absolute `SERVERPOD_DATABASE_DATA_PATH` under this repository's ignored `tmp/` directory. Stop another local instance first. This preserves your existing development database; CI starts from a fresh workspace.
 
 ```powershell
 cd caregrid_web

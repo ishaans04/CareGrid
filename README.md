@@ -4,19 +4,19 @@
 
 > **Startup Buildathon India 2026 · Team Duality (Hriday Vig + Ishaan Sharma).** Start with the [submission package](docs/buildathon/README.md), [Google solution architecture](docs/buildathon/SOLUTION-ARCHITECTURE.md), and [interactive web prototype](caregrid_web/README.md). [Pitch assets](assets/pitch/README.md) include the architecture graphic and product captures. The older Flutter/Serverpod documentation below describes the inherited prototype; Serverpod Cloud is a historical deployment path. The proposed event architecture uses Google Cloud. No live Google resources or campus pilot are claimed.
 
-> **20 November update:** the [connected web MVP](docs/buildathon/CONNECTED-MVP.md) now runs member SOS, command dispatch, responder proof, care handoff, readiness and analytics against the actual Serverpod/PostgreSQL backend. Start on Windows with `powershell -File scripts/start-local.ps1` from this repository. [Connected product screenshots](assets/pitch/connected/README.md). Verification: 49 backend checks, 15 Node tests and four Chrome tests (three real workflows plus one Google-entry configuration preview); backend static analysis clean. [Google runtime and identity](docs/buildathon/GOOGLE-RUNTIME.md) are implemented for deployment verification once a project exists.
+> **20 November update:** the [connected web MVP](docs/buildathon/CONNECTED-MVP.md) now runs member SOS, command dispatch, responder proof, care handoff, readiness and analytics against the actual Serverpod/PostgreSQL backend. Start on Windows with `powershell -File scripts/start-local.ps1` from this repository. [Connected product screenshots](assets/pitch/connected/README.md). Verification: 60 backend tests, 17 Node checks and five Chrome tests (three real workflows, a delayed-draft UI race and a Google-entry configuration preview); backend static analysis clean. [Google runtime and identity](docs/buildathon/GOOGLE-RUNTIME.md) are implemented for deployment verification once a project exists.
 
 **The AI emergency response operating system for campuses**
 
 *No emergency should wait in a queue, and no response should be trusted merely because an alert was sent.*
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.13-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.12.2-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![Serverpod](https://img.shields.io/badge/Serverpod-4.0.4-6E4AFF)](https://serverpod.dev)
 [![Google Cloud target](https://img.shields.io/badge/Target-Google%20Cloud-4285F4)](docs/buildathon/SOLUTION-ARCHITECTURE.md)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%2B-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org)
 [![Platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS%20%7C%20Web-success)](#run-it-locally)
-[![Tests](https://img.shields.io/badge/backend%20tests-49%20passing-brightgreen)](#tests)
+[![Tests](https://img.shields.io/badge/backend%20tests-60%20passing-brightgreen)](#tests)
 
 </div>
 
@@ -309,7 +309,7 @@ serverpod cloud deploy         # every later deploy
 cd caregrid_server && dart test
 ```
 
-49 backend tests cover routing/policy/planning/rehearsal, the full response loop, closure/arrival guards, role/assignment/redaction boundaries, production demo denial, concurrent watchdog ownership, Firebase RSA validation and SQL membership/revocation. The web package adds 15 Node tests and four isolated Chrome tests (three real local workflows plus a Google-entry configuration preview). Linux CI builds both images and verifies non-superuser migrations/bootstrap; Terraform schema validation and six mocked rollout plans check the staging deployment. [Current validation and limits](docs/buildathon/VALIDATION.md). No real Google OAuth, Cloud Build or cloud deployment has run.
+60 backend tests cover routing/policy/planning/rehearsal, the full response loop, closure/arrival guards, role/assignment/redaction boundaries, production demo denial, concurrent watchdog ownership, Firebase RSA validation and SQL membership/revocation. The web package adds 17 Node checks and five isolated Chrome tests (three real local workflows, a delayed-draft UI race and a Google-entry configuration preview). Linux CI builds both images and verifies non-superuser migrations/bootstrap; Terraform schema validation and eight mocked rollout plans check the staging deployment. [Current validation and limits](docs/buildathon/VALIDATION.md). The [optional Gemini handoff adapter](docs/buildathon/GOOGLE-GEMINI.md) is implemented with synthetic response tests and remains disabled by default. No real Gemini/OAuth, Cloud Build or cloud deployment has run.
 
 ## Project structure
 

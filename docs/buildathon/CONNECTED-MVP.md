@@ -1,4 +1,4 @@
-# Connected MVP · 19 November 2026
+# Connected MVP · updated 20 November 2026
 
 CareGrid now has a web workspace connected to the existing Serverpod application and PostgreSQL database. Command, responder, medical, admin and member accounts share server state. The original pitch presentation remains available separately.
 
@@ -37,7 +37,7 @@ The launcher copies the server into an ignored server-only Dart workspace under 
 
 No Google project, model, Firebase authentication, Maps API, FCM delivery, cloud database or evidence bucket has been provisioned. This local gateway is not a deployed Google integration. The target remains [Cloud Run + Cloud SQL and the Google services in the architecture](SOLUTION-ARCHITECTURE.md).
 
-Before deployment, replace demo PINs with Firebase/Identity Platform verification and SQL membership, remove the public demo-account endpoint, use HTTPS and secure cookies, and either use verified identity directly at the API or externalize/revoke gateway sessions across instances. The current in-memory session store and watchdog are unsuitable for a scaled Cloud Run service. Cloud SQL transactions/outbox and durable deadline recovery remain required. No emergency services, real patients or live camera feeds are connected.
+Cloud-mode Firebase verification/SQL membership, a stateless Google-authenticated gateway, separate coordinated watchdog runtime and phased Terraform deployment are now implemented and tested offline. The local PIN/session mode remains loopback only. The [optional Gemini draft adapter](GOOGLE-GEMINI.md) is implemented with synthetic response tests and remains disabled by default. Follow [the rollout runbook](../../infra/google/README.md) for actual project/Firebase setup and live verification. SQL transactions/outbox, tenant isolation, telemetry provenance, evaluated model behavior and operational recovery remain pilot gates. No emergency services, real patients or live camera feeds are connected.
 
 ## Run, verify and demonstrate
 

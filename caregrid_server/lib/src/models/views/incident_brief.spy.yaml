@@ -1,0 +1,12 @@
+### Optional Gemini handoff draft. It cannot change incident or dispatch state.
+class: IncidentBrief
+fields:
+  incidentCode: String
+  generatedAt: DateTime
+  sourceUpdatedAt: DateTime
+  status: String
+  summary: String?
+  evidenceRefs: List<String>
+  model: String?
+  promptVersion: String
+  notice: String

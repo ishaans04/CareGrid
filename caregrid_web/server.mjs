@@ -27,6 +27,7 @@ const publicFiles = new Set([
   "connected.js",
   "domain.mjs",
   "connected-domain.mjs",
+  "briefing-view.mjs",
 ]);
 // Explicit surface only. Serverpod enforces role and ownership checks.
 const methods = new Set([
@@ -38,6 +39,7 @@ const methods = new Set([
   "incident/addNote",
   "incident/dismiss",
   "incident/resolve",
+  "briefing/generate",
   "campus/twin",
   "campus/route",
   "care/cases",

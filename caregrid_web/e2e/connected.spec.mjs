@@ -10,8 +10,8 @@ async function capture(page, name) {
     page.getByRole("button", { name: "Sign out", exact: true }),
   ).toBeEnabled();
   await page.evaluate(() => document.fonts.ready);
-  if (name === "02-mobile-responder")
-    await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => new Promise(requestAnimationFrame));
   await page.screenshot({
     path: path.join(directory, `${name}.png`),
     fullPage: name !== "02-mobile-responder",
@@ -41,6 +41,14 @@ test("member SOS crosses authenticated command, responder and care sessions", as
   browser,
 }) => {
   const contexts = [];
+  let releaseDetail;
+  const detailGate = new Promise((resolve) => {
+    releaseDetail = resolve;
+  });
+  let detailRequested;
+  const detailEntered = new Promise((resolve) => {
+    detailRequested = resolve;
+  });
   try {
     const member = await login(browser, "student.aanya", "5501", {
       width: 390,
@@ -84,11 +92,43 @@ test("member SOS crosses authenticated command, responder and care sessions", as
         return Boolean(incident);
       })
       .toBe(true);
+    await command.page.route("**/api/rpc/incident/detail", async (route) => {
+      if (route.request().postDataJSON().incidentId === incident.id) {
+        detailRequested();
+        await detailGate;
+      }
+      await route.continue();
+    });
     await command.page
       .locator(".incident-row")
       .filter({ hasText: incident.code })
       .click();
+    await detailEntered;
+    await expect(command.page.locator(".detail-heading")).toHaveCount(0);
+    await expect(
+      command.page.getByRole("button", { name: "Draft handoff brief" }),
+    ).toHaveCount(0);
+    releaseDetail();
+    await expect(command.page.locator(".detail-heading")).toContainText(
+      incident.code,
+    );
+    await command.page.unroute("**/api/rpc/incident/detail");
     await expect(command.page.locator(".detail-heading")).toContainText(marker);
+    await command.page
+      .getByRole("button", { name: "Draft handoff brief", exact: true })
+      .click();
+    await expect(command.page.locator("#handoff-brief")).toContainText(
+      "Gemini is not enabled",
+    );
+    await expect(
+      command.page.getByRole("button", {
+        name: "Approve recommended dispatch",
+        exact: true,
+      }),
+    ).toBeEnabled();
+    await expect(
+      member.page.getByRole("button", { name: "Draft handoff brief" }),
+    ).toHaveCount(0);
     await capture(command.page, "01-command-centre");
     await command.page
       .getByRole("button", { name: "Take ownership", exact: true })
@@ -201,6 +241,7 @@ test("member SOS crosses authenticated command, responder and care sessions", as
     ).toBe(true);
     expect(errors).toEqual([]);
   } finally {
+    releaseDetail();
     for (const context of contexts) await context.close();
   }
 });
