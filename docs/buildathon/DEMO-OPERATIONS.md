@@ -51,6 +51,8 @@ The final refreshed plan **after** attaching the team alert channels also report
 
 ## Billing and alerts
 
+**21 November replacement account:** the project is now linked to `011742-6AEDED-1EC8D8` (GDP Event Credit: Buildathon day 2), with billing enabled. The previous account was closed. The existing $5 gross-cost budget and both team email channels were reproduced on the replacement account; budget ID `4de3c550-4d89-445a-ac50-3317addbbf3d`. This is not a statement of the new credit balance or expiry. See the [recovery record](GOOGLE-PROVISIONING.md#billing-recovery--21-november-2026) for the dated service status. The observations below describe the former account.
+
 The owner account can access billing. At approximately 22:35 IST on 20 November, the Google Cloud console showed **$4.85 remaining (97%)** of the $5 GDP credit, with an **end date of 21 November 2026**. The regular monthly report showed $0.00 net and $0.08 Cloud Run usage offset by savings. These views update at different times; neither proves all incurred usage has been posted. The console did not show a precise expiry timestamp.
 
 Cloud SQL and the continuously allocated watchdog keep billing while idle. The previously calculated gross SQL/watchdog baseline is approximately **$0.113195/hour ($2.72/day)** before applicable credits/free allowances, excluding builds, web/API requests, storage, backups, logging and optional AI. This is a planning baseline, not a bill or guaranteed credit lifetime. Credit expiry can arrive before exhaustion. The $5 budget sends alerts; it does not stop services or cap charges.

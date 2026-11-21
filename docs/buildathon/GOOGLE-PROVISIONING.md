@@ -6,6 +6,14 @@ This is the operational starting point for another coding or deployment agent. T
 
 This record supplements the [deployment runbook](../../infra/google/README.md), which remains the source for staged rollout commands. Recheck live resources and current `main` before making changes; this is a dated inventory.
 
+## Billing recovery — 21 November 2026
+
+The original event billing account was closed. The existing `caregrid-staging` project is now linked to **`011742-6AEDED-1EC8D8`**, display name **GDP Event Credit: Buildathon day 2**, with `billingEnabled=true`. This supersedes the original billing-account values below; the project, region, deployed images, database and role bindings were not replaced.
+
+The existing **USD 5 monthly gross-cost budget** was reproduced on the replacement account, scoped to `projects/959096744456`, with actual thresholds 50%, 80%, 100% and forecast 100%. Both existing team email notification channels are attached. New budget ID: `4de3c550-4d89-445a-ac50-3317addbbf3d`. A budget is an alert threshold, not verified credit balance or a spending cap. The replacement credit balance and expiry must be checked in [Credits](https://console.cloud.google.com/billing/011742-6AEDED-1EC8D8/credits?project=caregrid-staging).
+
+**Recovery in progress, checked 21 November at 11:49 IST:** Cloud SQL `caregrid-demo-pg` still reports `SUSPENDED` with `BILLING_ISSUE`; public web requests return HTTP 503. An explicit SQL restart was rejected with HTTP 409 while suspended. Required Run, SQL, Secret Manager and Firebase Identity Toolkit APIs remain enabled. Do not reseed, recreate the database, roll back Terraform's rollout stage or change the application to address this platform suspension. [Google documents up to 30 minutes of Cloud Run billing recovery with no manual workaround](https://docs.cloud.google.com/run/docs/known-issues), and [SQL may take a few hours to become runnable](https://docs.cloud.google.com/sql/docs/postgres/faq). Verify the actual SQL state and HTTP responses before reporting the site restored.
+
 ## 0. Live deployment — 20 November 2026, 16:40 IST
 
 | Item | Live value |
